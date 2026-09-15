@@ -18,14 +18,14 @@ const jsonLd = {
   hasPart: entries.map((e) => ({
     "@type": "Article",
     headline: `Top ${e.toolCount} Code Review Tools for ${e.provider} in 2026`,
-    url: new URL(`/explore/${e.slug}`, Astro.site).href,
+    url: new URL(`/explore/${e.slug}/`, Astro.site).href,
   })),
 };
 ---
 <Layout
   title="Explore — Review Radar"
   description="Comparison articles ranking code quality, security and code review tools by git hosting platform, so you can find what integrates with the platform you already use."
-  breadcrumbs={[{ name: "Explore", url: "/explore" }]}
+  breadcrumbs={[{ name: "Explore", url: "/explore/" }]}
 >
   <SimpleHeader slot="header" />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -48,7 +48,7 @@ const jsonLd = {
       </p>
       <div class="glossary-grid">
         {entries.map((e) => (
-          <a href={`/explore/${e.slug}`} class="glossary-card">
+          <a href={`/explore/${e.slug}/`} class="glossary-card">
             <span class="label glossary-card-group">{e.group}</span>
             <span class="glossary-card-term">Top {e.toolCount} Code Review Tools for {e.provider} in 2026</span>
             <span class="glossary-card-short">{e.short}</span>

@@ -46,9 +46,9 @@ export async function GET({ site }) {
   lines.push("## Directory");
   lines.push("");
   lines.push(`- [All tools](${url("/")}): the full directory, filterable by category, deployment model, git platform, analysis type, compliance, integrations, language and pricing.`);
-  lines.push(`- [Glossary](${url("/glossary")}): ${GLOSSARY.length} definitions of the terms used across the directory, each listing the tools that support it.`);
-  lines.push(`- [Explore](${url("/explore")}): comparison articles ranking tools by git hosting platform.`);
-  lines.push(`- [About](${url("/about")}): what the directory covers and how entries are kept current.`);
+  lines.push(`- [Glossary](${url("/glossary/")}): ${GLOSSARY.length} definitions of the terms used across the directory, each listing the tools that support it.`);
+  lines.push(`- [Explore](${url("/explore/")}): comparison articles ranking tools by git hosting platform.`);
+  lines.push(`- [About](${url("/about/")}): what the directory covers and how entries are kept current.`);
   lines.push("");
 
   for (const [category, list] of byCategory) {
@@ -65,7 +65,7 @@ export async function GET({ site }) {
         .filter(Boolean)
         .join(", ");
       lines.push(
-        `- [${t.name}](${url(`/${t.slug}`)}): ${t.description} Deployment: ${deploy || "not documented"}. ` +
+        `- [${t.name}](${url(`/${t.slug}/`)}): ${t.description} Deployment: ${deploy || "not documented"}. ` +
           `Pricing: ${t.priceLabel}. Last verified ${t.lastUpdated}.`
       );
     }
@@ -84,7 +84,7 @@ export async function GET({ site }) {
       const breakdown = partial.length
         ? `${all.length} of ${tools.length} tools support it (${full.length} fully, ${partial.length} partially).`
         : `${all.length} of ${tools.length} tools support it.`;
-      lines.push(`- [What is ${term.term}?](${url(`/glossary/${term.slug}`)}): ${term.short} ${breakdown}`);
+      lines.push(`- [What is ${term.term}?](${url(`/glossary/${term.slug}/`)}): ${term.short} ${breakdown}`);
     }
     lines.push("");
   }
@@ -98,7 +98,7 @@ export async function GET({ site }) {
     const breakdown = partial
       ? `${ranked.length} tools integrate with it (${full} fully, ${partial} partially).`
       : `${ranked.length} tools integrate with it.`;
-    lines.push(`- [Top ${a.provider} Tools](${url(`/explore/${a.slug}`)}): ${a.short} ${breakdown}`);
+    lines.push(`- [Top ${a.provider} Tools](${url(`/explore/${a.slug}/`)}): ${a.short} ${breakdown}`);
   }
   lines.push("");
 

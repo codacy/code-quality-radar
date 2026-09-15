@@ -23,14 +23,14 @@ const jsonLd = {
   name: AUTHOR.name,
   description: AUTHOR.bio,
   image: imageUrl,
-  url: new URL(`/author/${AUTHOR.slug}`, Astro.site).href,
+  url: new URL(`/author/${AUTHOR.slug}/`, Astro.site).href,
   sameAs: [AUTHOR.linkedin, AUTHOR.github],
 };
 ---
 <Layout
   title={`${AUTHOR.name} — Review Radar`}
   description={`Articles and comparisons by ${AUTHOR.name}, who built and maintains Review Radar.`}
-  breadcrumbs={[{ name: AUTHOR.name, url: `/author/${AUTHOR.slug}` }]}
+  breadcrumbs={[{ name: AUTHOR.name, url: `/author/${AUTHOR.slug}/` }]}
 >
   <SimpleHeader slot="header" />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -87,7 +87,7 @@ const jsonLd = {
       </p>
       <div class="glossary-grid">
         {articles.map((a) => (
-          <a href={`/explore/${a.slug}`} class="glossary-card">
+          <a href={`/explore/${a.slug}/`} class="glossary-card">
             <span class="label glossary-card-group">{a.group}</span>
             <span class="glossary-card-term">Top {a.toolCount} Code Review Tools for {a.provider} in 2026</span>
             <span class="glossary-card-short">{a.short}</span>

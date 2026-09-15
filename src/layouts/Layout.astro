@@ -17,7 +17,7 @@ const { title, description, breadcrumbs } = Astro.props;
 const trail = breadcrumbs ?? [];
 const fullTrail = [{ name: "All tools", url: "/" }, ...trail];
 
-const canonical = new URL(Astro.url.pathname.replace(/\/$/, "") || "/", Astro.site).href;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
 
 const breadcrumbLd = trail.length
   ? {
@@ -55,9 +55,14 @@ const breadcrumbLd = trail.length
   <link rel="sitemap" href="/sitemap-index.xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://js-eu1.hs-scripts.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
 
   {breadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />}
+
+  <!-- Start of HubSpot Embed Code -->
+  <script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/7370416.js" is:inline></script>
+  <!-- End of HubSpot Embed Code -->
 </head>
 <body>
   <slot name="header" />

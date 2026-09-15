@@ -2,12 +2,12 @@
 import { AUTHOR } from "../data/author.js";
 ---
 <aside class="author-card">
-  <a href={`/author/${AUTHOR.slug}`} class="author-avatar">
+  <a href={`/author/${AUTHOR.slug}/`} class="author-avatar">
     {AUTHOR.image ? <img src={AUTHOR.image} alt="" loading="lazy" /> : AUTHOR.initials}
   </a>
   <div class="author-body">
     <p class="label author-kicker">Built by</p>
-    <p class="author-name"><a href={`/author/${AUTHOR.slug}`}>{AUTHOR.name}</a></p>
+    <p class="author-name"><a href={`/author/${AUTHOR.slug}/`}>{AUTHOR.name}</a></p>
     <p class="author-bio">{AUTHOR.bio}</p>
     <div class="author-links">
       <a href={AUTHOR.linkedin} target="_blank" rel="noopener noreferrer me" aria-label={`${AUTHOR.name} on LinkedIn`}>

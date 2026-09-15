@@ -114,7 +114,7 @@ const jsonLdFaq = {
 <Layout
   title={`${tool.name} — Review Radar`}
   description={tool.one_liner}
-  breadcrumbs={[{ name: tool.name, url: `/${tool.slug}` }]}
+  breadcrumbs={[{ name: tool.name, url: `/${tool.slug}/` }]}
 >
   <SimpleHeader slot="header" />
 
@@ -321,7 +321,7 @@ const jsonLdFaq = {
         </div>
         <div class="similar-grid">
           {similar.map((s) => (
-            <a href={`/${s.slug}`} class="similar-card">
+            <a href={`/${s.slug}/`} class="similar-card">
               <span class="similar-name">{s.name}</span>
               <span class="similar-desc">{s.description}</span>
             </a>

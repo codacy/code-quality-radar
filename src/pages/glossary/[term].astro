@@ -81,7 +81,7 @@ const jsonLdTerm = {
   inDefinedTermSet: {
     "@type": "DefinedTermSet",
     name: "Review Radar Glossary",
-    url: new URL("/glossary", Astro.site).href,
+    url: new URL("/glossary/", Astro.site).href,
   },
 };
 const jsonLdArticle = {
@@ -106,8 +106,8 @@ const jsonLdFaq = {
   title={`${headline} — Review Radar`}
   description={entry.short}
   breadcrumbs={[
-    { name: "Glossary", url: "/glossary" },
-    { name: entry.term, url: `/glossary/${entry.slug}` },
+    { name: "Glossary", url: "/glossary/" },
+    { name: entry.term, url: `/glossary/${entry.slug}/` },
   ]}
 >
   <SimpleHeader slot="header" />
@@ -141,7 +141,7 @@ const jsonLdFaq = {
               <span class="ranked-index">{i + 1}</span>
               <div class="ranked-body">
                 <div class="ranked-head">
-                  <a href={`/${t.slug}`} class="ranked-name">{t.name}</a>
+                  <a href={`/${t.slug}/`} class="ranked-name">{t.name}</a>
                   <span class="pill">{t.categoryLabel}</span>
                   {t.partial && <span class="facet-status status-partial">Partial</span>}
                   {t.tier && <span class="pill facet-tier">{t.tier}</span>}
@@ -165,7 +165,7 @@ const jsonLdFaq = {
           <h2 class="h3">Related terms</h2>
           <div class="chip-list" style="margin-top: var(--space-md);">
             {related.map((r) => (
-              <a href={`/glossary/${r.slug}`} class="chip chip-link">{r.term}</a>
+              <a href={`/glossary/${r.slug}/`} class="chip chip-link">{r.term}</a>
             ))}
           </div>
         </section>

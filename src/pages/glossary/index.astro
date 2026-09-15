@@ -24,14 +24,14 @@ const jsonLd = {
     "@type": "DefinedTerm",
     name: e.term,
     description: e.short,
-    url: new URL(`/glossary/${e.slug}`, Astro.site).href,
+    url: new URL(`/glossary/${e.slug}/`, Astro.site).href,
   })),
 };
 ---
 <Layout
   title="Glossary — Review Radar"
   description="Plain-English definitions of code quality, code security and code review terms, including SAST, SCA, IaC scanning, merge gates and self-hosted deployment, each with the tools that support it."
-  breadcrumbs={[{ name: "Glossary", url: "/glossary" }]}
+  breadcrumbs={[{ name: "Glossary", url: "/glossary/" }]}
 >
   <SimpleHeader slot="header" />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -71,7 +71,7 @@ const jsonLd = {
       <div class="glossary-grid" id="glossaryGrid">
         {entries.map((e) => (
           <a
-            href={`/glossary/${e.slug}`}
+            href={`/glossary/${e.slug}/`}
             class="glossary-card"
             data-group={e.group}
             data-search={`${e.term} ${e.short} ${e.group}`.toLowerCase()}
