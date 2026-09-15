@@ -6,7 +6,7 @@ export const AUTHOR = {
   image: "/author/claudia-fernandes.jpg",
   bio: "Geek wannabe; AKA Claude-ia.",
   linkedin: "https://www.linkedin.com/in/claudiacsf/",
-  github: "https://github.com/ccsfcodacy",
+  github: "https://github.com/codacy",
   // Author-page-only aside, tucked into a closed <details> — not part of the
   // short bio reused in every byline.
   claudeNote: "Claude says this directory is evidence I work across the marketing/engineering line. I'll take it.",
