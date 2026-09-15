@@ -10,6 +10,14 @@
 //   deployment → tool.deployment[key]
 //   apiCli     → tool.apiCli[key]
 
+// Content dates for the glossary, in ISO 8601. These feed `datePublished` /
+// `dateModified` on each term page's Article JSON-LD. They are content dates,
+// not build dates: bump GLOSSARY_UPDATED only when a definition's substance
+// changes, never on a redeploy, or the freshness signal becomes a lie.
+// A single entry can override either with its own `published` / `updated`.
+export const GLOSSARY_PUBLISHED = "2026-09-07";
+export const GLOSSARY_UPDATED = "2026-09-07";
+
 export const GLOSSARY_GROUPS = [
   "Tool categories",
   "Analysis & detection",

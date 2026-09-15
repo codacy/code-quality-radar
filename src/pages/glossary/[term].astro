@@ -8,6 +8,8 @@ import {
   toolsForTerm,
   facetCellFor,
   valueForTerm,
+  GLOSSARY_PUBLISHED,
+  GLOSSARY_UPDATED,
 } from "../../data/glossary.js";
 import { getTools, getToolDetail, tierLabelFor } from "../../lib/tools.js";
 import { AUTHOR } from "../../data/author.js";
@@ -89,6 +91,8 @@ const jsonLdArticle = {
   "@type": "Article",
   headline,
   description: entry.short,
+  datePublished: entry.published ?? GLOSSARY_PUBLISHED,
+  dateModified: entry.updated ?? GLOSSARY_UPDATED,
   author: { "@type": "Person", name: AUTHOR.name, url: AUTHOR.linkedin },
   about: { "@type": "DefinedTerm", name: entry.term },
 };
