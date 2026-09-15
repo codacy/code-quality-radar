@@ -1,0 +1,4 @@
+# /sitemap.xml is the path people and tools reach for by convention; the real
+# one is the Astro-generated index. Rewrite (200) rather than redirect so the
+# file is served at both paths. robots.txt still declares the canonical one.
+/sitemap.xml  /sitemap-index.xml  200

@@ -1,0 +1,38 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SimpleHeader from "../components/SimpleHeader.astro";
+---
+<Layout
+  title="Page not found — Review Radar"
+  description="That page isn't here. Browse the directory of code quality, security and code review tools, the glossary, or the comparison articles."
+  noindex
+>
+  <SimpleHeader slot="header" />
+
+  <section class="section" style="padding-top: var(--space-4xl); position: relative; overflow: hidden;">
+    <div class="container" style="max-width: 760px;">
+      <p class="label section-label">404</p>
+      <h1 class="h1">That page isn't here.</h1>
+      <p class="body-lg text-secondary" style="margin-top: var(--space-lg);">
+        The link may be out of date, or the entry may have been renamed. Everything the
+        directory covers is reachable from the pages below.
+      </p>
+      <hr class="rule-short" style="margin-top: var(--space-xl);" />
+      <div style="margin-top: var(--space-xl); display: flex; flex-wrap: wrap; gap: var(--space-sm);">
+        <a href="/" class="btn btn-primary">Browse tools</a>
+        <a href="/glossary/" class="btn btn-secondary">Glossary</a>
+        <a href="/explore/" class="btn btn-secondary">Explore</a>
+        <a href="/about/" class="btn btn-secondary">About</a>
+      </div>
+    </div>
+    <svg aria-hidden="true" width="360" height="360" viewBox="0 0 360 360" style="position:absolute; right:-90px; top:-40px; opacity:0.35; pointer-events:none;">
+      <circle cx="180" cy="180" r="160" stroke="#1E2A40" stroke-width="1" fill="none"/>
+      <circle cx="180" cy="180" r="115" stroke="#1E2A40" stroke-width="1" fill="none"/>
+      <circle cx="180" cy="180" r="70" stroke="#4AB0B5" stroke-width="1" stroke-dasharray="3 4" fill="none"/>
+      <line x1="180" y1="20" x2="180" y2="340" stroke="#141E30" stroke-width="1"/>
+      <line x1="20" y1="180" x2="340" y2="180" stroke="#141E30" stroke-width="1"/>
+      <circle cx="235" cy="150" r="3" fill="#6ECDD2"/>
+      <circle cx="150" cy="230" r="2" fill="#4AB0B5"/>
+    </svg>
+  </section>
+</Layout>

@@ -1,6 +1,7 @@
 ---
 import Footer from "../components/Footer.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
+import { Font } from "astro:assets";
 import "../styles/global.css";
 
 interface Props {
@@ -11,13 +12,18 @@ interface Props {
    * consistent. Drives both the visible trail and the BreadcrumbList JSON-LD.
    */
   breadcrumbs?: { name: string; url: string }[];
+  /** Social share image, absolute-ised against `site`. Defaults to the sitewide card. */
+  image?: string;
+  /** Keep the page out of the index, for pages that exist but shouldn't rank. */
+  noindex?: boolean;
 }
-const { title, description, breadcrumbs } = Astro.props;
+const { title, description, breadcrumbs, image = "/og.png", noindex = false } = Astro.props;
 
 const trail = breadcrumbs ?? [];
 const fullTrail = [{ name: "All tools", url: "/" }, ...trail];
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(image, Astro.site).href;
 
 const breadcrumbLd = trail.length
   ? {
@@ -39,24 +45,29 @@ const breadcrumbLd = trail.length
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
-  <link rel="canonical" href={canonical} />
+  {noindex
+    ? <meta name="robots" content="noindex, follow" />
+    : <link rel="canonical" href={canonical} />}
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Review Radar" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical} />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Review Radar, a directory of code quality, security and code review tools." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content={ogImage} />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
 
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="sitemap" href="/sitemap-index.xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://js-eu1.hs-scripts.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <Font cssVariable="--font-inter" preload />
 
   {breadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />}
 
