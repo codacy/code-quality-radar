@@ -393,6 +393,8 @@ p, .body  { font-size: 16px; font-weight: 400; line-height: 1.55; margin: 0; }
   max-height: calc(100vh - var(--header-h) - (2 * var(--space-lg)));
   overflow-y: auto;
 }
+/* Mobile-only disclosure control; the panel is always expanded on desktop. */
+.filters-toggle { display: none; }
 .filters-panel-head {
   display: flex;
   align-items: center;
@@ -605,6 +607,73 @@ details[open] > .filter-group-title::before { transform: rotate(45deg); }
 
 @media (max-width: 860px) {
   .directory-layout { grid-template-columns: 1fr; }
+  /* Stacked above the grid, a sticky full-height panel would pin itself over
+     the whole viewport and leave no room for the tools, so it becomes an
+     ordinary block that collapses down to its toggle. */
+  .filters-panel {
+    position: static;
+    top: auto;
+    max-height: none;
+    overflow: visible;
+    padding: var(--space-md);
+  }
+  .filters-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    width: 100%;
+    background: none;
+    border: none;
+    padding: var(--space-2xs) 0;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .filters-toggle::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    margin-left: auto;
+    border-right: 1.5px solid var(--text-tertiary);
+    border-bottom: 1.5px solid var(--text-tertiary);
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform .15s ease;
+    flex-shrink: 0;
+  }
+  .filters-panel.is-open .filters-toggle::after { transform: rotate(-135deg) translate(-2px, -2px); }
+  .filters-toggle-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: var(--radius-full);
+    background: var(--accent-subtle);
+    color: var(--accent-text);
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .filters-toggle-count[hidden] { display: none; }
+  .filters-panel-body { display: none; }
+  /* Expanded, the full facet list runs far longer than a phone screen, so it
+     scrolls inside the panel and the grid stays one collapse away. */
+  .filters-panel.is-open .filters-panel-body {
+    display: block;
+    max-height: 60vh;
+    overflow-y: auto;
+    /* Options bleed their hover background out by --space-xs, which a
+       scroll container would otherwise turn into a horizontal scrollbar, so
+       the body reclaims that much room from the panel's own padding. */
+    overflow-x: hidden;
+    margin: var(--space-md) calc(-1 * var(--space-xs)) 0;
+    padding: 0 var(--space-xs);
+  }
+  /* The toggle already says "Filters"; only "Clear all" is worth repeating. */
+  .filters-panel-head { justify-content: flex-end; }
+  .filters-panel-head h3 { display: none; }
 }
 
 /* Tool detail page */

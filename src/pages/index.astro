@@ -66,7 +66,19 @@ const OR_WITHIN_GROUP = ["category"];
   <section class="section" style="padding-top: 0;">
     <div class="container">
       <div class="directory-layout">
-        <aside class="filters-panel">
+        <aside class="filters-panel" id="filtersPanel">
+          <button
+            type="button"
+            class="filters-toggle"
+            id="filtersToggle"
+            aria-expanded="false"
+            aria-controls="filtersPanelBody"
+          >
+            <span class="filters-toggle-label">Filters</span>
+            <span class="filters-toggle-count" id="filtersToggleCount" hidden></span>
+          </button>
+
+          <div class="filters-panel-body" id="filtersPanelBody">
           <div class="filters-panel-head">
             <h3 class="h4">Filters</h3>
             <button type="button" id="clearFilters">Clear all</button>
@@ -88,6 +100,7 @@ const OR_WITHIN_GROUP = ["category"];
           <FilterGroup title="CI/CD System" groupKey="ci" options={facets.ciSystems} searchable={true} open={false} />
           <FilterGroup title="Issue Tracker" groupKey="issuetrackers" options={facets.issueTrackers} searchable={true} open={false} />
           <FilterGroup title="Chat & Notifications" groupKey="chat" options={facets.chatNotifications} searchable={true} open={false} />
+          </div>
         </aside>
 
         <div>
@@ -194,9 +207,23 @@ const OR_WITHIN_GROUP = ["category"];
     const pipeGroupSet = new Set(pipeGroups);
     const orWithinGroupSet = new Set(orWithinGroup);
     const activeFiltersEl = document.getElementById("activeFilters");
+    const filtersPanel = document.getElementById("filtersPanel");
+    const filtersToggle = document.getElementById("filtersToggle");
+    const filtersToggleCount = document.getElementById("filtersToggleCount");
+
+    // The toggle is only rendered on narrow viewports, where the panel starts
+    // collapsed so the tool grid stays visible.
+    filtersToggle?.addEventListener("click", () => {
+      const open = filtersPanel.classList.toggle("is-open");
+      filtersToggle.setAttribute("aria-expanded", String(open));
+    });
 
     function renderActiveFilters() {
       const checked = checkboxes.filter((cb) => cb.checked);
+      if (filtersToggleCount) {
+        filtersToggleCount.textContent = String(checked.length);
+        filtersToggleCount.hidden = checked.length === 0;
+      }
       activeFiltersEl.innerHTML = "";
       activeFiltersEl.hidden = checked.length === 0;
       for (const cb of checked) {
