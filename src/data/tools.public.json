@@ -304,7 +304,7 @@
           "gitlab_cloud": "yes",
           "gitlab_self_managed": "yes",
           "bitbucket_cloud": "yes",
-          "bitbucket_data_center": "partial",
+          "bitbucket_data_center": "yes",
           "azure_devops": "yes"
         },
         "ci_systems": [
@@ -881,7 +881,7 @@
           "github_cloud": "yes",
           "github_enterprise_server": "partial",
           "gitlab_cloud": "partial",
-          "gitlab_self_managed": "no",
+          "gitlab_self_managed": "partial",
           "bitbucket_cloud": "no",
           "bitbucket_data_center": "no",
           "azure_devops": "no"
@@ -1959,9 +1959,9 @@
           "github_cloud": "yes",
           "github_enterprise_server": "yes",
           "gitlab_cloud": "partial",
-          "gitlab_self_managed": "yes",
+          "gitlab_self_managed": "partial",
           "bitbucket_cloud": "partial",
-          "bitbucket_data_center": "partial",
+          "bitbucket_data_center": "no",
           "azure_devops": "no"
         },
         "ci_systems": [
@@ -2519,9 +2519,9 @@
           "github_cloud": "yes",
           "github_enterprise_server": "yes",
           "gitlab_cloud": "yes",
-          "gitlab_self_managed": "yes",
+          "gitlab_self_managed": "no",
           "bitbucket_cloud": "yes",
-          "bitbucket_data_center": "yes",
+          "bitbucket_data_center": "no",
           "azure_devops": "no"
         },
         "ci_systems": [
@@ -3606,7 +3606,7 @@
           "gitlab_cloud": "yes",
           "gitlab_self_managed": "yes",
           "bitbucket_cloud": "yes",
-          "bitbucket_data_center": "partial",
+          "bitbucket_data_center": "yes",
           "azure_devops": "yes"
         },
         "ci_systems": [
@@ -5692,9 +5692,9 @@
           "github_cloud": "yes",
           "github_enterprise_server": "partial",
           "gitlab_cloud": "yes",
-          "gitlab_self_managed": "partial",
+          "gitlab_self_managed": "yes",
           "bitbucket_cloud": "yes",
-          "bitbucket_data_center": "partial",
+          "bitbucket_data_center": "yes",
           "azure_devops": "yes"
         },
         "ci_systems": [
@@ -7223,7 +7223,7 @@
           "gitlab_cloud": "yes",
           "gitlab_self_managed": "yes",
           "bitbucket_cloud": "no",
-          "bitbucket_data_center": "no",
+          "bitbucket_data_center": "yes",
           "azure_devops": "no"
         },
         "ci_systems": [],
