@@ -1,0 +1,88 @@
+---
+import { glossarySlugFor } from "../data/glossary.js";
+
+interface Props {
+  facets: { key: string; label: string; group?: string }[];
+  cells: Record<string, any> | undefined;
+  /** Glossary source type for these facets (workflow, detection, ai, compliance, apiCli). Omit when no terms exist. */
+  glossaryType?: string;
+  labelledby?: string;
+  firstColumn?: string;
+  /** Feature and availability only, for facets whose cells carry no note (git providers, API/CLI). */
+  compact?: boolean;
+}
+const { facets, cells, glossaryType, labelledby, firstColumn = "Feature", compact = false } = Astro.props;
+
+const STATUS = {
+  yes: { text: "Yes", cls: "is-yes" },
+  partial: { text: "Partial", cls: "is-partial" },
+  no: { text: "No", cls: "is-no" },
+  unknown: { text: "Unknown", cls: "is-unknown" },
+};
+
+const rows = facets.map((f) => {
+  const cell = cells?.[f.key];
+  const isObject = cell && typeof cell === "object";
+  const raw = isObject ? cell.v : cell;
+  const v = raw in STATUS ? raw : "unknown";
+  const slug = glossaryType ? glossarySlugFor(glossaryType, f.key) : null;
+  return {
+    ...f,
+    v,
+    note: isObject ? cell.note : null,
+    href: slug ? `/glossary/${slug}/` : null,
+  };
+});
+
+// Groups appear in the order their first facet does, so the facet array stays the single source of order.
+const groups = [];
+for (const r of rows) {
+  const name = r.group || null;
+  let g = groups.find((x) => x.name === name);
+  if (!g) groups.push((g = { name, rows: [] }));
+  g.rows.push(r);
+}
+const colCount = compact ? 2 : 3;
+---
+<table class:list={["feature-table", { "is-compact": compact }]} role="table" aria-labelledby={labelledby}>
+  <colgroup>
+    <col class="ft-col-feature" />
+    <col class="ft-col-status" />
+    {!compact && <col class="ft-col-desc" />}
+  </colgroup>
+  <thead role="rowgroup">
+    <tr role="row">
+      <th role="columnheader" scope="col">{firstColumn}</th>
+      <th role="columnheader" scope="col">Availability</th>
+      {!compact && <th role="columnheader" scope="col">Description</th>}
+    </tr>
+  </thead>
+  {groups.map((g) => (
+    <tbody role="rowgroup">
+      {g.name && (
+        <tr class="ft-group" role="row">
+          <th role="rowheader" scope="rowgroup" colspan={colCount}>{g.name}</th>
+        </tr>
+      )}
+      {g.rows.map((r) => (
+        <tr class:list={["ft-row", STATUS[r.v].cls]} role="row">
+          <th class="ft-feature" role="rowheader" scope="row">
+            {r.href ? <a href={r.href}>{r.label}</a> : r.label}
+          </th>
+          <td class="ft-status" role="cell">
+            <span class="ft-status-inner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                {r.v === "yes" && <path d="M5 12.5l4.5 4.5L19 7.5" />}
+                {r.v === "partial" && <><circle cx="12" cy="12" r="7.5" /><path d="M12 4.5a7.5 7.5 0 0 1 0 15z" fill="currentColor" /></>}
+                {r.v === "no" && <path d="M6.5 12h11" />}
+                {r.v === "unknown" && <><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1 1-1.1 1.8v.5" /><path d="M12 17.5h.01" /></>}
+              </svg>
+              {STATUS[r.v].text}
+            </span>
+          </td>
+          {!compact && <td class="ft-desc" role="cell">{r.note}</td>}
+        </tr>
+      ))}
+    </tbody>
+  ))}
+</table>

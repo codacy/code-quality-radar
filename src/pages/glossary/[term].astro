@@ -1,6 +1,5 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import SimpleHeader from "../../components/SimpleHeader.astro";
+import DocsLayout from "../../layouts/DocsLayout.astro";
 import AuthorCard from "../../components/AuthorCard.astro";
 import {
   GLOSSARY,
@@ -75,6 +74,13 @@ const faqs = [
   },
 ];
 
+const toc = [
+  { id: "tools-heading", label: ranked.length === 1 ? "Top tool" : "Top tools" },
+  { id: "look-for-heading", label: "What to look for" },
+  ...(related.length > 0 ? [{ id: "related-heading", label: "Related terms" }] : []),
+  { id: "faq-heading", label: "FAQ" },
+];
+
 const jsonLdTerm = {
   "@context": "https://schema.org",
   "@type": "DefinedTerm",
@@ -106,20 +112,21 @@ const jsonLdFaq = {
   })),
 };
 ---
-<Layout
+<DocsLayout
   title={`${headline} — Review Radar`}
   description={entry.short}
   breadcrumbs={[
     { name: "Glossary", url: "/glossary/" },
     { name: entry.term, url: `/glossary/${entry.slug}/` },
   ]}
+  nav="glossary"
+  current={entry.slug}
+  toc={toc}
 >
-  <SimpleHeader slot="header" />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdTerm)} />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdFaq)} />
 
-  <div class="container article-container">
     <article>
       <header class="article-head">
         <p class="label section-label">{entry.group}</p>
@@ -132,7 +139,7 @@ const jsonLdFaq = {
       </section>
 
       <section class="article-section">
-        <h2 class="h3">Top {ranked.length} {entry.term} {ranked.length === 1 ? "tool" : "tools"}</h2>
+        <h2 class="h3" id="tools-heading">Top {ranked.length} {entry.term} {ranked.length === 1 ? "tool" : "tools"}</h2>
         <p class="text-secondary body-sm" style="margin-top: var(--space-xs);">
           Every tool in the directory documented as supporting {entry.term}
           {partialCount > 0 && <>, {fullCount} fully, {partialCount} partially</>}, with what its
@@ -158,7 +165,7 @@ const jsonLdFaq = {
       </section>
 
       <section class="article-section">
-        <h2 class="h3">What to look for</h2>
+        <h2 class="h3" id="look-for-heading">What to look for</h2>
         <ul class="fit-list strengths" style="margin-top: var(--space-md);">
           {entry.lookFor.map((l) => <li>{l}</li>)}
         </ul>
@@ -166,7 +173,7 @@ const jsonLdFaq = {
 
       {related.length > 0 && (
         <section class="article-section">
-          <h2 class="h3">Related terms</h2>
+          <h2 class="h3" id="related-heading">Related terms</h2>
           <div class="chip-list" style="margin-top: var(--space-md);">
             {related.map((r) => (
               <a href={`/glossary/${r.slug}/`} class="chip chip-link">{r.term}</a>
@@ -176,7 +183,7 @@ const jsonLdFaq = {
       )}
 
       <section class="article-section">
-        <h2 class="h3">FAQ</h2>
+        <h2 class="h3" id="faq-heading">FAQ</h2>
         {faqs.map((f) => (
           <div class="faq-item">
             <h3 class="faq-question">{f.q}</h3>
@@ -187,5 +194,4 @@ const jsonLdFaq = {
 
       <AuthorCard />
     </article>
-  </div>
-</Layout>
+</DocsLayout>

@@ -16,8 +16,15 @@ interface Props {
   image?: string;
   /** Keep the page out of the index, for pages that exist but shouldn't rank. */
   noindex?: boolean;
+  /**
+   * Render the visible trail above <main>. Docs-style pages turn this off and
+   * place it inside their content column; the JSON-LD is emitted either way.
+   */
+  renderBreadcrumbs?: boolean;
+  /** Text-led page: the breadcrumb trail sits above the 800px reading column, not at the frame edge. */
+  measure?: boolean;
 }
-const { title, description, breadcrumbs, image = "/og.png", noindex = false } = Astro.props;
+const { title, description, breadcrumbs, image = "/og.png", noindex = false, renderBreadcrumbs = true, measure = false } = Astro.props;
 
 const trail = breadcrumbs ?? [];
 const fullTrail = [{ name: "All tools", url: "/" }, ...trail];
@@ -77,8 +84,8 @@ const breadcrumbLd = trail.length
 </head>
 <body>
   <slot name="header" />
-  {trail.length > 0 && (
-    <div class="container">
+  {renderBreadcrumbs && trail.length > 0 && (
+    <div class:list={["container", { "container-measure": measure }]}>
       <Breadcrumbs trail={trail} />
     </div>
   )}

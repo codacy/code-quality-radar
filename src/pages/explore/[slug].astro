@@ -1,6 +1,5 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import SimpleHeader from "../../components/SimpleHeader.astro";
+import DocsLayout from "../../layouts/DocsLayout.astro";
 import AuthorCard from "../../components/AuthorCard.astro";
 import { EXPLORE_ARTICLES, getExploreArticle, rankToolsForArticle } from "../../data/explore.js";
 import { getTools } from "../../lib/tools.js";
@@ -44,6 +43,13 @@ const faqs = [
   },
 ];
 
+const toc = [
+  { id: "tools-heading", label: ranked.length === 1 ? "Top tool" : "Top tools" },
+  { id: "look-for-heading", label: "What to look for" },
+  ...(other.length > 0 ? [{ id: "other-heading", label: "Other platforms" }] : []),
+  { id: "faq-heading", label: "FAQ" },
+];
+
 const jsonLdArticle = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -73,20 +79,21 @@ const jsonLdFaq = {
   })),
 };
 ---
-<Layout
+<DocsLayout
   title={`${headline} — Review Radar`}
   description={description}
   breadcrumbs={[
     { name: "Explore", url: "/explore/" },
     { name: `Top ${article.provider} Tools`, url: `/explore/${article.slug}/` },
   ]}
+  nav="explore"
+  current={article.slug}
+  toc={toc}
 >
-  <SimpleHeader slot="header" />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdItemList)} />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdFaq)} />
 
-  <div class="container article-container">
     <article>
       <header class="article-head">
         <p class="label section-label">{article.group}</p>
@@ -99,7 +106,7 @@ const jsonLdFaq = {
       </section>
 
       <section class="article-section">
-        <h2 class="h3">
+        <h2 class="h3" id="tools-heading">
           Top {ranked.length} code review {ranked.length === 1 ? "tool" : "tools"} for {article.provider}
         </h2>
         <p class="text-secondary body-sm" style="margin-top: var(--space-xs);">
@@ -129,7 +136,7 @@ const jsonLdFaq = {
       </section>
 
       <section class="article-section">
-        <h2 class="h3">What to look for</h2>
+        <h2 class="h3" id="look-for-heading">What to look for</h2>
         <ul class="fit-list strengths" style="margin-top: var(--space-md);">
           {article.lookFor.map((l) => <li>{l}</li>)}
         </ul>
@@ -137,7 +144,7 @@ const jsonLdFaq = {
 
       {other.length > 0 && (
         <section class="article-section">
-          <h2 class="h3">Other platforms</h2>
+          <h2 class="h3" id="other-heading">Other platforms</h2>
           <div class="chip-list" style="margin-top: var(--space-md);">
             {other.map((a) => (
               <a href={`/explore/${a.slug}/`} class="chip chip-link">{a.provider}</a>
@@ -147,7 +154,7 @@ const jsonLdFaq = {
       )}
 
       <section class="article-section">
-        <h2 class="h3">FAQ</h2>
+        <h2 class="h3" id="faq-heading">FAQ</h2>
         {faqs.map((f) => (
           <div class="faq-item">
             <h3 class="faq-question">{f.q}</h3>
@@ -158,5 +165,4 @@ const jsonLdFaq = {
 
       <AuthorCard />
     </article>
-  </div>
-</Layout>
+</DocsLayout>

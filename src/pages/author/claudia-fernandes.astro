@@ -31,12 +31,13 @@ const jsonLd = {
   title={`${AUTHOR.name} — Review Radar`}
   description={`Articles and comparisons by ${AUTHOR.name}, who built and maintains Review Radar.`}
   breadcrumbs={[{ name: AUTHOR.name, url: `/author/${AUTHOR.slug}/` }]}
+  measure
 >
   <SimpleHeader slot="header" />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="section" style="padding-top: var(--space-4xl);">
-    <div class="container" style="max-width: 760px;">
+    <div class="container container-measure">
       <div class="author-hero">
         <span class="author-hero-avatar">
           <img src={AUTHOR.image} alt={AUTHOR.name} />
@@ -64,7 +65,7 @@ const jsonLd = {
   <hr class="divider" />
 
   <section class="section bug-hunt-embed">
-    <div class="container" style="max-width: 760px;">
+    <div class="container container-measure">
       <div style="border: 1px solid var(--border-default); border-radius: var(--radius-card); overflow: hidden;">
         <iframe
           src="/bug-hunt.html"

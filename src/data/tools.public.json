@@ -2578,7 +2578,7 @@
         }
       },
       "languages": {
-        "count_claimed": 50,
+        "count_claimed": 51,
         "list": [
           "Apex",
           "AsyncAPI",
@@ -2593,6 +2593,7 @@
           "Dart",
           "Dockerfile",
           "Elixir",
+          "Flutter",
           "GitHub Actions",
           "Go",
           "Groovy",

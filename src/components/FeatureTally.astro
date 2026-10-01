@@ -1,0 +1,22 @@
+---
+interface Props {
+  sets: { facets: { key: string }[]; cells: Record<string, any> | undefined }[];
+}
+const { sets } = Astro.props;
+
+// Partial stays its own number, never folded into yes: support is not parity.
+const counts = { yes: 0, partial: 0, no: 0, unknown: 0 };
+for (const { facets, cells } of sets) {
+  for (const f of facets) {
+    const c = cells?.[f.key];
+    const v = c && typeof c === "object" ? c.v : c;
+    counts[v in counts ? v : "unknown"]++;
+  }
+}
+const parts = Object.entries(counts).filter(([, n]) => n > 0);
+---
+<p class="feature-tally">
+  {parts.map(([k, n], i) => (
+    <>{i > 0 && <>{" "}<span class="feature-tally-sep" aria-hidden="true">·</span>{" "}</>}<span class={`is-${k}`}>{n} {k}</span></>
+  ))}
+</p>

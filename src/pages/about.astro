@@ -1,16 +1,20 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import SimpleHeader from "../components/SimpleHeader.astro";
+import { getTools } from "../lib/tools.js";
+
+const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
 ---
 <Layout
   title="About — Review Radar"
   description="Review Radar records what code quality, security and code review tools support, using the same set of criteria for each tool, so they can be compared directly against vendor documentation."
   breadcrumbs={[{ name: "About", url: "/about/" }]}
+  measure
 >
   <SimpleHeader slot="header" />
 
   <section class="section" style="padding-top: var(--space-4xl); position: relative; overflow: hidden;">
-    <div class="container" style="max-width: 760px;">
+    <div class="container container-measure">
       <p class="label section-label">About</p>
       <h1 class="h1">A directory of code quality, security and code review tools.</h1>
       <p class="body-lg text-secondary" style="margin-top: var(--space-lg);">
@@ -33,7 +37,7 @@ import SimpleHeader from "../components/SimpleHeader.astro";
   <hr class="divider" />
 
   <section class="section">
-    <div class="container" style="max-width: 760px;">
+    <div class="container container-measure">
       <p class="label section-label">Why this exists</p>
       <h2 class="h2">Vendor documentation is difficult to compare.</h2>
       <hr class="rule-short" />
@@ -57,7 +61,7 @@ import SimpleHeader from "../components/SimpleHeader.astro";
   <hr class="divider" />
 
   <section class="section">
-    <div class="container" style="max-width: 760px;">
+    <div class="container container-measure">
       <p class="label section-label">What we track</p>
       <h2 class="h2">The same criteria for every tool.</h2>
       <hr class="rule-short" />
@@ -89,7 +93,7 @@ import SimpleHeader from "../components/SimpleHeader.astro";
   <hr class="divider" />
 
   <section class="section">
-    <div class="container" style="max-width: 760px;">
+    <div class="container container-measure">
       <p class="label section-label">How entries stay current</p>
       <h2 class="h2">Checked against the vendor's own documentation.</h2>
       <hr class="rule-short" />
@@ -117,7 +121,7 @@ import SimpleHeader from "../components/SimpleHeader.astro";
   <hr class="divider" />
 
   <section class="section">
-    <div class="container" style="max-width: 760px;">
+    <div class="container container-measure">
       <p class="label section-label">Who it's for</p>
       <h2 class="h2">Engineers and security teams evaluating tools.</h2>
       <hr class="rule-short" />
@@ -131,4 +135,108 @@ import SimpleHeader from "../components/SimpleHeader.astro";
       </div>
     </div>
   </section>
+
+  <hr class="divider" />
+
+  <section class="section" id="submit-a-correction">
+    <div class="container container-measure">
+      <p class="label section-label">Corrections</p>
+      <h2 class="h2">Submit a correction.</h2>
+      <hr class="rule-short" />
+      <p class="text-secondary" style="margin-top: var(--space-md);">
+        Spotted something wrong or out of date? Tell us what should change and, if you can, where
+        the vendor documents it. Every correction is checked against the vendor's own documentation
+        before a listing changes.
+      </p>
+
+      <p id="correction-sent" class="form-sent">
+        Thanks, your correction was sent. We'll check it against the vendor's documentation.
+      </p>
+
+      {/* Delivered by Netlify Forms. HubSpot's collected-forms capture is
+          switched off so a correction never turns into a CRM contact. */}
+      <form
+        class="correction-form"
+        name="correction"
+        method="POST"
+        action="/about/#correction-sent"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        data-hs-do-not-collect="true"
+      >
+        <input type="hidden" name="form-name" value="correction" />
+        <input type="hidden" name="page" value="" />
+        <p class="form-honeypot" hidden>
+          <label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+        </p>
+
+        <div class="form-field">
+          <label for="correction-tool">Tool <span class="form-optional">(optional)</span></label>
+          <select id="correction-tool" name="tool">
+            <option value="">Not about a specific tool</option>
+            {tools.map((t) => <option value={t.name} data-slug={t.slug}>{t.name}</option>)}
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="correction-message">What should change?</label>
+          <textarea id="correction-message" name="message" rows="6" required></textarea>
+        </div>
+
+        <div class="form-field">
+          <label for="correction-email">Your email</label>
+          <input id="correction-email" type="email" name="email" autocomplete="email" required />
+          <p class="form-hint">Only used to follow up on this correction.</p>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Send correction</button>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </section>
 </Layout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('form[name="correction"]');
+  if (form) {
+    const status = form.querySelector<HTMLElement>(".form-status");
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    // Arriving from a tool page pre-selects that tool.
+    const slug = new URLSearchParams(location.search).get("tool");
+    const option = slug && form.querySelector<HTMLOptionElement>(`option[data-slug="${CSS.escape(slug)}"]`);
+    if (option) option.selected = true;
+
+    // Record which page of the site the visitor came from, for context.
+    const page = form.querySelector<HTMLInputElement>('input[name="page"]');
+    if (page && document.referrer.startsWith(location.origin)) page.value = new URL(document.referrer).pathname;
+
+    // Send in place. Without JavaScript the form posts normally and returns to #correction-sent.
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!status || !button) return;
+      button.disabled = true;
+      status.className = "form-status";
+      status.textContent = "Sending…";
+      try {
+        const res = await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(new FormData(form) as any).toString(),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        if (page) page.value = "";
+        status.classList.add("is-sent");
+        status.textContent = "Thanks, your correction was sent. We'll check it against the vendor's documentation.";
+      } catch {
+        status.classList.add("is-error");
+        status.textContent = "That didn't send. Check your connection and try again.";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>

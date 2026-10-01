@@ -1,0 +1,63 @@
+---
+import { getTools } from "../lib/tools.js";
+import { GLOSSARY } from "../data/glossary.js";
+import { EXPLORE_ARTICLES } from "../data/explore.js";
+
+interface Props {
+  nav: "tools" | "glossary" | "explore";
+  current?: string;
+}
+const { nav, current } = Astro.props;
+
+const byLabel = (a, b) => a.label.localeCompare(b.label);
+// Tools and terms run A to Z. Explore keeps its dataset order, which pairs each
+// platform with its self-hosted edition (GitHub, then GitHub Enterprise Server).
+const NAVS = {
+  tools: {
+    title: "Tools",
+    href: "/",
+    noun: "tools",
+    items: getTools()
+      .map((t) => ({ slug: t.slug, label: t.name, href: `/${t.slug}/`, search: `${t.name} ${t.vendor || ""}` }))
+      .sort(byLabel),
+  },
+  glossary: {
+    title: "Glossary",
+    href: "/glossary/",
+    noun: "terms",
+    items: GLOSSARY.map((t) => ({ slug: t.slug, label: t.term, href: `/glossary/${t.slug}/`, search: t.term })).sort(byLabel),
+  },
+  explore: {
+    title: "Explore",
+    href: "/explore/",
+    noun: "platforms",
+    items: EXPLORE_ARTICLES.map((a) => ({ slug: a.slug, label: a.provider, href: `/explore/${a.slug}/`, search: a.provider })),
+  },
+};
+const { title, href, noun, items } = NAVS[nav];
+---
+<nav id="docs-nav" class="docs-sidebar" aria-label={title}>
+  <div class="docs-sidebar-inner">
+    <button type="button" class="docs-drawer-close" aria-label="Close navigation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+    <label class="docs-search">
+      <span class="sr-only">Search {noun}</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+      <input type="search" class="docs-search-input" placeholder={`Search ${noun}`} autocomplete="off" spellcheck="false" />
+      <kbd class="docs-search-key" aria-hidden="true">/</kbd>
+    </label>
+    <p class="docs-sidebar-title"><a href={href}>{title}</a></p>
+    <div class="docs-sidebar-scroll">
+      <ul class="docs-sidebar-list">
+        {items.map((item) => (
+          <li data-search={item.search.toLowerCase()}>
+            <a href={item.href} aria-current={item.slug === current ? "page" : undefined}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+      <p class="docs-sidebar-empty" hidden>No {noun} match</p>
+    </div>
+  </div>
+</nav>
+<div class="docs-drawer-backdrop" hidden></div>

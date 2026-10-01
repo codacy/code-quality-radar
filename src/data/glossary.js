@@ -1092,6 +1092,13 @@ export function getGlossaryTerm(slug) {
   return GLOSSARY.find((t) => t.slug === slug) || null;
 }
 
+const SLUG_BY_SOURCE = new Map(GLOSSARY.map((t) => [`${t.source.type}:${t.source.key}`, t.slug]));
+
+/** Glossary slug for a dataset facet, e.g. ("detection", "sast") → "sast". Null when no term covers it. */
+export function glossarySlugFor(type, key) {
+  return SLUG_BY_SOURCE.get(`${type}:${key}`) || null;
+}
+
 const DEPLOYMENT_KEYS = { cloud: "saas_cloud", selfHosted: "self_hosted", airGapped: "air_gapped" };
 const RAW_GROUPS = {
   detection: "detection",

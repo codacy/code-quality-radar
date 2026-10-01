@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Logo from "../components/Logo.astro";
+import SimpleHeader from "../components/SimpleHeader.astro";
 import FilterGroup from "../components/FilterGroup.astro";
 import {
   getTools,
@@ -47,12 +47,9 @@ const OR_WITHIN_GROUP = ["category"];
   title="Review Radar — Code Quality, Code Security & Code Review Tools"
   description="A directory of code quality, static analysis, security scanning, and AI-assisted code review tools. Filter by category, language, deployment model, compliance, integrations, and pricing."
 >
-  <header class="site-header directory-header" slot="header">
-    <div class="container">
-      <Logo />
-      <h1 class="directory-h1">Unbiased code quality, security and code review tool directory</h1>
-    </div>
-  </header>
+  <SimpleHeader slot="header">
+    <h1 class="directory-h1">Unbiased code quality, security and code review tool directory</h1>
+  </SimpleHeader>
 
   <section class="hero-search-wrap">
     <div class="container">

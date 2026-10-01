@@ -1,7 +1,7 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import SimpleHeader from "../components/SimpleHeader.astro";
-import FacetRow from "../components/FacetRow.astro";
+import DocsLayout from "../layouts/DocsLayout.astro";
+import FeatureTable from "../components/FeatureTable.astro";
+import FeatureTally from "../components/FeatureTally.astro";
 import {
   getTools,
   getToolDetail,
@@ -53,6 +53,8 @@ function joinList(arr, max = 8) {
 }
 
 const langCount = (typeof tool.languages?.count_claimed === "number" ? tool.languages.count_claimed : 0) || tool.languages?.list?.length || 0;
+const languageList = tool.languages?.list || [];
+const gatedLanguages = tool.languages?.tier_gated_languages || [];
 const buyerLabels = (tool.fit_signals?.best_fit_buyer || []).map((b) => BEST_FIT_BUYER_LABELS[b] || b);
 const gitLabels = GIT_PROVIDER_FACETS.map((f) =>
   mark(f.label, tool.integrations?.git_providers?.[f.key])
@@ -91,6 +93,21 @@ const faqs = [
   },
 ];
 
+const hasFit = tool.fit_signals?.notable_strengths?.length > 0 || tool.fit_signals?.notable_limitations?.length > 0;
+// "On this page" entries, built from the same conditions that render each section.
+const toc = [
+  { id: "workflow-heading", label: "Workflow coverage" },
+  { id: "detection-heading", label: "Analysis & detection" },
+  { id: "ai-heading", label: "AI capabilities" },
+  { id: "compliance-heading", label: "Compliance & governance" },
+  { id: "integrations-heading", label: "Integrations" },
+  ...(languageList.length > 0 ? [{ id: "languages-heading", label: "Languages" }] : []),
+  { id: "pricing-heading", label: "Pricing & plans" },
+  ...(hasFit ? [{ id: "fit-heading", label: "Who it's for" }] : []),
+  ...(similar.length > 0 ? [{ id: "similar-heading", label: "Similar tools" }] : []),
+  { id: "faq-heading", label: "FAQ" },
+];
+
 const jsonLdApp = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -111,33 +128,29 @@ const jsonLdFaq = {
   })),
 };
 ---
-<Layout
+<DocsLayout
   title={`${tool.name} — Review Radar`}
   description={tool.one_liner}
   breadcrumbs={[{ name: tool.name, url: `/${tool.slug}/` }]}
+  nav="tools"
+  current={tool.slug}
+  toc={toc}
 >
-  <SimpleHeader slot="header" />
 
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdApp)} />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdFaq)} />
 
-  <div class="container">
-    <section class="tool-hero">
-      <div class="tool-hero-main">
+    <header class="tool-hero">
+      <p class="label section-label">{tool.categoryLabel}</p>
+      <div class="tool-hero-title">
         <span class="tool-hero-avatar">
           {logoPathFor(tool.slug) ? <img src={logoPathFor(tool.slug)} alt="" loading="lazy" /> : tool.name.charAt(0).toUpperCase()}
         </span>
-        <div>
-          <p class="label section-label" style="margin-bottom: var(--space-2xs);">{tool.categoryLabel}</p>
-          <h1 class="h1">{tool.name}</h1>
-          <p class="text-secondary body-lg" style="margin-top: var(--space-sm); max-width: 640px;">{tool.one_liner}</p>
-        </div>
+        <h1 class="h1">{tool.name}</h1>
       </div>
-      <div class="tool-hero-side">
-        <span class="body-sm text-secondary">{tool.priceLabel}</span>
-        <span class="caption">Last verified {tool.lastUpdated}</span>
-      </div>
-    </section>
+      <p class="tool-hero-lede">{tool.one_liner}</p>
+      <p class="tool-hero-meta">{tool.priceLabel}<span aria-hidden="true">·</span>Last verified {tool.lastUpdated}</p>
+    </header>
 
     <div class="quick-facts-grid">
       <div class="quick-fact">
@@ -165,32 +178,33 @@ const jsonLdFaq = {
     </div>
 
     <section class="detail-section">
-      <div class="detail-section-head">
-        <h2 class="h2">Workflow coverage</h2>
-        <p class="text-secondary" style="margin-top: var(--space-xs);">Where in the development lifecycle {tool.name} operates.</p>
+      <div class="detail-section-head has-tally">
+        <div>
+          <h2 class="h2" id="workflow-heading">Workflow coverage</h2>
+          <p class="text-secondary" style="margin-top: var(--space-xs);">Where in the development lifecycle {tool.name} operates.</p>
+        </div>
+        <FeatureTally sets={[{ facets: WORKFLOW_STAGE_FACETS, cells: tool.workflow_stages }]} />
       </div>
-      <div class="facet-grid">
-        {WORKFLOW_STAGE_FACETS.map((f) => <FacetRow label={f.label} cell={tool.workflow_stages?.[f.key]} />)}
-      </div>
+      <FeatureTable facets={WORKFLOW_STAGE_FACETS} cells={tool.workflow_stages} glossaryType="workflow" labelledby="workflow-heading" />
     </section>
 
     <section class="detail-section">
-      <div class="detail-section-head">
-        <h2 class="h2">Analysis &amp; detection</h2>
-        <p class="text-secondary" style="margin-top: var(--space-xs);">Every detection and code-analysis capability tracked for {tool.name}.</p>
+      <div class="detail-section-head has-tally">
+        <div>
+          <h2 class="h2" id="detection-heading">Analysis &amp; detection</h2>
+          <p class="text-secondary" style="margin-top: var(--space-xs);">Every detection and code-analysis capability tracked for {tool.name}.</p>
+        </div>
+        <FeatureTally sets={[{ facets: DETECTION_FACETS, cells: tool.detection }]} />
       </div>
-      <div class="facet-grid">
-        {DETECTION_FACETS.map((f) => <FacetRow label={f.label} cell={tool.detection?.[f.key]} />)}
-      </div>
+      <FeatureTable facets={DETECTION_FACETS} cells={tool.detection} glossaryType="detection" labelledby="detection-heading" />
     </section>
 
     <section class="detail-section">
-      <div class="detail-section-head">
-        <h2 class="h2">AI capabilities</h2>
+      <div class="detail-section-head has-tally">
+        <h2 class="h2" id="ai-heading">AI capabilities</h2>
+        <FeatureTally sets={[{ facets: AI_CAPABILITY_FACETS, cells: tool.ai_posture }]} />
       </div>
-      <div class="facet-grid">
-        {AI_CAPABILITY_FACETS.map((f) => <FacetRow label={f.label} cell={tool.ai_posture?.[f.key]} />)}
-      </div>
+      <FeatureTable facets={AI_CAPABILITY_FACETS} cells={tool.ai_posture} glossaryType="ai" labelledby="ai-heading" />
       {tool.ai_posture?.models_used?.length > 0 && (
         <div style="margin-top: var(--space-lg);">
           <p class="label quick-fact-label" style="margin-bottom: var(--space-sm);">Models used</p>
@@ -202,12 +216,11 @@ const jsonLdFaq = {
     </section>
 
     <section class="detail-section">
-      <div class="detail-section-head">
-        <h2 class="h2">Compliance &amp; governance</h2>
+      <div class="detail-section-head has-tally">
+        <h2 class="h2" id="compliance-heading">Compliance &amp; governance</h2>
+        <FeatureTally sets={[{ facets: COMPLIANCE_BOOL_FACETS, cells: tool.compliance }]} />
       </div>
-      <div class="facet-grid">
-        {COMPLIANCE_BOOL_FACETS.map((f) => <FacetRow label={f.label} cell={tool.compliance?.[f.key]} />)}
-      </div>
+      <FeatureTable facets={COMPLIANCE_BOOL_FACETS} cells={tool.compliance} glossaryType="compliance" labelledby="compliance-heading" />
       {tool.compliance?.certifications?.length > 0 && (
         <div style="margin-top: var(--space-lg);">
           <p class="label quick-fact-label" style="margin-bottom: var(--space-sm);">Certifications</p>
@@ -227,12 +240,16 @@ const jsonLdFaq = {
     </section>
 
     <section class="detail-section">
-      <div class="detail-section-head">
-        <h2 class="h2">Integrations</h2>
+      <div class="detail-section-head has-tally">
+        <h2 class="h2" id="integrations-heading">Integrations</h2>
+        <FeatureTally sets={[
+          { facets: GIT_PROVIDER_FACETS, cells: tool.integrations?.git_providers },
+          { facets: API_CLI_FACETS, cells: tool.integrations?.api_cli },
+        ]} />
       </div>
-      <div class="facet-grid">
-        {GIT_PROVIDER_FACETS.map((f) => <FacetRow label={f.label} cell={tool.integrations?.git_providers?.[f.key]} />)}
-        {API_CLI_FACETS.map((f) => <FacetRow label={f.label} cell={tool.integrations?.api_cli?.[f.key]} />)}
+      <div class="feature-table-pair">
+        <FeatureTable facets={GIT_PROVIDER_FACETS} cells={tool.integrations?.git_providers} labelledby="integrations-heading" firstColumn="Git provider" compact />
+        <FeatureTable facets={API_CLI_FACETS} cells={tool.integrations?.api_cli} glossaryType="apiCli" labelledby="integrations-heading" firstColumn="API & CLI" compact />
       </div>
       {["ci_systems", "ides", "issue_trackers", "chat_notifications"].map((key) => {
         const labels = { ci_systems: "CI/CD systems", ides: "IDEs", issue_trackers: "Issue trackers", chat_notifications: "Chat & notifications" };
@@ -248,9 +265,24 @@ const jsonLdFaq = {
       })}
     </section>
 
+    {languageList.length > 0 && (
+      <section class="detail-section">
+        <div class="detail-section-head">
+          <h2 class="h2" id="languages-heading">Languages</h2>
+          <p class="text-secondary" style="margin-top: var(--space-xs);">Languages and frameworks named in {tool.name}'s documentation.</p>
+        </div>
+        <div class="chip-list">
+          {languageList.map((l) => <span class="chip">{l}</span>)}
+        </div>
+        {gatedLanguages.length > 0 && (
+          <p class="caption" style="margin-top: var(--space-md);">Need a higher plan: {gatedLanguages.join(", ")}</p>
+        )}
+      </section>
+    )}
+
     <section class="detail-section">
       <div class="detail-section-head">
-        <h2 class="h2">Pricing &amp; plans</h2>
+        <h2 class="h2" id="pricing-heading">Pricing &amp; plans</h2>
         {known(tool.commercial?.entry_paid_price) && (
           <p class="text-secondary" style="margin-top: var(--space-xs);">{tool.commercial.entry_paid_price}</p>
         )}
@@ -284,10 +316,10 @@ const jsonLdFaq = {
       )}
     </section>
 
-    {(tool.fit_signals?.notable_strengths?.length > 0 || tool.fit_signals?.notable_limitations?.length > 0) && (
+    {hasFit && (
       <section class="detail-section">
         <div class="detail-section-head">
-          <h2 class="h2">Who it's for</h2>
+          <h2 class="h2" id="fit-heading">Who it's for</h2>
           {known(tool.fit_signals?.best_fit_team_size) && (
             <p class="text-secondary" style="margin-top: var(--space-xs);">{tool.fit_signals.best_fit_team_size}</p>
           )}
@@ -316,7 +348,7 @@ const jsonLdFaq = {
     {similar.length > 0 && (
       <section class="detail-section">
         <div class="detail-section-head">
-          <h2 class="h2">Similar tools</h2>
+          <h2 class="h2" id="similar-heading">Similar tools</h2>
           <p class="text-secondary" style="margin-top: var(--space-xs);">Other {tool.categoryLabel} tools in the directory.</p>
         </div>
         <div class="similar-grid">
@@ -332,7 +364,7 @@ const jsonLdFaq = {
 
     <section class="detail-section">
       <div class="detail-section-head">
-        <h2 class="h2">FAQ</h2>
+        <h2 class="h2" id="faq-heading">FAQ</h2>
       </div>
       {faqs.map((f) => (
         <div class="faq-item">
@@ -356,5 +388,4 @@ const jsonLdFaq = {
         </p>
       </section>
     )}
-  </div>
-</Layout>
+</DocsLayout>

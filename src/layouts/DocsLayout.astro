@@ -1,0 +1,136 @@
+---
+import Layout from "./Layout.astro";
+import SimpleHeader from "../components/SimpleHeader.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import DocsSidebar from "../components/DocsSidebar.astro";
+import DocsToc from "../components/DocsToc.astro";
+
+/**
+ * Documentation-style page: a sidebar listing every tool, glossary term or Explore article,
+ * the content column, and an "On this page" list that tracks the scroll.
+ */
+interface Props {
+  title: string;
+  description: string;
+  breadcrumbs?: { name: string; url: string }[];
+  image?: string;
+  nav: "tools" | "glossary" | "explore";
+  /** Slug of the page being viewed, highlighted in the sidebar. */
+  current?: string;
+  toc?: { id: string; label: string }[];
+}
+const { nav, current, toc = [], breadcrumbs = [], ...layoutProps } = Astro.props;
+---
+<Layout {...layoutProps} breadcrumbs={breadcrumbs} renderBreadcrumbs={false}>
+  <SimpleHeader slot="header" menu menuLabel={`Open ${nav} menu`} correctionTool={nav === "tools" ? current : undefined} />
+  <div class="docs-layout">
+    <DocsSidebar nav={nav} current={current} />
+    <div class="docs-content">
+      {breadcrumbs.length > 0 && <Breadcrumbs trail={breadcrumbs} />}
+      <slot />
+    </div>
+    <DocsToc items={toc} />
+  </div>
+</Layout>
+
+<script>
+  const root = document.documentElement;
+  const nav = document.getElementById("docs-nav");
+  const menuBtn = document.querySelector<HTMLButtonElement>(".docs-menu-btn");
+  const backdrop = document.querySelector<HTMLElement>(".docs-drawer-backdrop");
+  const input = nav?.querySelector<HTMLInputElement>(".docs-search-input");
+  const items = [...(nav?.querySelectorAll<HTMLLIElement>(".docs-sidebar-list li") ?? [])];
+  const empty = nav?.querySelector<HTMLElement>(".docs-sidebar-empty");
+  const drawerQuery = matchMedia("(max-width: 1023px)");
+  const isOpen = () => nav?.classList.contains("is-open");
+
+  // Drawer, below 1024px. The same nav element, repositioned by CSS.
+  function setOpen(open: boolean) {
+    if (!nav || !backdrop) return;
+    nav.classList.toggle("is-open", open);
+    backdrop.hidden = !open;
+    menuBtn?.setAttribute("aria-expanded", String(open));
+    root.classList.toggle("docs-drawer-open", open);
+    if (open) input?.focus({ preventScroll: true });
+    else menuBtn?.focus();
+  }
+  menuBtn?.addEventListener("click", () => setOpen(!isOpen()));
+  nav?.querySelector(".docs-drawer-close")?.addEventListener("click", () => setOpen(false));
+  backdrop?.addEventListener("click", () => setOpen(false));
+  drawerQuery.addEventListener("change", (e) => { if (!e.matches && isOpen()) setOpen(false); });
+  // Keep keyboard focus inside the open drawer.
+  document.addEventListener("focusin", (e) => {
+    if (isOpen() && nav && !nav.contains(e.target as Node)) input?.focus();
+  });
+
+  // Sidebar search: a filter over the list, not a site search.
+  function filter() {
+    const q = (input?.value || "").trim().toLowerCase();
+    let shown = 0;
+    for (const li of items) {
+      const match = !q || (li.dataset.search || "").includes(q);
+      li.hidden = !match;
+      if (match) shown++;
+    }
+    if (empty) empty.hidden = shown > 0;
+  }
+  input?.addEventListener("input", filter);
+  input?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const first = items.find((li) => !li.hidden)?.querySelector("a");
+      if (first) location.href = first.href;
+    } else if (e.key === "Escape" && input.value) {
+      input.value = "";
+      filter();
+      e.stopPropagation();
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && isOpen()) {
+      setOpen(false);
+      return;
+    }
+    if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+    const target = e.target as HTMLElement;
+    if (target.closest?.("input, textarea, select, [contenteditable]")) return;
+    e.preventDefault();
+    if (drawerQuery.matches) setOpen(true);
+    else input?.focus();
+  });
+
+  // Bring the current item into view inside the list, without moving the page.
+  const list = nav?.querySelector<HTMLElement>(".docs-sidebar-scroll");
+  const currentLink = nav?.querySelector<HTMLElement>('[aria-current="page"]');
+  if (list && currentLink) {
+    const offset = currentLink.getBoundingClientRect().top - list.getBoundingClientRect().top;
+    if (offset > list.clientHeight * 0.6) list.scrollTop = offset - list.clientHeight / 3;
+  }
+
+  // Scroll-spy: the active entry is the last heading that has passed under the header.
+  const tocLinks = [...document.querySelectorAll<HTMLAnchorElement>(".docs-toc a[data-toc-id]")];
+  const heads = tocLinks.map((a) => document.getElementById(a.dataset.tocId || ""));
+  const headerH = parseInt(getComputedStyle(root).getPropertyValue("--header-h")) || 67;
+  let ticking = false;
+  function spy() {
+    ticking = false;
+    let active = 0;
+    heads.forEach((h, i) => {
+      if (h && h.getBoundingClientRect().top <= headerH + 120) active = i;
+    });
+    if (innerHeight + scrollY >= root.scrollHeight - 2) active = heads.length - 1;
+    tocLinks.forEach((a, i) => {
+      a.classList.toggle("is-active", i === active);
+      if (i === active) a.setAttribute("aria-current", "location");
+      else a.removeAttribute("aria-current");
+    });
+  }
+  if (tocLinks.length) {
+    addEventListener("scroll", () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(spy);
+      }
+    }, { passive: true });
+    spy();
+  }
+</script>
