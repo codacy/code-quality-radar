@@ -1,16 +1,18 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
 import AuthorCard from "../../components/AuthorCard.astro";
+import ArticleMeta from "../../components/ArticleMeta.astro";
 import LookFor from "../../components/LookFor.astro";
 import Shuffle from "../../components/Shuffle.astro";
-import { EXPLORE_ARTICLES, getExploreArticle, rankToolsForArticle } from "../../data/explore.js";
+import { EXPLORE_ARTICLES, EXPLORE_PUBLISHED, EXPLORE_UPDATED, getExploreArticle, rankToolsForArticle } from "../../data/explore.js";
 import { logoPathFor } from "../../lib/logos.js";
 import { attachComments, lookForFaq, SHUFFLE_NOTE } from "../../lib/picks.js";
 import { faqJsonLd } from "../../lib/faq.js";
 import FaqItems from "../../components/FaqItems.astro";
 import { getTools, UMBRELLA } from "../../lib/tools.js";
-import { exploreHeadline } from "../../lib/headlines.js";
+import { exploreHeadline, exploreTitle } from "../../lib/headlines.js";
 import { AUTHOR } from "../../data/author.js";
+import { authorLd, publisherLd } from "../../data/publisher.js";
 
 export function getStaticPaths() {
   return EXPLORE_ARTICLES.map((a) => ({ params: { slug: a.slug } }));
@@ -29,7 +31,13 @@ const partialCount = ranked.length - fullCount;
 const headline = exploreHeadline(article.provider, ranked.length);
 const total = allTools.length;
 const howMany = ranked.length === total ? `All ${total} tools in this directory` : `${ranked.length} of the ${total} tools in this directory`;
-const description = `${ranked.length} of ${allTools.length} tools tracked in this directory integrate with ${article.provider}. ${article.short}`;
+// Full and partial support stay separate in the count, as everywhere else.
+const description =
+  `${article.short} ${ranked.length} of ${total} tracked tools do` +
+  (partialCount ? ` (${fullCount} fully, ${partialCount} partially).` : ".");
+const published = article.published ?? EXPLORE_PUBLISHED;
+const updated = article.updated ?? EXPLORE_UPDATED;
+const pageUrl = new URL(`/explore/${article.slug}/`, Astro.site).href;
 
 const PARITY_CAVEAT =
   "Support is not the same as parity, since some integrations are narrower in scope or gated to a higher plan tier. Tools with full support are listed before those with partial support.";
@@ -72,7 +80,13 @@ const jsonLdArticle = {
   "@type": "Article",
   headline,
   description,
-  author: { "@type": "Person", name: AUTHOR.name, url: AUTHOR.linkedin },
+  url: pageUrl,
+  mainEntityOfPage: pageUrl,
+  image: new URL("/og.png", Astro.site).href,
+  datePublished: published,
+  dateModified: updated,
+  author: authorLd(AUTHOR, Astro.site),
+  publisher: publisherLd(Astro.site),
   about: { "@type": "Thing", name: article.provider },
 };
 const jsonLdItemList = {
@@ -89,7 +103,7 @@ const jsonLdItemList = {
 const jsonLdFaq = faqJsonLd(faqs, Astro.site);
 ---
 <DocsLayout
-  title={`${headline} — Review Radar`}
+  title={`${exploreTitle(article.provider, ranked.length)} — Review Radar`}
   description={description}
   breadcrumbs={[
     { name: "Explore", url: "/explore/" },
@@ -98,6 +112,8 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
   nav="explore"
   current={article.slug}
   toc={toc}
+  published={published}
+  modified={updated}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdItemList)} />
@@ -108,6 +124,7 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
         <p class="label section-label">{article.group}</p>
         <h1 class="h1">{headline}</h1>
         <p class="article-lede">{article.short}</p>
+        <ArticleMeta updated={updated} />
       </header>
 
       <section class="article-section">

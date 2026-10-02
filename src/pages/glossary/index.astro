@@ -18,7 +18,9 @@ const groupsInUse = GLOSSARY_GROUPS.filter((g) => entries.some((e) => e.group ==
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "DefinedTermSet",
+  "@id": new URL("/glossary/#glossary", Astro.site).href,
   name: "Code quality, security and code review glossary",
+  url: new URL("/glossary/", Astro.site).href,
   description:
     "Plain definitions of the code quality, security and code review terms used across the Review Radar tool directory.",
   hasDefinedTerm: entries.map((e) => ({
@@ -30,8 +32,8 @@ const jsonLd = {
 };
 ---
 <Layout
-  title="Glossary — Review Radar"
-  description="Plain-English definitions of code quality, security and code review terms, including SAST, SCA, IaC scanning, quality gates and self-hosted deployment, each with the tools that support it."
+  title="Code Quality, Security and Code Review Glossary — Review Radar"
+  description="Plain-English definitions of code quality, security and code review terms, from SAST and SCA to quality gates, each listing the tools that support it."
   breadcrumbs={[{ name: "Glossary", url: "/glossary/" }]}
 >
   <SimpleHeader slot="header" />

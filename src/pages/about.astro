@@ -3,6 +3,8 @@ import Layout from "../layouts/Layout.astro";
 import SimpleHeader from "../components/SimpleHeader.astro";
 import { getTools } from "../lib/tools.js";
 import { GLOSSARY } from "../data/glossary.js";
+import { AUTHOR } from "../data/author.js";
+import { PUBLISHER, publisherLd } from "../data/publisher.js";
 
 const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
 
@@ -13,14 +15,23 @@ const SAMPLE_TERMS = [
   "test-coverage-tracking", "ai-code-review", "pr-inline-review", "merge-gate", "mcp-server",
 ];
 const sampleTerms = SAMPLE_TERMS.map((slug) => GLOSSARY.find((t) => t.slug === slug)).filter(Boolean);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  url: new URL("/about/", Astro.site).href,
+  about: { "@type": "WebSite", name: "Review Radar", url: new URL("/", Astro.site).href },
+  publisher: publisherLd(Astro.site),
+};
 ---
 <Layout
   title="About — Review Radar"
-  description="Review Radar records what code quality, security and code review tools support, using the same set of criteria for each tool, so they can be compared directly against vendor documentation."
+  description="How Review Radar compares code quality, security and code review tools: the same criteria for every tool, checked against each vendor's own documentation."
   breadcrumbs={[{ name: "About", url: "/about/" }]}
   measure
 >
   <SimpleHeader slot="header" />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="section" style="padding-top: var(--space-4xl); position: relative; overflow: hidden;">
     <div class="container container-measure">
@@ -136,6 +147,32 @@ const sampleTerms = SAMPLE_TERMS.map((slug) => GLOSSARY.find((t) => t.slug === s
       <div style="margin-top: var(--space-xl);">
         <a href="/" class="btn btn-primary">Browse tools</a>
       </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <section class="section" id="who-publishes-it">
+    <div class="container container-measure">
+      <p class="label section-label">Who publishes it</p>
+      <h2 class="h2">Published by {PUBLISHER.name}.</h2>
+      <hr class="rule-short" />
+      <p class="text-secondary" style="margin-top: var(--space-md);">
+        Review Radar is published by <a href={PUBLISHER.url}>{PUBLISHER.name}</a>. {PUBLISHER.about}, so
+        tracking what every tool in this market supports is part of its day-to-day work.
+      </p>
+      <p class="text-secondary" style="margin-top: var(--space-md);">
+        {PUBLISHER.name} is also one of the {tools.length} tools listed. The directory is built so that
+        doesn't tilt it:
+      </p>
+      <ul class="fit-list strengths faq-list" style="margin-top: var(--space-md);">
+        <li>{PUBLISHER.name} is recorded against the same criteria, from the same kind of public sources, as every other tool.</li>
+        <li>Tool lists are shown in a random order on every visit, so no tool gets an advantage from its position.</li>
+        <li>Corrections are welcome for any tool, {PUBLISHER.name} included.</li>
+      </ul>
+      <p class="text-secondary" style="margin-top: var(--space-md);">
+        The directory is researched and maintained by <a href={`/author/${AUTHOR.slug}/`}>{AUTHOR.name}</a>.
+      </p>
     </div>
   </section>
 

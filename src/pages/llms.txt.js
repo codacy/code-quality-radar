@@ -5,6 +5,8 @@ import { getTools, CATEGORY_PLURALS, UMBRELLA } from "../lib/tools.js";
 import { GLOSSARY, GLOSSARY_GROUPS, splitToolsForTerm, PARITY_CAVEAT } from "../data/glossary.js";
 import { questionFor, doesPhraseFor, isCategoryTerm, pluralFor } from "../data/glossary-phrasing.js";
 import { EXPLORE_ARTICLES, rankToolsForArticle } from "../data/explore.js";
+import { AUTHOR } from "../data/author.js";
+import { PUBLISHER } from "../data/publisher.js";
 
 const SMALL_WORDS = new Set(["and", "or", "for", "of", "the", "a", "an", "in", "to"]);
 const titleCase = (s) => s.replace(/\b[a-z][a-z-]*/g, (w, i) => (i > 0 && SMALL_WORDS.has(w) ? w : w[0].toUpperCase() + w.slice(1)));
@@ -44,6 +46,12 @@ export async function GET({ site }) {
       `Counts below separate the first two. ${PARITY_CAVEAT}`
   );
   lines.push("");
+  lines.push(
+    `Review Radar is published by ${PUBLISHER.name} (${PUBLISHER.url}). ${PUBLISHER.about}. ` +
+      `${PUBLISHER.name} is also one of the tools listed, recorded against the same criteria as every other tool, ` +
+      `and tool lists are not ranked. The directory is researched and maintained by ${AUTHOR.name}.`
+  );
+  lines.push("");
   const latest = tools.map((t) => t.lastUpdated).sort().at(-1);
   lines.push(`Most recent verification: ${latest}. Tools tracked: ${tools.length}.`);
   lines.push("");
@@ -52,8 +60,9 @@ export async function GET({ site }) {
   lines.push("");
   lines.push(`- [All tools](${url("/")}): the full directory, filterable by category, deployment model, git platform, analysis type, compliance, integrations, language and pricing.`);
   lines.push(`- [Glossary](${url("/glossary/")}): ${GLOSSARY.length} definitions of the terms used across the directory, each listing the tools that support it.`);
-  lines.push(`- [Explore](${url("/explore/")}): comparison articles ranking tools by git hosting platform.`);
+  lines.push(`- [Explore](${url("/explore/")}): comparison articles, one per git hosting platform, listing every tool that integrates with it. Lists are not ranked.`);
   lines.push(`- [About](${url("/about/")}): what the directory covers and how entries are kept current.`);
+  lines.push(`- [Full tool records](${url("/llms-full.txt")}): every tool's complete capability record (notes, plan tiers, plans, integrations) in one plain-text file.`);
   lines.push("");
 
   for (const [category, list] of byCategory) {
@@ -105,6 +114,11 @@ export async function GET({ site }) {
       : `${ranked.length} tools integrate with it.`;
     lines.push(`- [Best ${titleCase(UMBRELLA)} for ${a.provider}](${url(`/explore/${a.slug}/`)}): ${a.short} ${breakdown}`);
   }
+  lines.push("");
+
+  lines.push("## Optional");
+  lines.push("");
+  lines.push(`- [${AUTHOR.name}](${url(`/author/${AUTHOR.slug}/`)}): who maintains the directory. ${AUTHOR.bio}`);
   lines.push("");
 
   return new Response(`${lines.join("\n").trimEnd()}\n`, {
