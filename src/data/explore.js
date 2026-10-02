@@ -116,7 +116,7 @@ export const EXPLORE_ARTICLES = [
       },
       {
         slug: "greptile",
-        comment: "Reviews draw on a graph of the whole repository. Greptile's self-hosted Enterprise edition can run air-gapped with a local model, but has to stay within 30 days of the cloud release, and offers a 30-day refund instead of a trial.",
+        comment: "Reviews draw on a graph of the whole repository. Greptile's self-hosted Enterprise edition can run air-gapped with self-hosted LLMs, but must stay within 30 days of the cloud release, with a 30-day refund instead of a trial.",
       },
       {
         slug: "codescene",
@@ -124,7 +124,7 @@ export const EXPLORE_ARTICLES = [
       },
       {
         slug: "codeant",
-        comment: "CodeAnt combines AI merge request review with SAST, SCA, secrets, IaC and code quality checks. Its Enterprise plan adds on-premises or VPC deployment on AWS, GCP, Azure or a private data center, though no air-gapped option is listed.",
+        comment: "CodeAnt combines AI merge request review with SAST, SCA, secrets, IaC and code quality checks. Its Enterprise plan adds on-premises, VPC or fully air-gapped deployment, though no install or sizing requirements are published.",
       },
       {
         slug: "coderabbit",
@@ -136,7 +136,7 @@ export const EXPLORE_ARTICLES = [
       },
       {
         slug: "aikido",
-        comment: "Aikido covers SAST, secrets, SCA, IaC and containers, and can enforce results through GitLab merge request approval rules. Higher-tier plans add on-premises scanning and a Broker for internal systems, but code quality is out of scope.",
+        comment: "Aikido covers SAST, secrets, SCA, IaC and containers, and can enforce results through GitLab merge request approval rules. Its Local Scanner on Pro still reports to Aikido Cloud, so fully offline use needs the separately priced Aikido Machine.",
       },
       {
         slug: "checkmarx",

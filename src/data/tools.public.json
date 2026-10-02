@@ -135,19 +135,25 @@
           "tier_label": "Pro"
         },
         "code_smells_maintainability": {
-          "v": "no",
-          "note": "Not offered in vendor documentation reviewed as of 2026-09-05.",
-          "tier": "n/a"
+          "v": "yes",
+          "note": "AI quality rules check PRs; credit-paid repository scans rate maintainability, readability, performance and reliability.",
+          "tier": "team",
+          "tier_label": "Basic",
+          "verified_on": "2026-10-02"
         },
         "complexity_metrics": {
-          "v": "no",
-          "note": "Not offered in vendor documentation reviewed as of 2026-09-05.",
-          "tier": "n/a"
+          "v": "partial",
+          "note": "AI rules flag long functions and deep nesting; no computed complexity metric.",
+          "tier": "team",
+          "tier_label": "Basic",
+          "verified_on": "2026-10-02"
         },
         "duplication_detection": {
-          "v": "no",
-          "note": "Not offered in vendor documentation reviewed as of 2026-09-05.",
-          "tier": "n/a"
+          "v": "partial",
+          "note": "AI rule flags obvious within-file duplication only; no cross-file clone detection or metric.",
+          "tier": "team",
+          "tier_label": "Basic",
+          "verified_on": "2026-10-02"
         },
         "dead_unused_code": {
           "v": "no",
@@ -155,14 +161,18 @@
           "tier": "n/a"
         },
         "test_coverage_tracking": {
-          "v": "no",
-          "note": "Not offered in vendor documentation reviewed as of 2026-09-05.",
-          "tier": "n/a"
+          "v": "yes",
+          "note": "Uploads LCOV and Cobertura reports from CI; coverage per repository, file and line with trends.",
+          "tier": "team",
+          "tier_label": "Basic",
+          "verified_on": "2026-10-02"
         },
         "diff_new_code_coverage": {
-          "v": "no",
-          "note": "Not offered in vendor documentation reviewed as of 2026-09-05.",
-          "tier": "n/a"
+          "v": "partial",
+          "note": "GitHub PR check fails when total report coverage is below a threshold; no changed-line coverage.",
+          "tier": "team",
+          "tier_label": "Basic",
+          "verified_on": "2026-10-02"
         },
         "architecture_governance": {
           "v": "no",
@@ -274,27 +284,31 @@
         },
         "self_hosted": {
           "v": "yes",
-          "note": "On-prem code/container scanning from Pro; Zen Firewall on-prem and endpoint agent need Advanced",
-          "tier": "team",
-          "tier_label": "Pro",
-          "verified_on": "2026-08-18"
+          "note": "Aikido Machine runs code scanning and AI pentesting on an on-site GPU server; Pro's Local Scanner reports to Aikido Cloud.",
+          "tier": "add-on",
+          "tier_label": "Aikido Machine",
+          "verified_on": "2026-10-02"
         },
         "air_gapped": {
           "v": "yes",
-          "note": "Broker for Internal Apps enables air-gapped/internal deployments; included from Advanced",
-          "tier": "team",
-          "tier_label": "Advanced",
-          "verified_on": "2026-08-18"
+          "note": "Aikido Machine runs with no internet, updated by encrypted USB or one allowlisted domain; Cloud Scanning is not offered.",
+          "tier": "add-on",
+          "tier_label": "Aikido Machine",
+          "verified_on": "2026-10-02"
         },
         "data_residency_choice": {
           "v": "yes",
-          "note": "US default and EU option, more on request; plan table gates residency to Enterprise",
-          "tier": "enterprise"
+          "note": "Workspace data is stored in-region in the EU (default), US, Australia or Middle East, chosen at setup; a separate government edition runs on AWS GovCloud.",
+          "tier": "unknown",
+          "verified_on": "2026-10-02"
         },
-        "self_hosted_requirements": "Not specified in detail. Components named: offline SAST scanning, Zen Firewall deployed as Kubernetes sidecar / reverse proxy on Docker or VMs / inline library, Device Protection endpoint agent, and the Aikido Broker for credential handling and private registry or cloud access. No OS, sizing, or dependency requirements given.",
+        "self_hosted_requirements": "Two self-managed options. Hybrid: the Local Scanner CLI (Linux x86_64 or ARM64, macOS, Windows, or a Docker image) runs on CI runners, VMs, servers or dev machines; Aikido recommends 2-4 CPU cores, 8-16 GB RAM and at least 10 GB of temporary disk, with outbound HTTPS to *.aikido.dev, and findings upload to Aikido Cloud. The optional Broker needs Docker 20.10+ with Compose 1.29+ (or Kubernetes 1.19+), 1 CPU core, 1 GB RAM and outbound HTTPS to *.aikidobroker.com. Air-gapped: Aikido Machine is a 4U server with enterprise GPUs, bought to Aikido's published specification or bought or leased through a hardware partner, in two capacity configurations; the customer racks it and provides power, cooling and noise insulation, an Aikido engineer sets up the software on site, and updates arrive by physical media or over HTTPS.",
         "regions": [
+          "EU",
           "US",
-          "EU"
+          "AU",
+          "ME",
+          "US GovCloud"
         ]
       },
       "integrations": {
@@ -381,9 +395,9 @@
         "certifications": [
           "SOC 2 Type II",
           "ISO 27001",
+          "ISO 42001",
           "GDPR",
-          "CCPA",
-          "HIPAA"
+          "FedRAMP Moderate (in process, not yet authorized)"
         ],
         "standards_mapping": [
           "OWASP Top 10",
@@ -397,8 +411,9 @@
         ],
         "audit_logs": {
           "v": "yes",
-          "note": "Comprehensive audit trail of user actions; Advanced/Enterprise plan only",
-          "tier": "enterprise"
+          "note": "Activity log records issue actions such as snooze, ignore, severity changes and AutoFix PRs; API export needs Basic.",
+          "tier": "free",
+          "verified_on": "2026-10-02"
         },
         "sso_saml": {
           "v": "yes",
@@ -409,8 +424,9 @@
         },
         "rbac": {
           "v": "yes",
-          "note": "Advanced RBAC with custom roles; Advanced/Enterprise plan only, no lower-tier roles described",
-          "tier": "enterprise"
+          "note": "Admin, default and team-only roles; default and team-only users can be read-only, with per-user permission toggles.",
+          "tier": "unknown",
+          "verified_on": "2026-10-02"
         },
         "compliance_reporting_exports": {
           "v": "yes",
@@ -466,8 +482,8 @@
             ],
             "key_limits": [
               "No PR security review, no Jira/Linear/Drata/Vanta sync",
-              "No AI & Bot Protection or Device Protection",
-              "No on-prem, cloud/container/API scanning beyond the basics",
+              "Device Protection limited to npm and PyPI malware blocking; no AI & Bot Protection (Basic+)",
+              "No API scanning, attack surface monitoring, on-prem scanning or dependency malware detection (Pro+)",
               "Community support only"
             ]
           },
@@ -519,7 +535,7 @@
               "All Pro features, plus: broker for internal apps, private registry proxy",
               "Higher API rate limits, FIPS base images, FedRAMP ATO",
               "Priority support in Slack or MS Teams",
-              "Multi-tenant portal, air-gapped/fully isolated deployments via broker",
+              "Multi-tenant portal",
               "200 credits/month included",
               "500 repos, 200 container images, 20 domains, 20 cloud accounts, 50M protected requests/mo"
             ],
@@ -559,11 +575,11 @@
           "Wide integration surface: 10 CI systems, 11 issue trackers, 13 private registries, 9 IDEs"
         ],
         "notable_limitations": [
-          "No published prices; both Pro and Enterprise require contacting sales",
-          "Zen Firewall runtime protection and Device Protection are Advanced/Enterprise only",
-          "Cloud, container and API scanning plus IDE plugins are excluded from the free plan",
-          "SSO, advanced RBAC, audit logging, data residency and on-premise are Enterprise only",
-          "No code quality, maintainability, complexity, duplication or test coverage capability documented"
+          "Enterprise pricing is quote-only, as are Pro and Advanced above 50 developers",
+          "Free plan caps runtime protection at 250k requests a month and limits Device Protection to npm and PyPI malware blocking",
+          "API scanning, attack surface monitoring and dependency malware detection start at Pro; free IDE plugins scan JavaScript and secrets only",
+          "Local Scanner (Pro and up) still sends findings to Aikido Cloud; fully offline use requires the separately priced Aikido Machine",
+          "No complexity or duplication metrics; quality findings come from AI rules on PRs (Basic and up) and credit-paid repository scans"
         ]
       }
     },
@@ -3003,9 +3019,9 @@
         },
         "ai_usage_governance_inventory": {
           "v": "no",
-          "note": "Exportable per-suggestion audit log records model id/version and reviewer decision for AI-generated changes.",
+          "note": "No AI-generated-code inventory; logs cover only CodeAnt's own AI suggestions, with model version and reviewer decision.",
           "tier": "n/a",
-          "verified_on": "2026-08-19"
+          "verified_on": "2026-10-02"
         },
         "chat_with_reviewer": {
           "v": "yes",
@@ -3038,17 +3054,20 @@
           "verified_on": "2026-08-19"
         },
         "air_gapped": {
-          "v": "no",
-          "note": "Docs describe on-prem/VPC deployment (Enterprise) but never claim air-gapped/fully offline operation",
-          "tier": "n/a",
-          "verified_on": "2026-08-19"
+          "v": "yes",
+          "note": "Enterprise Plan deploys fully on-premises, including air-gapped environments with zero external network connectivity.",
+          "tier": "enterprise",
+          "verified_on": "2026-10-02",
+          "tier_label": "Enterprise"
         },
         "data_residency_choice": {
-          "v": "unknown",
-          "note": "Not documented on product pages — this is typically addressed in trust centers and contracts instead.",
-          "tier": "n/a"
+          "v": "partial",
+          "note": "Enterprise Plan deploys into the customer's own AWS, GCP or Azure VPC or data center; the DPA lets customers specify processing regions, but no region list is published.",
+          "tier": "enterprise",
+          "tier_label": "Enterprise",
+          "verified_on": "2026-10-02"
         },
-        "self_hosted_requirements": "unknown",
+        "self_hosted_requirements": "Not specified in detail. The Enterprise Plan deploys the full platform inside the customer's VPC on AWS, GCP or Azure or in a private data center, including air-gapped environments; the CLI and CI integrations point at the self-hosted instance through a custom API base URL (codeant set-base-url, apiBase). No OS, orchestration, sizing or model-hosting requirements are published.",
         "regions": []
       },
       "integrations": {
@@ -3092,7 +3111,7 @@
         }
       },
       "languages": {
-        "count_claimed": "40+ (Feature #3.1); the same document also claims '100+ languages and frameworks' in Feature #12.2",
+        "count_claimed": "30+; application security rules cover 25+ languages and frameworks",
         "list": [
           "ABAP",
           "Apex",
@@ -3151,7 +3170,10 @@
         "tier_gated_languages": []
       },
       "compliance": {
-        "certifications": [],
+        "certifications": [
+          "SOC 2 Type II",
+          "HIPAA"
+        ],
         "standards_mapping": [
           "OWASP Top 10 2021 (A01, A02, A03, A04, A05, A07, A08, A09, A10)",
           "GDPR",
@@ -3166,19 +3188,25 @@
           "EU AI Act"
         ],
         "audit_logs": {
-          "v": "partial",
-          "note": "Audit trail for remediation tracking only; no administrative or access audit log documented",
-          "tier": "unknown"
+          "v": "yes",
+          "note": "SSO & Audit Log is an Enterprise Plan inclusion; an audit events API exports organization events for ingestion.",
+          "tier": "enterprise",
+          "tier_label": "Enterprise",
+          "verified_on": "2026-10-02"
         },
         "sso_saml": {
-          "v": "no",
-          "note": "Not offered in vendor documentation reviewed as of 2026-09-05.",
-          "tier": "n/a"
+          "v": "yes",
+          "note": "SSO, SAML and SCIM are listed on the Enterprise Plan only.",
+          "tier": "enterprise",
+          "tier_label": "Enterprise",
+          "verified_on": "2026-10-02"
         },
         "rbac": {
           "v": "yes",
-          "note": "Role-based access control with organization and team management, user permissions, service accounts",
-          "tier": "unknown"
+          "note": "Custom and preset roles scoped to repositories or teams; pricing lists RBAC under the Enterprise plan.",
+          "tier": "enterprise",
+          "tier_label": "Enterprise",
+          "verified_on": "2026-10-02"
         },
         "compliance_reporting_exports": {
           "v": "yes",
@@ -3302,12 +3330,10 @@
           "Findings mapped to GDPR, HIPAA, ISO 27002, SOC 2, PCI DSS v4.0, MISRA and AUTOSAR, plus DORA metrics reporting"
         ],
         "notable_limitations": [
-          "No pricing information of any kind: no tiers, prices, billing unit, free tier or trial documented",
-          "No SSO/SAML or SCIM provisioning documented, despite an enterprise positioning",
-          "No deployment option beyond SaaS: no self-hosted, air-gapped or data-residency choice documented",
-          "Language claims are inconsistent (40+ vs 100+) and unaccompanied by any per-capability language matrix",
-          "No AI transparency: models used, code-training policy and data handling are entirely undocumented",
-          "CodeAnt's public documentation is largely a feature-name inventory, so the depth of most capabilities cannot be verified"
+          "SSO, SAML and SCIM are Enterprise Plan only, and no identity-provider setup guide is published",
+          "On-prem, VPC and air-gapped deployment are Enterprise Plan only, with no published installation, sizing or model-hosting requirements",
+          "Language counts vary (30+ on the pricing page, 25+ for application security rules) and no per-capability language matrix is published",
+          "LLM providers and models are not named, although no-training and zero-data-retention policies are published"
         ]
       }
     },
@@ -4110,10 +4136,10 @@
         },
         "air_gapped": {
           "v": "yes",
-          "note": "On-prem comparison table: 'Offline mode for very strict security requirements', offline access supported",
+          "note": "CodeScene On-prem offline mode runs without an external network connection and comes with the self-managed deployment on any paid plan.",
           "tier": "team",
           "tier_label": "Standard",
-          "verified_on": "2026-08-19"
+          "verified_on": "2026-10-02"
         },
         "data_residency_choice": {
           "v": "yes",
@@ -4121,7 +4147,7 @@
           "tier": "team",
           "tier_label": "Standard"
         },
-        "self_hosted_requirements": "Docker container or standalone Java JAR, deployed on customer-provisioned infrastructure: cloud VMs (GCP tested on customer deployments, AWS, Azure) or on-prem servers. Licence key required for non-open-source use. Updates delivered as Docker images (v7.5.5 documented at analysis date). Scaling is manual and user-configured. On-premise deployment support is listed as an Enterprise-plan inclusion.",
+        "self_hosted_requirements": "Docker container (codescene/codescene image) or standalone JAR on Java 17+, deployed on customer-provisioned infrastructure: a plain Linux VM on a public cloud (AWS, Azure, GCP) or on-prem servers. CodeScene recommends 4+ GB RAM, 4+ vCPUs and fast SSD storage, and advises against distributed file storage such as Azure Files, Amazon EFS or NFS. A license key is required, including for offline mode. Updates are delivered as new Docker images (v7.5.12, released September 25, 2026). Scaling is manual and user-configured. On-prem (self managed) deployment is available on the Standard, Pro and Enterprise plans.",
         "regions": [
           "US",
           "EU"
@@ -4207,19 +4233,24 @@
         ],
         "standards_mapping": [],
         "audit_logs": {
-          "v": "yes",
-          "note": "Audit trail with full logging for compliance; audit and logging listed as a recent enterprise improvement",
-          "tier": "enterprise"
+          "v": "no",
+          "note": "No audit log of user or admin activity documented for Cloud or on-prem; on-prem application logs are for troubleshooting.",
+          "tier": "n/a",
+          "verified_on": "2026-10-02"
         },
         "sso_saml": {
           "v": "yes",
-          "note": "SSO on enterprise plans, plus LDAP and OAuth2; SAML is not named specifically",
-          "tier": "enterprise"
+          "note": "Microsoft Entra ID SSO (OIDC) on Cloud from Pro; on-prem LDAP/Active Directory and OAuth2/OpenID Connect SSO is an Enterprise inclusion; SAML not named.",
+          "tier": "team",
+          "tier_label": "Pro",
+          "verified_on": "2026-10-02"
         },
         "rbac": {
           "v": "yes",
-          "note": "Role-based access control with fine-grained permission management, listed as an Enterprise inclusion",
-          "tier": "enterprise"
+          "note": "Predefined roles from Admin to Bot, assignable globally or per group or project; an Enterprise inclusion, on-prem today with Cloud support planned.",
+          "tier": "enterprise",
+          "tier_label": "Enterprise",
+          "verified_on": "2026-10-02"
         },
         "compliance_reporting_exports": {
           "v": "yes",
@@ -4295,7 +4326,7 @@
               "No delivery insights (branch analysis, lead times)",
               "No code coverage measurement",
               "No advanced cost metrics or planned vs. unplanned work tracking",
-              "No SSO, RBAC or on-premise support"
+              "No SSO or role-based access control"
             ]
           },
           {
@@ -4312,7 +4343,7 @@
               "Advanced cost metrics and planned vs. unplanned work tracking"
             ],
             "key_limits": [
-              "No SSO, RBAC, custom integrations or on-premise support",
+              "No role-based access control; SSO limited to Microsoft Entra ID on Cloud",
               "No dedicated infrastructure or success manager"
             ]
           },
@@ -4324,10 +4355,10 @@
             "key_inclusions": [
               "Everything in Pro",
               "Single Sign-On and role-based access control",
-              "On-premise deployment support and dedicated infrastructure option",
+              "CodeHealth KPIs across teams",
               "Custom integrations and priority support",
               "Dedicated workshops, onboarding and success manager",
-              "Compliance and audit support"
+              "Scalable pricing for large teams"
             ],
             "key_limits": [
               "Quote-only pricing",
@@ -4356,7 +4387,7 @@
           "No security scanning of any kind — SAST, SCA, secrets, IaC, container and cloud posture are absent from the entire 15,000-word source",
           "Requires substantial Git history to be accurate, and onboarding complexity is listed as a risk in CodeScene's own documentation",
           "Code Health quality varies by language because the metric must be implemented per language",
-          "Delivery insights, team insights, code coverage and advanced cost metrics are gated to the Pro plan; SSO, RBAC, on-premise and audit support to Enterprise",
+          "Delivery insights, team insights, code coverage, the Software Portfolio overview, the REST API and PM tools integrations with cost analyses require the Pro plan; on CodeScene Cloud, Microsoft Entra SSO starts on Pro, while the Enterprise plan's single sign-on and role-based access control are available on-prem today, with Cloud support on the way.",
           "Duplication detection is never mentioned, an unusual omission for a maintainability platform",
           "AI features (ACE, MCP server, PR Refactoring Agent) are described as new and maturing; Azure DevOps refactoring agent is not yet available"
         ]
@@ -6966,9 +6997,9 @@
         },
         "merge_gate_blocking": {
           "v": "partial",
-          "note": "config.json statusCheck posts a GitHub status check with review result; no fail-state/required-check documented",
+          "note": "statusCheck posts a review status check on GitHub, GitLab, Bitbucket and Gitea; no fail criteria documented.",
           "tier": "unknown",
-          "verified_on": "2026-08-24"
+          "verified_on": "2026-10-02"
         },
         "full_repo_scan": {
           "v": "partial",
@@ -7198,22 +7229,24 @@
         },
         "self_hosted": {
           "v": "yes",
-          "note": "docker-compose on customer compute; buyer provisions Postgres with pgvector and Redis.",
+          "note": "Docker Compose (up to 100 developers) or a Kubernetes Helm chart on customer infrastructure, with bundled or managed PostgreSQL with pgvector.",
           "tier": "enterprise",
-          "verified_on": "2026-09-06"
+          "verified_on": "2026-10-02",
+          "tier_label": "Enterprise"
         },
         "air_gapped": {
           "v": "yes",
-          "note": "Docs state the entire service can run air-gapped; any OpenAI-compatible endpoint allows a local model.",
+          "note": "Greptile says its entire self-hosted service can run in an air-gapped environment, and self-hosters can run their own LLMs instead of a cloud model API.",
           "tier": "enterprise",
-          "verified_on": "2026-09-06"
+          "verified_on": "2026-10-02",
+          "tier_label": "Enterprise"
         },
         "data_residency_choice": {
           "v": "partial",
           "note": "Data sovereignty via self-hosting; no cloud region selection documented",
           "tier": "enterprise"
         },
-        "self_hosted_requirements": "Docker Compose path (up to 100 developers): single Linux VM on Ubuntu 20.04+, Amazon Linux 2023, Debian 11+ or RHEL 8+, Docker 23.x+, Docker Compose v2.5+; either an AWS Terraform stack (VPC, EC2, RDS PostgreSQL, ElastiCache Redis, bootstrapped automatically) or manual setup on GCP, Azure, on-prem or custom infrastructure. Kubernetes path (100+ developers, HA): Kubernetes 1.21+ (1.25+ recommended), Helm 3.0+, an ingress controller such as ingress-nginx, and a separate Hatchet workflow-orchestration Helm release installed first; services web, auth, api, chunker, summarizer, worker, webhook, jobs, llmproxy, plus optional jackson for SAML SSO; bundled PostgreSQL and PgBouncer or a managed database (RDS, Cloud SQL). An AWS EKS Terraform stack exists (EKS Auto Mode, RDS, ElastiCache, AWS Load Balancer Controller, External Secrets Operator with SSM Parameter Store and KMS, Hatchet); no official GCP or Azure Terraform stack — GKE, AKS, on-prem, k3s, Rancher and OpenShift require bringing your own cluster to the generic Helm chart. PostgreSQL with the pgvector extension is required as vector database; Redis recommended. Network: inbound port 3007 for SCM webhooks (must be publicly reachable), 3000 for web UI, 8080 for the Hatchet admin dashboard (optional); outbound HTTPS to LLM provider APIs, GitHub/GitLab APIs and the container registry. Maximum 30-day version delta from cloud. No bundled monitoring stack (no Prometheus ServiceMonitor/PodMonitor, Grafana or log forwarding). CLI reviews require deployments from 2026-05-14 or later; local sandboxing uses the bwrap backend.",
+        "self_hosted_requirements": "Docker Compose path (up to 100 developers): single Linux VM on Ubuntu 20.04+, Amazon Linux 2023, Debian 11+ or RHEL 8+, Docker 23.x+, Docker Compose v2.5+; either an AWS Terraform stack (VPC, EC2, RDS PostgreSQL, ElastiCache Redis, bootstrapped automatically) or manual setup on GCP, Azure, on-prem or custom infrastructure. Kubernetes path (100+ developers, HA): Kubernetes 1.21+ (1.25+ recommended), Helm 3.0+, an ingress controller such as ingress-nginx, and a separate Hatchet workflow-orchestration Helm release installed first; services web, auth, api, chunker, summarizer, worker, webhook, jobs, llmproxy, plus optional jackson for SAML SSO; bundled PostgreSQL and PgBouncer or a managed database (RDS, Cloud SQL). An AWS EKS Terraform stack exists (EKS Auto Mode, RDS, ElastiCache, AWS Load Balancer Controller, External Secrets Operator with SSM Parameter Store and KMS, Hatchet); no official GCP or Azure Terraform stack — GKE, AKS, on-prem, k3s, Rancher and OpenShift require bringing your own cluster to the generic Helm chart. PostgreSQL with the pgvector extension is required as vector database; Redis recommended. Network (standard connected setup): inbound port 3007 for SCM webhooks (must be publicly reachable), 3000 for web UI, 8080 for the Hatchet admin dashboard (optional); outbound HTTPS to LLM provider APIs, GitHub/GitLab APIs and Greptile's container registry (Docker Hub or AWS ECR, with Greptile-issued credentials). Greptile also states the whole service can run in an air-gapped environment, with self-hosted LLMs in place of cloud model APIs. Maximum 30-day version delta from cloud. No bundled monitoring stack (no Prometheus ServiceMonitor/PodMonitor, Grafana or log forwarding). CLI reviews require deployments from 2026-05-14 or later; local sandboxing uses the bwrap backend.",
         "regions": []
       },
       "integrations": {
@@ -7222,7 +7255,7 @@
           "github_enterprise_server": "yes",
           "gitlab_cloud": "yes",
           "gitlab_self_managed": "yes",
-          "bitbucket_cloud": "no",
+          "bitbucket_cloud": "yes",
           "bitbucket_data_center": "yes",
           "azure_devops": "no"
         },
@@ -7399,10 +7432,10 @@
           "T-Rex sandbox execution writes and runs tests and browser flows, attaching logs, screenshots and videos",
           "Cascading per-directory .greptile/ configuration with explicit merge and precedence semantics",
           "Learning system with a hard never-suppress floor for security, memory leaks and null dereferences",
-          "SOC 2 Type II, HIPAA and GDPR claimed alongside air-gapped Docker Compose and Kubernetes self-hosting"
+          "SOC 2 Type II, HIPAA and GDPR claimed, with Docker Compose or Kubernetes self-hosting and air-gapped environments supported"
         ],
         "notable_limitations": [
-          "Native review integration covers GitHub and GitLab only; Bitbucket and Azure DevOps appear solely as MCP lookup values",
+          "No Azure DevOps support; GitHub Enterprise Server, GitLab Self-Managed, Bitbucket Data Center and Gitea require Enterprise",
           "No SCA, SBOM, license, container, IaC or dedicated secrets scanning documented",
           "Credit metering per PR author: 1 credit per review, 3 per T-Rex review, $1/credit overage",
           "T-Rex runtime validation and auto-approve are beta; no free trial for self-hosted deployments",
