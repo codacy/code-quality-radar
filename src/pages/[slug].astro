@@ -19,6 +19,9 @@ import {
   isCatchAll,
 } from "../lib/tools.js";
 import { TOOL_FIT } from "../data/tool-fit.js";
+import { EXPLORE_ARTICLES } from "../data/explore.js";
+import { glossarySlugFor } from "../data/glossary.js";
+import { publisherLd } from "../data/publisher.js";
 import { websiteFor } from "../data/tool-websites.js";
 import { logoPathFor } from "../lib/logos.js";
 import Shuffle from "../components/Shuffle.astro";
@@ -167,20 +170,38 @@ const toc = [
   { id: "faq-heading", label: "FAQ" },
 ];
 
+// Contextual links: the category label to its glossary definition, and each git
+// provider row to the Explore article for that platform.
+const categorySlug = glossarySlugFor("category", tool.primary_job);
+const exploreByProvider = Object.fromEntries(EXPLORE_ARTICLES.map((a) => [a.source.key, `/explore/${a.slug}/`]));
+
+// The page is a profile of the tool: an ItemPage whose subject is the
+// SoftwareApplication, dated by the tool's last verification (shown in the hero).
+const pageUrl = new URL(`/${tool.slug}/`, Astro.site).href;
 const jsonLdApp = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: tool.name,
-  description: tool.one_liner,
-  applicationCategory: tool.categoryLabel,
-  ...(tool.commercial?.free_tier?.v === "yes"
-    ? { offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free plan" } }
-    : {}),
+  "@type": "ItemPage",
+  url: pageUrl,
+  name: `${tool.name}: features, pricing and alternatives`,
+  dateModified: tool.lastUpdated,
+  publisher: publisherLd(Astro.site),
+  mainEntity: {
+    "@type": "SoftwareApplication",
+    name: tool.name,
+    description: tool.one_liner,
+    applicationCategory: "DeveloperApplication",
+    applicationSubCategory: tool.categoryLabel,
+    ...(tool.vendor ? { publisher: { "@type": "Organization", name: tool.vendor.replace(/\s*\(.*\)$/, "") } } : {}),
+    ...(officialSite ? { sameAs: [officialSite] } : {}),
+    ...(tool.commercial?.free_tier?.v === "yes"
+      ? { offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free plan" } }
+      : {}),
+  },
 };
 const jsonLdFaq = faqJsonLd(faqs, Astro.site);
 ---
 <DocsLayout
-  title={`${tool.name} — Review Radar`}
+  title={`${tool.name}: Features, Pricing and Alternatives — Review Radar`}
   description={tool.one_liner}
   breadcrumbs={[{ name: tool.name, url: `/${tool.slug}/` }]}
   nav="tools"
@@ -192,7 +213,9 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdFaq)} />
 
     <header class="tool-hero">
-      <p class="label section-label">{tool.categoryLabel}</p>
+      <p class="label section-label">
+        {categorySlug ? <a href={`/glossary/${categorySlug}/`}>{tool.categoryLabel}</a> : tool.categoryLabel}
+      </p>
       <div class="tool-hero-title">
         <span class="tool-hero-avatar">
           {logoPathFor(tool.slug) ? <img src={logoPathFor(tool.slug)} alt="" loading="lazy" /> : tool.name.charAt(0).toUpperCase()}
@@ -303,7 +326,7 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
         ]} />
       </div>
       <div class="feature-table-pair">
-        <FeatureTable facets={GIT_PROVIDER_FACETS} cells={tool.integrations?.git_providers} labelledby="integrations-heading" firstColumn="Git provider" compact />
+        <FeatureTable facets={GIT_PROVIDER_FACETS} cells={tool.integrations?.git_providers} labelledby="integrations-heading" firstColumn="Git provider" compact hrefs={exploreByProvider} />
         <FeatureTable facets={API_CLI_FACETS} cells={tool.integrations?.api_cli} glossaryType="apiCli" labelledby="integrations-heading" firstColumn="API & CLI" compact />
       </div>
       {["ci_systems", "ides", "issue_trackers", "chat_notifications"].map((key) => {
@@ -442,7 +465,7 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
         <p class="caption" style="margin-top: var(--space-sm);">
           Opens {new URL(officialSite).hostname} in a new tab.
           {slug === "codacy"
-            ? " Review Radar is affiliated with Codacy."
+            ? " Review Radar is published by Codacy."
             : ` Review Radar is not affiliated with ${tool.vendor}.`}
         </p>
       </section>

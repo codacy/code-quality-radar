@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import SimpleHeader from "../../components/SimpleHeader.astro";
 import { AUTHOR } from "../../data/author.js";
+import { publisherLd } from "../../data/publisher.js";
 import { EXPLORE_ARTICLES, rankToolsForArticle } from "../../data/explore.js";
 import { getTools } from "../../lib/tools.js";
 import { exploreHeadline } from "../../lib/headlines.js";
@@ -18,14 +19,22 @@ const imageUrl = new URL(AUTHOR.image, Astro.site).href;
 // has to be interpolated into a string first and injected as raw HTML.
 const claudeNoteComment = `<!-- ${AUTHOR.claudeNote} -->`;
 
+// ProfilePage is the type search engines read for an author page; the Person
+// it describes is the same one every article's byline points at.
+const pageUrl = new URL(`/author/${AUTHOR.slug}/`, Astro.site).href;
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Person",
-  name: AUTHOR.name,
-  description: AUTHOR.bio,
-  image: imageUrl,
-  url: new URL(`/author/${AUTHOR.slug}/`, Astro.site).href,
-  sameAs: [AUTHOR.linkedin, AUTHOR.github],
+  "@type": "ProfilePage",
+  url: pageUrl,
+  mainEntity: {
+    "@type": "Person",
+    name: AUTHOR.name,
+    description: AUTHOR.bio,
+    image: imageUrl,
+    url: pageUrl,
+    sameAs: [AUTHOR.linkedin, AUTHOR.github],
+    worksFor: publisherLd(Astro.site),
+  },
 };
 ---
 <Layout

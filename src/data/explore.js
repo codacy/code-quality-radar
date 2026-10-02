@@ -10,6 +10,14 @@
 
 import { byBandThenName } from "../lib/picks.js";
 
+// Content dates for Explore articles, in ISO 8601, feeding the Article JSON-LD,
+// the visible "Updated" line and the sitemap's <lastmod>. Same rule as the
+// glossary: bump EXPLORE_UPDATED only when an article's substance changes
+// (intro, guidance, comments), never on a redeploy. An article can override
+// either with its own `published` / `updated`.
+export const EXPLORE_PUBLISHED = "2026-09-07";
+export const EXPLORE_UPDATED = "2026-10-02";
+
 export const EXPLORE_GROUPS = ["Best of"];
 
 export const EXPLORE_ARTICLES = [
@@ -23,7 +31,7 @@ export const EXPLORE_ARTICLES = [
     intro: [
       "GitHub is the most widely used git hosting platform, which also makes it the one with the widest selection of review and security tooling. Most tools here integrate as a GitHub App, reading pull requests and posting review comments, status checks and merge-gate decisions directly on the PR.",
       "GitHub also sells its own tooling, so a fair comparison includes it. Dependabot raises dependency alerts and upgrade pull requests, the paid Code Security and Secret Protection add-ons cover CodeQL static analysis and secret scanning with push protection, GitHub Code Quality flags maintainability and reliability issues, and Copilot code review adds AI review comments for teams on a Copilot plan. Staying first-party means one fewer vendor to approve, no extra app permissions and findings in a single place.",
-      "On the other side, GitHub doesn't document test coverage tracking, complexity or duplication metrics, reachability analysis for dependency findings, or scanning for Terraform and container images, and teams that also host code on GitLab or Bitbucket need a separate setup there. Specialised tools are usually brought in for one of those gaps, or for more depth in a single area, at the cost of another vendor and another set of permissions. The useful comparison is capability by capability, against what your team actually needs.",
+      "On the other side, GitHub doesn't document test coverage tracking, complexity or duplication metrics, reachability analysis for dependency findings, or scanning for Terraform and container images, and teams that also host code on GitLab or Bitbucket need a separate setup there. Specialized tools are usually brought in for one of those gaps, or for more depth in a single area, at the cost of another vendor and another set of permissions. The useful comparison is capability by capability, against what your team actually needs.",
     ],
     lookFor: [
       "Whether the tool installs as a GitHub App (repo-scoped permissions) or asks for a personal access token with broader access",

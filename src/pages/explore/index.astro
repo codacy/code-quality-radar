@@ -14,8 +14,9 @@ const entries = EXPLORE_ARTICLES.map((a) => ({
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: "Explore — Review Radar",
-  description: "Comparison articles ranking code quality, security and review tools by platform and use case.",
+  name: "Code quality, security and code review tools by git platform",
+  description: "Comparison articles on code quality, security and code review tools, one for each git hosting platform.",
+  url: new URL("/explore/", Astro.site).href,
   hasPart: entries.map((e) => ({
     "@type": "Article",
     headline: exploreHeadline(e.provider, e.toolCount),
@@ -24,8 +25,8 @@ const jsonLd = {
 };
 ---
 <Layout
-  title="Explore — Review Radar"
-  description="Comparison articles ranking code quality, security and code review tools by git hosting platform, so you can find what integrates with the platform you already use."
+  title="Code Quality, Security and Code Review Tools by Git Platform — Review Radar"
+  description="Code quality, security and code review tools for GitHub, GitLab, Bitbucket and Azure DevOps, including self-hosted editions, compared on what vendors document."
   breadcrumbs={[{ name: "Explore", url: "/explore/" }]}
 >
   <SimpleHeader slot="header" />
@@ -34,10 +35,10 @@ const jsonLd = {
   <section class="hero-search-wrap">
     <div class="container">
       <p class="label section-label">Explore</p>
-      <h1 class="h2" style="margin-top: var(--space-2xs);">Tools ranked by platform</h1>
+      <h1 class="h2" style="margin-top: var(--space-2xs);">Tools by git hosting platform</h1>
       <p class="text-secondary" style="margin-top: var(--space-sm); max-width: 620px;">
-        Which code quality, security and review tools integrate with the git hosting platform you
-        already use, ranked from the same dataset as the rest of the directory.
+        Which code quality, security and code review tools integrate with the git hosting platform you
+        already use, drawn from the same dataset as the rest of the directory.
       </p>
     </div>
   </section>
