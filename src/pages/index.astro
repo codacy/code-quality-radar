@@ -3,16 +3,8 @@ import Layout from "../layouts/Layout.astro";
 import SimpleHeader from "../components/SimpleHeader.astro";
 import FilterGroup from "../components/FilterGroup.astro";
 import Shuffle from "../components/Shuffle.astro";
-import {
-  getTools,
-  getFacetOptions,
-  GIT_PROVIDER_FACETS,
-  WORKFLOW_STAGE_FACETS,
-  DETECTION_FACETS,
-  DETECTION_GROUPS,
-  AI_CAPABILITY_FACETS,
-  COMPLIANCE_BOOL_FACETS,
-} from "../lib/tools.js";
+import { getTools, getFacetOptions, DETECTION_FACETS, DETECTION_GROUPS } from "../lib/tools.js";
+import { toolSearch } from "../lib/search-index.js";
 import { logoPathFor } from "../lib/logos.js";
 import { publisherLd } from "../data/publisher.js";
 
@@ -20,6 +12,7 @@ import { publisherLd } from "../data/publisher.js";
 const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
 const facets = getFacetOptions(tools);
 const totalCount = tools.length;
+const allLanguages = facets.languages.map((o) => o.label);
 
 function tokenStr(obj) {
   return Object.entries(obj)
@@ -30,10 +23,6 @@ function tokenStr(obj) {
 function pipeStr(arr) {
   return `|${arr.join("|")}|`;
 }
-function labelsOf(defs, obj) {
-  return defs.filter((f) => obj[f.key]).map((f) => f.label);
-}
-
 // Groups whose values are free text (may contain spaces) are matched via
 // pipe-delimited membership; everything else is a space-separated token list.
 const PIPE_GROUPS = ["languages", "certifications", "ides", "ci", "issuetrackers", "chat"];
@@ -165,27 +154,11 @@ const jsonLd = [
                 </select>
               </label>
             </div>
+            <p class="search-note" id="searchNote" aria-live="polite" hidden></p>
             <div class="active-filters" id="activeFilters" hidden></div>
           </div>
-          <div class="tool-grid" id="toolGrid">
+          <div class="tool-grid" id="toolGrid" data-pipe-groups={PIPE_GROUPS.join(" ")} data-or-groups={OR_WITHIN_GROUP.join(" ")}>
             {tools.map((t) => {
-              const searchParts = [
-                t.name,
-                t.categoryLabel,
-                t.description,
-                ...t.languages,
-                ...t.tags,
-                ...labelsOf(GIT_PROVIDER_FACETS, t.gitProviders),
-                ...labelsOf(WORKFLOW_STAGE_FACETS, t.workflowStages),
-                ...labelsOf(DETECTION_FACETS, t.detection),
-                ...labelsOf(AI_CAPABILITY_FACETS, t.aiCapabilities),
-                ...labelsOf(COMPLIANCE_BOOL_FACETS, t.complianceBool),
-                ...t.certifications,
-                ...t.ides,
-                ...t.ciSystems,
-                ...t.issueTrackers,
-                ...t.chatNotifications,
-              ];
               return (
                 <a
                   href={`/${t.slug}/`}
@@ -214,7 +187,7 @@ const jsonLd = [
                   data-ci={pipeStr(t.ciSystems)}
                   data-issuetrackers={pipeStr(t.issueTrackers)}
                   data-chat={pipeStr(t.chatNotifications)}
-                  data-search={searchParts.join(" ").toLowerCase()}
+                  data-search={toolSearch(t, allLanguages)}
                   data-name={t.name.toLowerCase()}
                   data-lastupdated={t.lastUpdated}
                 >
@@ -243,7 +216,9 @@ const jsonLd = [
     </div>
   </section>
 
-  <script define:vars={{ pipeGroups: PIPE_GROUPS, orWithinGroup: OR_WITHIN_GROUP }}>
+  <script>
+    import { createSearch, renderCorrection } from "../lib/search.js";
+
     const searchInput = document.getElementById("searchInput");
     const clearBtn = document.getElementById("clearFilters");
     const sortSelect = document.getElementById("sortSelect");
@@ -254,8 +229,11 @@ const jsonLd = [
     const visibleCountEl = document.getElementById("visibleCount");
     const noResultsEl = document.getElementById("noResults");
     const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"][data-filter-group]'));
-    const pipeGroupSet = new Set(pipeGroups);
-    const orWithinGroupSet = new Set(orWithinGroup);
+    const pipeGroupSet = new Set(toolGrid.dataset.pipeGroups.split(" "));
+    const orWithinGroupSet = new Set(toolGrid.dataset.orGroups.split(" "));
+    const searchNote = document.getElementById("searchNote");
+    const searchTools = createSearch(cards.map((card) => card.dataset.search));
+    const cardIndex = new Map(cards.map((card, i) => [card, i]));
     const activeFiltersEl = document.getElementById("activeFilters");
     const filtersPanel = document.getElementById("filtersPanel");
     const filtersToggle = document.getElementById("filtersToggle");
@@ -331,8 +309,10 @@ const jsonLd = [
       return pipeGroupSet.has(group) ? raw.includes(`|${value}|`) : raw.split(" ").includes(value);
     }
 
-    function cardMatchesSelection(card, selected, query, skipGroup) {
-      if (query && !card.dataset.search.includes(query)) return false;
+    // `queryHits` is the set of card indexes the search box matched, or null
+    // when the box is empty.
+    function cardMatchesSelection(card, selected, queryHits, skipGroup) {
+      if (queryHits && !queryHits.has(cardIndex.get(card))) return false;
       for (const [group, values] of Object.entries(selected)) {
         if (group === skipGroup) continue;
         const values_ = Array.from(values);
@@ -344,7 +324,7 @@ const jsonLd = [
       return true;
     }
 
-    function updateFacetCounts(selected, query) {
+    function updateFacetCounts(selected, queryHits) {
       for (const cb of checkboxes) {
         const group = cb.dataset.filterGroup;
         const value = cb.dataset.value;
@@ -355,7 +335,7 @@ const jsonLd = [
           // constraints, so show how many match this one alone — ignoring
           // whatever else is checked in the same group.
           for (const card of cards) {
-            if (!cardMatchesSelection(card, selected, query, group)) continue;
+            if (!cardMatchesSelection(card, selected, queryHits, group)) continue;
             if (cardMatchesGroup(card, group, value)) count++;
           }
         } else {
@@ -366,7 +346,7 @@ const jsonLd = [
           candidate[group] = new Set(selected[group]);
           candidate[group].add(value);
           for (const card of cards) {
-            if (cardMatchesSelection(card, candidate, query, null)) count++;
+            if (cardMatchesSelection(card, candidate, queryHits, null)) count++;
           }
         }
 
@@ -377,18 +357,21 @@ const jsonLd = [
 
     function applyFilters() {
       const selected = selectedByGroup();
-      const query = (searchInput?.value || "").trim().toLowerCase();
+      const rawQuery = searchInput?.value || "";
+      const result = searchTools(rawQuery);
+      const queryHits = result ? result.hits : null;
+      renderCorrection(searchNote, rawQuery, result?.correction);
       let visible = 0;
 
       for (const card of cards) {
-        const match = cardMatchesSelection(card, selected, query, null);
+        const match = cardMatchesSelection(card, selected, queryHits, null);
         card.hidden = !match;
         if (match) visible++;
       }
 
       visibleCountEl.textContent = String(visible);
       noResultsEl.hidden = visible !== 0;
-      updateFacetCounts(selected, query);
+      updateFacetCounts(selected, queryHits);
       renderActiveFilters();
     }
 
@@ -401,13 +384,15 @@ const jsonLd = [
     });
     checkboxes.forEach((cb) => cb.addEventListener("change", applyFilters));
 
+    // The option names are on screen, so a corrected spelling explains itself
+    // here and needs no note.
     document.querySelectorAll(".js-inline-search").forEach((input) => {
+      const options = Array.from(input.closest("details")?.querySelectorAll(".searchable-option") || []);
+      const searchOptions = createSearch(options.map((el) => el.dataset.search));
       input.addEventListener("input", () => {
-        const q = input.value.trim().toLowerCase();
-        const details = input.closest("details");
-        details?.querySelectorAll(".searchable-option").forEach((el) => {
-          const name = el.dataset.optionName || "";
-          el.style.display = !q || name.includes(q) ? "flex" : "none";
+        const result = searchOptions(input.value);
+        options.forEach((el, i) => {
+          el.style.display = !result || result.hits.has(i) ? "flex" : "none";
         });
       });
     });

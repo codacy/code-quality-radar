@@ -102,7 +102,7 @@ export const PHRASING = {
       },
     ],
   },
-  "ai-usage-governance": { question: "What is AI-generated code governance?", with: "with AI-generated code governance" },
+  "ai-usage-governance": { question: "What is AI code governance?", with: "with AI code governance" },
   "chat-with-reviewer": { question: "What is conversational review?", with: "with conversational review" },
   "feedback-learning": { question: "What is learning from feedback?", with: "that learn from feedback" },
   "code-excluded-from-training": { question: "What does “code excluded from training” mean?", with: "that exclude your code from training" },

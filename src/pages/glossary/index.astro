@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import SimpleHeader from "../../components/SimpleHeader.astro";
 import { GLOSSARY, GLOSSARY_GROUPS, toolsForTerm } from "../../data/glossary.js";
 import { getTools } from "../../lib/tools.js";
+import { termSearch } from "../../lib/search-index.js";
 
 const tools = getTools();
 // The full/partial split belongs on the article, where there is room to
@@ -69,6 +70,7 @@ const jsonLd = {
       <p class="results-count is-standalone" id="glossaryCount">
         Showing <b id="glossaryVisible">{entries.length}</b> of {entries.length} terms
       </p>
+      <p class="search-note" id="glossarySearchNote" aria-live="polite" hidden></p>
 
       <div class="glossary-grid" id="glossaryGrid">
         {entries.map((e) => (
@@ -76,7 +78,7 @@ const jsonLd = {
             href={`/glossary/${e.slug}/`}
             class="glossary-card"
             data-group={e.group}
-            data-search={`${e.term} ${e.short} ${e.group}`.toLowerCase()}
+            data-search={termSearch(e)}
           >
             <span class="label glossary-card-group">{e.group}</span>
             <span class="glossary-card-term">{e.term}</span>
@@ -93,23 +95,28 @@ const jsonLd = {
   </section>
 
   <script>
+    import { createSearch, renderCorrection } from "../../lib/search.js";
+
     const search = document.getElementById("glossarySearch");
     const cards = Array.from(document.querySelectorAll(".glossary-card"));
+    const searchNote = document.getElementById("glossarySearchNote");
+    const searchTerms = createSearch(cards.map((card) => card.dataset.search));
     const chips = Array.from(document.querySelectorAll(".group-chip"));
     const visibleEl = document.getElementById("glossaryVisible");
     const noResults = document.getElementById("glossaryNoResults");
     let activeGroup = "all";
 
     function apply() {
-      const q = (search?.value || "").trim().toLowerCase();
+      const result = searchTerms(search?.value || "");
+      renderCorrection(searchNote, search?.value || "", result?.correction);
       let visible = 0;
-      for (const card of cards) {
+      cards.forEach((card, i) => {
         const matchesGroup = activeGroup === "all" || card.dataset.group === activeGroup;
-        const matchesQuery = !q || card.dataset.search.includes(q);
+        const matchesQuery = !result || result.hits.has(i);
         const show = matchesGroup && matchesQuery;
         card.hidden = !show;
         if (show) visible++;
-      }
+      });
       visibleEl.textContent = String(visible);
       noResults.hidden = visible !== 0;
     }

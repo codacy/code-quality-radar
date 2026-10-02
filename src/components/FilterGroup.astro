@@ -1,4 +1,6 @@
 ---
+import { labelSearch } from "../lib/search-index.js";
+
 interface Option {
   key?: string;
   value?: string;
@@ -29,7 +31,7 @@ const { title, groupKey, options, searchable = false, open = true } = Astro.prop
     )}
     <div class={`filter-options${searchable ? " scrollable" : ""}`}>
       {options.map((o) => (
-        <label class="filter-option searchable-option" data-option-name={o.label.toLowerCase()}>
+        <label class="filter-option searchable-option" data-search={labelSearch(o.label)}>
           <input type="checkbox" data-filter-group={groupKey} data-value={o.key ?? o.value} />
           <span>{o.label}</span>
           <span class="filter-count">{o.count}</span>

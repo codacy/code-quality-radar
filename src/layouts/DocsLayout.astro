@@ -37,6 +37,8 @@ const { nav, current, toc = [], breadcrumbs = [], ...layoutProps } = Astro.props
 </Layout>
 
 <script>
+  import { createSearch } from "../lib/search.js";
+
   const root = document.documentElement;
   const nav = document.getElementById("docs-nav");
   const menuBtn = document.querySelector<HTMLButtonElement>(".docs-menu-btn");
@@ -66,15 +68,17 @@ const { nav, current, toc = [], breadcrumbs = [], ...layoutProps } = Astro.props
     if (isOpen() && nav && !nav.contains(e.target as Node)) input?.focus();
   });
 
-  // Sidebar search: a filter over the list, not a site search.
+  // Sidebar search: a filter over the list, not a site search. The names are
+  // on screen, so a corrected spelling explains itself and needs no note.
+  const searchItems = createSearch(items.map((li) => li.dataset.search || ""));
   function filter() {
-    const q = (input?.value || "").trim().toLowerCase();
+    const result = searchItems(input?.value || "");
     let shown = 0;
-    for (const li of items) {
-      const match = !q || (li.dataset.search || "").includes(q);
+    items.forEach((li, i) => {
+      const match = !result || result.hits.has(i);
       li.hidden = !match;
       if (match) shown++;
-    }
+    });
     if (empty) empty.hidden = shown > 0;
   }
   input?.addEventListener("input", filter);

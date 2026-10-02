@@ -928,7 +928,7 @@ export const GLOSSARY = [
   },
   {
     slug: "ai-usage-governance",
-    term: "AI-Generated Code Governance",
+    term: "AI Code Governance",
     group: "AI capabilities",
     source: { type: "ai", key: "ai_usage_governance_inventory" },
     short:
