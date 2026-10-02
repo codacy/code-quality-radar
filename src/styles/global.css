@@ -355,16 +355,54 @@ p, .body  { font-size: 16px; font-weight: 400; line-height: 1.55; margin: 0; }
   text-align: center;
 }
 
-/* Directory header (no nav — logo/title only) */
+/* Site header: logo, section tabs centred on the page, actions on the right.
+   Equal outer columns keep the tabs centred whatever the actions' width. */
 .directory-header .container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-lg);
   height: auto;
   padding-top: var(--space-md);
   padding-bottom: var(--space-md);
-  flex-wrap: wrap;
-  gap: var(--space-sm);
 }
-.directory-header .logo { font-size: 16px; }
+.directory-header .logo { justify-self: start; font-size: 16px; }
 .directory-header .logo svg { width: 34px; height: 34px; margin-left: -6px; }
+
+.header-nav ul {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.header-nav a {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-input);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: color .15s ease, background-color .15s ease;
+}
+.header-nav a:hover { color: var(--text-primary); background: var(--surface-hover); }
+.header-nav a.is-active { color: var(--text-primary); background: var(--surface-active); }
+.header-nav a:focus-visible { outline: 2px solid var(--accent-muted); outline-offset: 2px; }
+
+/* Below 860px the tabs no longer fit between logo and actions, so they take a
+   second row under them. */
+@media (max-width: 860px) {
+  :root { --header-h: 109px; }
+  .directory-header .container {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: var(--space-xs);
+  }
+  .header-nav { grid-column: 1 / -1; grid-row: 2; }
+}
 
 /* Hero search (per-request: present but understated) */
 .hero-search-wrap { padding: var(--space-lg) 0; }
@@ -373,11 +411,7 @@ p, .body  { font-size: 16px; font-weight: 400; line-height: 1.55; margin: 0; }
   font-weight: 400;
   line-height: 1.4;
   color: var(--text-tertiary);
-  margin: 0;
-  text-align: right;
-}
-@media (max-width: 640px) {
-  .directory-h1 { display: none; }
+  margin: 0 0 var(--space-sm);
 }
 .hero-search {
   display: flex;
@@ -1380,14 +1414,28 @@ details[open] > .filter-group-title::before { transform: rotate(45deg); }
   .docs-sidebar { transition: none; }
 }
 
-/* Header actions, on every page: the correction link, plus the docs drawer
-   button on narrow docs pages. */
-.header-actions { display: flex; align-items: center; gap: var(--space-xs); margin-left: auto; }
-.directory-h1 { margin-left: auto; }
-.directory-h1 + .header-actions { margin-left: var(--space-lg); }
-/* The tagline hides on phones but is still a sibling, so hand the push back. */
-@media (max-width: 640px) {
-  .directory-h1 + .header-actions { margin-left: auto; }
+/* Header actions, on every page: GitHub, the correction link, plus the docs
+   drawer button on narrow docs pages. */
+.header-actions { display: flex; align-items: center; justify-self: end; gap: var(--space-xs); }
+.header-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-button);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: color .15s ease, background-color .15s ease;
+}
+.header-github:hover { color: var(--text-primary); background: var(--surface-hover); }
+.header-github:focus-visible { outline: 2px solid var(--accent-muted); outline-offset: 2px; }
+.header-github svg { width: 16px; height: 16px; }
+/* The label goes before the tabs run out of room, leaving the mark. */
+@media (max-width: 1023px) {
+  .header-github-label { display: none; }
 }
 .header-correction {
   display: inline-flex;
