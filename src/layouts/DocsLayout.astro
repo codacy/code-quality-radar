@@ -22,7 +22,7 @@ interface Props {
 const { nav, current, toc = [], breadcrumbs = [], ...layoutProps } = Astro.props;
 ---
 <Layout {...layoutProps} breadcrumbs={breadcrumbs} renderBreadcrumbs={false}>
-  <SimpleHeader slot="header" menu menuLabel={`Open ${nav} menu`} correctionTool={nav === "tools" ? current : undefined} />
+  <SimpleHeader slot="header" section={nav} menu menuLabel={`Open ${nav} menu`} correctionTool={nav === "tools" ? current : undefined} />
   <div class="docs-layout">
     <DocsSidebar nav={nav} current={current} />
     <div class="docs-content">
