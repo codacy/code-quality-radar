@@ -103,7 +103,7 @@ export const AI_CAPABILITY_FACETS = [
   { key: "has_ai_review_engine", label: "AI Code Review" },
   { key: "byo_model_byok", label: "Bring Your Own Model" },
   { key: "mcp_server", label: "MCP Server" },
-  { key: "ai_usage_governance_inventory", label: "AI-Generated Code Governance" },
+  { key: "ai_usage_governance_inventory", label: "AI Code Governance" },
   { key: "chat_with_reviewer", label: "Conversational Review" },
   { key: "learns_from_feedback", label: "Learning From Feedback" },
   { key: "code_excluded_from_training", label: "Code Excluded From Training" },
