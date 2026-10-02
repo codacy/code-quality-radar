@@ -2376,7 +2376,7 @@
         },
         "ai_logic_bug_detection": {
           "v": "partial",
-          "note": "AI Reviewer adds Gemini contextual review; logic-error claims appear only in the flagged Verity section.",
+          "note": "AI Reviewer (Google Gemini) checks PR changes against the PR description and linked Jira ticket for logic gaps; currently GitHub only.",
           "tier": "team"
         },
         "pr_summaries_walkthroughs": {
@@ -3442,7 +3442,7 @@
         },
         "diff_new_code_coverage": {
           "v": "no",
-          "note": "Not documented; same absence basis as overall test coverage tracking",
+          "note": "Not offered in vendor documentation reviewed as of 2026-08-19; the dashboard metrics reference has no coverage metric for new or changed code.",
           "tier": "n/a",
           "verified_on": "2026-08-19"
         },
