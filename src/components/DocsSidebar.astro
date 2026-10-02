@@ -2,6 +2,8 @@
 import { getTools } from "../lib/tools.js";
 import { GLOSSARY } from "../data/glossary.js";
 import { EXPLORE_ARTICLES } from "../data/explore.js";
+import { labelSearch } from "../lib/search-index.js";
+import { termAliases } from "../data/search-synonyms.js";
 
 interface Props {
   nav: "tools" | "glossary" | "explore";
@@ -18,20 +20,20 @@ const NAVS = {
     href: "/",
     noun: "tools",
     items: getTools()
-      .map((t) => ({ slug: t.slug, label: t.name, href: `/${t.slug}/`, search: `${t.name} ${t.vendor || ""}` }))
+      .map((t) => ({ slug: t.slug, label: t.name, href: `/${t.slug}/`, search: labelSearch(t.name, t.vendor || "") }))
       .sort(byLabel),
   },
   glossary: {
     title: "Glossary",
     href: "/glossary/",
     noun: "terms",
-    items: GLOSSARY.map((t) => ({ slug: t.slug, label: t.term, href: `/glossary/${t.slug}/`, search: t.term })).sort(byLabel),
+    items: GLOSSARY.map((t) => ({ slug: t.slug, label: t.term, href: `/glossary/${t.slug}/`, search: labelSearch(t.term, ...termAliases(t.slug)) })).sort(byLabel),
   },
   explore: {
     title: "Explore",
     href: "/explore/",
     noun: "platforms",
-    items: EXPLORE_ARTICLES.map((a) => ({ slug: a.slug, label: a.provider, href: `/explore/${a.slug}/`, search: a.provider })),
+    items: EXPLORE_ARTICLES.map((a) => ({ slug: a.slug, label: a.provider, href: `/explore/${a.slug}/`, search: labelSearch(a.provider) })),
   },
 };
 const { title, href, noun, items } = NAVS[nav];
@@ -51,7 +53,7 @@ const { title, href, noun, items } = NAVS[nav];
     <div class="docs-sidebar-scroll">
       <ul class="docs-sidebar-list">
         {items.map((item) => (
-          <li data-search={item.search.toLowerCase()}>
+          <li data-search={item.search}>
             <a href={item.href} aria-current={item.slug === current ? "page" : undefined}>{item.label}</a>
           </li>
         ))}

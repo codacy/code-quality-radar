@@ -116,6 +116,19 @@ export const COMPLIANCE_BOOL_FACETS = [
   { key: "compliance_reporting_exports", label: "Compliance Reporting & Exports" },
 ];
 
+export const DEPLOYMENT_FACETS = [
+  { key: "cloud", label: "Cloud (SaaS)" },
+  { key: "selfHosted", label: "Self-Hosted (On-Premises)" },
+  { key: "airGapped", label: "Air-Gapped (Offline)" },
+];
+
+// Keys are the view-model fields set in getTools().
+export const PRICING_BOOL_FACETS = [
+  { key: "freeTier", label: "Free Plan Available" },
+  { key: "freeForOpenSource", label: "Free for Open Source" },
+  { key: "hasTrial", label: "Free Trial Available" },
+];
+
 export const API_CLI_FACETS = [
   { key: "rest_api", label: "REST API" },
   { key: "cli", label: "CLI" },
@@ -397,11 +410,7 @@ export function getFacetOptions(tools) {
     .map(([value, count]) => ({ key: value, label: CATEGORY_LABELS[value] || value, count }))
     .sort((a, b) => b.count - a.count);
 
-  const deployment = [
-    { key: "cloud", label: "Cloud (SaaS)", count: tools.filter((t) => t.deployment.cloud).length },
-    { key: "selfHosted", label: "Self-Hosted (On-Premises)", count: tools.filter((t) => t.deployment.selfHosted).length },
-    { key: "airGapped", label: "Air-Gapped (Offline)", count: tools.filter((t) => t.deployment.airGapped).length },
-  ];
+  const deployment = DEPLOYMENT_FACETS.map((f) => ({ ...f, count: tools.filter((t) => t.deployment[f.key]).length }));
 
   const gitProviders = countBoolGroup(tools, (t) => t.gitProviders, GIT_PROVIDER_FACETS);
   const workflowStages = countBoolGroup(tools, (t) => t.workflowStages, WORKFLOW_STAGE_FACETS);
@@ -426,11 +435,7 @@ export function getFacetOptions(tools) {
     .map(([value, count]) => ({ key: value, label: PRICING_MODEL_LABELS[value] || value, count }))
     .sort((a, b) => b.count - a.count);
 
-  const pricingBool = [
-    { key: "freeTier", label: "Free Plan Available", count: tools.filter((t) => t.freeTier).length },
-    { key: "freeForOpenSource", label: "Free for Open Source", count: tools.filter((t) => t.freeForOpenSource).length },
-    { key: "hasTrial", label: "Free Trial Available", count: tools.filter((t) => t.hasTrial).length },
-  ];
+  const pricingBool = PRICING_BOOL_FACETS.map((f) => ({ ...f, count: tools.filter((t) => t[f.key]).length }));
 
   return {
     categories,
