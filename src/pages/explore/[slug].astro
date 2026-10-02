@@ -8,7 +8,8 @@ import { logoPathFor } from "../../lib/logos.js";
 import { attachComments, lookForFaq, SHUFFLE_NOTE } from "../../lib/picks.js";
 import { faqJsonLd } from "../../lib/faq.js";
 import FaqItems from "../../components/FaqItems.astro";
-import { getTools } from "../../lib/tools.js";
+import { getTools, UMBRELLA } from "../../lib/tools.js";
+import { exploreHeadline } from "../../lib/headlines.js";
 import { AUTHOR } from "../../data/author.js";
 
 export function getStaticPaths() {
@@ -25,21 +26,22 @@ const alphabetical = [...ranked].sort((a, b) => a.name.localeCompare(b.name)).ma
 const fullCount = ranked.filter((t) => !t.partial).length;
 const partialCount = ranked.length - fullCount;
 
-const headline = `Top ${ranked.length} Code Review Tools for ${article.provider} in 2026`;
+const headline = exploreHeadline(article.provider, ranked.length);
+const total = allTools.length;
+const howMany = ranked.length === total ? `All ${total} tools in this directory` : `${ranked.length} of the ${total} tools in this directory`;
 const description = `${ranked.length} of ${allTools.length} tools tracked in this directory integrate with ${article.provider}. ${article.short}`;
 
 const PARITY_CAVEAT =
   "Support is not the same as parity, since some integrations are narrower in scope or gated to a higher plan tier. Tools with full support are listed before those with partial support.";
 
 const other = EXPLORE_ARTICLES.filter((a) => a.slug !== article.slug).slice(0, 6);
-const anOrA = /^[aeiou]/i.test(article.provider) ? "an" : "a";
 
 const faqs = [
   {
-    q: `What are the best code review tools for ${article.provider}?`,
+    q: `What are the best ${UMBRELLA} for ${article.provider}?`,
     a: ranked.length
       ? [
-          `${ranked.length} of the ${allTools.length} tools in this directory document a ${article.provider} integration:`,
+          `${howMany} document a ${article.provider} integration:`,
           { links: alphabetical },
           "Which fits best depends on your setup. The guidance on this page covers what to weigh.",
         ]
@@ -48,20 +50,19 @@ const faqs = [
   {
     q: `How many tools integrate with ${article.provider}?`,
     a: [
-      `${ranked.length} of ${allTools.length} tools support ${article.provider}` +
-        (partialCount ? `, ${fullCount} fully and ${partialCount} partially.` : "."),
-      PARITY_CAVEAT,
+      `${howMany} integrate with ${article.provider}` + (partialCount ? `, ${fullCount} fully and ${partialCount} partially.` : "."),
+      ...(partialCount ? [PARITY_CAVEAT] : []),
     ],
   },
   {
-    q: `What should you look for in ${anOrA} ${article.provider} code review tool?`,
+    q: `What should you check when choosing ${UMBRELLA} for ${article.provider}?`,
     a: lookForFaq(article.lookFor),
   },
 ];
 
 const toc = [
   { id: "look-for-heading", label: "What to look for" },
-  { id: "tools-heading", label: ranked.length === 1 ? "Top tool" : "Top tools" },
+  { id: "tools-heading", label: ranked.length === 1 ? "Best tool" : "Best tools" },
   ...(other.length > 0 ? [{ id: "other-heading", label: "Other platforms" }] : []),
   { id: "faq-heading", label: "FAQ" },
 ];
@@ -92,7 +93,7 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
   description={description}
   breadcrumbs={[
     { name: "Explore", url: "/explore/" },
-    { name: `Top ${article.provider} Tools`, url: `/explore/${article.slug}/` },
+    { name: article.provider, url: `/explore/${article.slug}/` },
   ]}
   nav="explore"
   current={article.slug}
@@ -117,7 +118,7 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
 
       <section class="article-section">
         <h2 class="h3" id="tools-heading">
-          Top {ranked.length} code review {ranked.length === 1 ? "tool" : "tools"} for {article.provider}
+          Best {ranked.length} {UMBRELLA} for {article.provider}
         </h2>
         <p class="text-secondary body-sm" style="margin-top: var(--space-xs);">
           Every tool in the directory documented as integrating with {article.provider}

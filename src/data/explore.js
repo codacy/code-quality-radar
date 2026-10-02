@@ -19,7 +19,7 @@ export const EXPLORE_ARTICLES = [
     group: "Best of",
     provider: "GitHub",
     source: { key: "github_cloud" },
-    short: "The code review and security tools that integrate with GitHub.",
+    short: "Code quality, security and code review tools that integrate with GitHub.",
     intro: [
       "GitHub is the most widely used git hosting platform, which also makes it the one with the widest selection of review and security tooling. Most tools here integrate as a GitHub App, reading pull requests and posting review comments, status checks and merge-gate decisions directly on the PR.",
       "GitHub also sells its own tooling, so a fair comparison includes it. Dependabot raises dependency alerts and upgrade pull requests, the paid Code Security and Secret Protection add-ons cover CodeQL static analysis and secret scanning with push protection, GitHub Code Quality flags maintainability and reliability issues, and Copilot code review adds AI review comments for teams on a Copilot plan. Staying first-party means one fewer vendor to approve, no extra app permissions and findings in a single place.",
@@ -29,7 +29,7 @@ export const EXPLORE_ARTICLES = [
       "Whether the tool installs as a GitHub App (repo-scoped permissions) or asks for a personal access token with broader access",
       "Whether it duplicates a capability GitHub Advanced Security or Copilot already covers on your current plan",
       "GitHub Marketplace listing and pricing, if you'd rather billing go through GitHub directly",
-      "Rate-limit behaviour on large monorepos or high pull-request volume",
+      "Rate-limit behavior on large monorepos or high pull-request volume",
     ],
   },
   {
@@ -38,9 +38,9 @@ export const EXPLORE_ARTICLES = [
     group: "Best of",
     provider: "GitHub Enterprise Server",
     source: { key: "github_enterprise_server" },
-    short: "Code review and security tools that support a self-hosted GitHub Enterprise Server instance.",
+    short: "Code quality, security and code review tools that support a self-hosted GitHub Enterprise Server instance.",
     intro: [
-      "GitHub Enterprise Server (GHES) is GitHub's self-hosted edition, run inside an organisation's own network rather than on github.com. That single fact changes which tools are even eligible: a cloud-only scanner cannot reach a GHES instance behind a firewall unless the organisation opens access for it, however well it integrates with GitHub.",
+      "GitHub Enterprise Server (GHES) is GitHub's self-hosted edition, run inside an organization's own network rather than on github.com. That single fact changes which tools are even eligible: a cloud-only scanner cannot reach a GHES instance behind a firewall unless the organization opens access for it, however well it integrates with GitHub.",
       "Tools that support GHES generally reach it in one of three ways: inbound access through a firewall allowlist for the vendor's IP addresses, an outbound connector the instance calls out through, or a self-hosted deployment of the tool inside the same network. Each trades setup effort against how much network access your security team has to approve. GitHub's own Code Security and Secret Protection add-ons are also sold for GHES and run inside the instance, which avoids the network question, though new features reach GHES on its own release cycle. Version compatibility applies to every option, since a tool built against the current GitHub API may not support an org running an older GHES release.",
     ],
     lookFor: [
@@ -56,10 +56,10 @@ export const EXPLORE_ARTICLES = [
     group: "Best of",
     provider: "GitLab",
     source: { key: "gitlab_cloud" },
-    short: "Code review and security tools that integrate with GitLab's merge request workflow.",
+    short: "Code quality, security and code review tools that integrate with GitLab's merge request workflow.",
     intro: [
       "GitLab's review workflow is built around the merge request (MR) rather than the pull request, and its CI/CD pipelines are native to the platform rather than a bolted-on integration. Tools built for GitLab typically post findings as MR discussion threads and can participate directly in pipeline stages, rather than only reacting to a webhook after the fact.",
-      "GitLab also ships its own security scanning, including SAST, secret detection, dependency scanning and container scanning. Some scanners run on every tier, but the merge request security widget, the security dashboard and vulnerability management need GitLab Ultimate. For a team already on Ultimate, that native set means no extra vendor and findings in the same merge request and pipeline as everything else. A third-party tool tends to earn its place elsewhere: a team on Free or Premium that doesn't want the Ultimate upgrade, a need for more depth in one area than GitLab's scanners offer, or one setup across GitLab and another git platform. Comparing capability by capability, with the Ultimate licence cost included, gives a better answer than a general rule either way.",
+      "GitLab also ships its own security scanning, including SAST, secret detection, dependency scanning and container scanning. Some scanners run on every tier, but the merge request security widget, the security dashboard and vulnerability management need GitLab Ultimate. For a team already on Ultimate, that native set means no extra vendor and findings in the same merge request and pipeline as everything else. A third-party tool tends to earn its place elsewhere: a team on Free or Premium that doesn't want the Ultimate upgrade, a need for more depth in one area than GitLab's scanners offer, or one setup across GitLab and another git platform. Comparing capability by capability, with the Ultimate license cost included, gives a better answer than a general rule either way.",
     ],
     lookFor: [
       "Whether findings appear as MR discussion threads or only in a separate dashboard",
@@ -74,9 +74,9 @@ export const EXPLORE_ARTICLES = [
     group: "Best of",
     provider: "GitLab Self-Managed",
     source: { key: "gitlab_self_managed" },
-    short: "Code review and security tools that support a self-managed GitLab instance.",
+    short: "Code quality, security and code review tools that support a self-managed GitLab instance.",
     intro: [
-      "Self-managed GitLab runs on infrastructure the organisation controls, often chosen for data-residency or air-gap requirements that GitLab.com cannot satisfy. As with any self-hosted git platform, a tool's support for GitLab.com does not automatically mean it supports a self-managed instance behind a private network.",
+      "Self-managed GitLab runs on infrastructure the organization controls, often chosen for data-residency or air-gap requirements that GitLab.com cannot satisfy. As with any self-hosted git platform, a tool's support for GitLab.com does not automatically mean it supports a self-managed instance behind a private network.",
       "The tools that do tend to fall into two groups: those offering their own self-hosted deployment so the whole pipeline stays inside the same network boundary, and cloud-hosted tools that support an outbound connection from a self-managed instance to the vendor's API.",
     ],
     lookFor: [
@@ -174,9 +174,9 @@ export const EXPLORE_ARTICLES = [
     group: "Best of",
     provider: "Bitbucket",
     source: { key: "bitbucket_cloud" },
-    short: "Code review and security tools that integrate with Bitbucket.",
+    short: "Code quality, security and code review tools that integrate with Bitbucket.",
     intro: [
-      "Bitbucket is Atlassian's hosted git platform, most often chosen by teams already standardised on the Atlassian stack, using Jira for tracking, Bitbucket Pipelines for CI, and Confluence for docs. Review and security tools here typically integrate through the Bitbucket REST API and post findings as PR comments or build statuses on Pipelines.",
+      "Bitbucket is Atlassian's hosted git platform, most often chosen by teams already standardized on the Atlassian stack, using Jira for tracking, Bitbucket Pipelines for CI, and Confluence for docs. Review and security tools here typically integrate through the Bitbucket REST API and post findings as PR comments or build statuses on Pipelines.",
       "The ecosystem of third-party tools supporting Bitbucket is smaller than GitHub's or GitLab's, which narrows the field faster than it does for the bigger platforms. Jira integration is also a bigger differentiator here than on other platforms, since a Bitbucket-hosted team is disproportionately likely to already be running Jira.",
     ],
     lookFor: [
@@ -192,10 +192,10 @@ export const EXPLORE_ARTICLES = [
     group: "Best of",
     provider: "Bitbucket Data Center",
     source: { key: "bitbucket_data_center" },
-    short: "Code review and security tools that support Bitbucket Data Center, Atlassian's self-hosted edition.",
+    short: "Code quality, security and code review tools that support Bitbucket Data Center, Atlassian's self-hosted edition.",
     intro: [
       "Bitbucket Data Center is Atlassian's self-hosted, clustered edition of Bitbucket, aimed at large enterprises with their own infrastructure and often a regulatory reason for keeping source code on-prem. It replaced the now end-of-life Bitbucket Server, and support for one does not imply support for the other, so check that a tool names Data Center specifically, not just \"Bitbucket Server\" from older documentation.",
-      "Organisations run Data Center for different reasons, and the reason shapes the shortlist. Where the driver is keeping source code on-prem, a tool with its own self-hosted or air-gapped deployment is usually the realistic fit, since a cloud scanner would mean sending that code outside. Where Data Center was chosen for other reasons, such as existing infrastructure or a long-standing Atlassian setup, a cloud-hosted tool can work well if the instance is reachable from the vendor's network or through a connector, and it saves the team from running another self-hosted service.",
+      "Organizations run Data Center for different reasons, and the reason shapes the shortlist. Where the driver is keeping source code on-prem, a tool with its own self-hosted or air-gapped deployment is usually the realistic fit, since a cloud scanner would mean sending that code outside. Where Data Center was chosen for other reasons, such as existing infrastructure or a long-standing Atlassian setup, a cloud-hosted tool can work well if the instance is reachable from the vendor's network or through a connector, and it saves the team from running another self-hosted service.",
     ],
     lookFor: [
       "Whether documentation specifically names Data Center, rather than the retired Bitbucket Server",
@@ -210,9 +210,9 @@ export const EXPLORE_ARTICLES = [
     group: "Best of",
     provider: "Azure DevOps",
     source: { key: "azure_devops" },
-    short: "Code review and security tools that integrate with Azure DevOps Repos and Pipelines.",
+    short: "Code quality, security and code review tools that integrate with Azure DevOps Repos and Pipelines.",
     intro: [
-      "Azure DevOps bundles source control (Repos), CI/CD (Pipelines), and work tracking (Boards) into one Microsoft-operated product, and is disproportionately common among teams already standardised on the Microsoft/.NET stack. Tools here typically integrate as an Azure DevOps extension from the Visual Studio Marketplace, or via a pipeline task that runs as a build step.",
+      "Azure DevOps bundles source control (Repos), CI/CD (Pipelines), and work tracking (Boards) into one Microsoft-operated product, and is disproportionately common among teams already standardized on the Microsoft/.NET stack. Tools here typically integrate as an Azure DevOps extension from the Visual Studio Marketplace, or via a pipeline task that runs as a build step.",
       "Azure DevOps has one of the smaller pools of third-party tool support among the platforms tracked here. Several tools list Azure Pipelines as a supported CI system without listing Azure Repos as a supported git provider. The two are separate integration points, and a tool can support one without the other.",
     ],
     lookFor: [

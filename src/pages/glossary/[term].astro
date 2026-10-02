@@ -12,7 +12,17 @@ import {
   GLOSSARY_PUBLISHED,
   GLOSSARY_UPDATED,
 } from "../../data/glossary.js";
-import { getTools, getToolDetail, tierLabelFor } from "../../lib/tools.js";
+import { getTools, getToolDetail, tierLabelFor, UMBRELLA } from "../../lib/tools.js";
+import {
+  questionFor,
+  withPhraseFor,
+  doesPhraseFor,
+  pluralFor,
+  singularFor,
+  notSameAsFor,
+  isCategoryTerm,
+  toolsNounFor,
+} from "../../data/glossary-phrasing.js";
 import { logoPathFor } from "../../lib/logos.js";
 import { attachComments, byBandThenName, lookForFaq, SHUFFLE_NOTE } from "../../lib/picks.js";
 import { faqJsonLd } from "../../lib/faq.js";
@@ -44,7 +54,29 @@ const commented = Boolean(entry.picks?.length);
 const alphabetical = [...ranked].sort((a, b) => a.name.localeCompare(b.name)).map((t) => ({ text: t.name, href: `/${t.slug}/` }));
 
 const related = GLOSSARY.filter((t) => t.group === entry.group && t.slug !== entry.slug).slice(0, 6);
-const headline = `What is ${entry.term}?`;
+const headline = questionFor(entry);
+const isCategory = isCategoryTerm(entry);
+const total = allTools.length;
+const count = ranked.length;
+
+// Categories hold the tools whose main job they describe; every other term is
+// a capability that tools support fully or partly. The heading and FAQ say
+// which, in words that fit the term, rather than dropping its bare name into
+// one template. Headings keep "Best" for search intent ("Best 19 SAST tools");
+// the list itself is shuffled. Where the term is not a kind of tool ("CLI"),
+// the heading names the whole directory instead of "Best 19 CLI tools".
+const toolsNoun = toolsNounFor(entry);
+const listHeading = isCategory
+  ? count === 1
+    ? `The only ${singularFor(entry)} in the directory`
+    : `Best ${count} ${pluralFor(entry)}`
+  : toolsNoun
+    ? `Best ${count} ${toolsNoun}`
+    : `Best ${count} ${count === 1 ? UMBRELLA.replace(/tools$/, "tool") : UMBRELLA} ${withPhraseFor(entry)}`;
+const howMany = count === total ? `All ${total} tools in this directory` : `${count} of the ${total} tools in this directory`;
+const notSameAs = notSameAsFor(entry)
+  .map((n) => ({ ...n, term: GLOSSARY.find((t) => t.slug === n.slug) }))
+  .filter((n) => n.term);
 
 // "Supports" spans a wide range here: a first-class implementation and one kept
 // alive for existing customers both register as support. Split the count so the
@@ -59,25 +91,28 @@ const parityCaveat =
 
 const faqs = [
   { q: headline, a: entry.short },
+  isCategory
+    ? {
+        q: `How many ${pluralFor(entry)} does Review Radar track?`,
+        a: [`Review Radar tracks ${count} ${count === 1 ? singularFor(entry) : pluralFor(entry)}${count ? ":" : "."}`, ...(count ? [{ links: alphabetical }] : [])],
+      }
+    : {
+        q: `How many tools in the directory ${doesPhraseFor(entry)}?`,
+        a: [
+          `${howMany} ${doesPhraseFor(entry)}` + (partialCount ? `, ${fullCount} fully and ${partialCount} partially` : "") + (count ? ":" : "."),
+          ...(count ? [{ links: alphabetical }] : []),
+          parityCaveat,
+        ],
+      },
   {
-    q: `How many tools support ${entry.term}?`,
-    a: [
-      `${ranked.length} of the ${allTools.length} tools tracked in this directory support ${entry.term}` +
-        (partialCount ? `, ${fullCount} fully and ${partialCount} partially` : "") +
-        (ranked.length ? ":" : "."),
-      ...(ranked.length ? [{ links: alphabetical }] : []),
-      parityCaveat,
-    ],
-  },
-  {
-    q: `What should you look for in ${entry.term}?`,
+    q: isCategory ? `What should you check when comparing ${pluralFor(entry)}?` : `What should you check when comparing tools ${withPhraseFor(entry)}?`,
     a: lookForFaq(entry.lookFor),
   },
 ];
 
 const toc = [
   { id: "look-for-heading", label: "What to look for" },
-  { id: "tools-heading", label: ranked.length === 1 ? "Top tool" : "Top tools" },
+  { id: "tools-heading", label: ranked.length === 1 ? "Best tool" : "Best tools" },
   ...(related.length > 0 ? [{ id: "related-heading", label: "Related terms" }] : []),
   { id: "faq-heading", label: "FAQ" },
 ];
@@ -129,18 +164,24 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
 
       <section class="article-section">
         {entry.long.map((p) => <p class="article-body">{p}</p>)}
+        {notSameAs.map((n) => (
+          <p class="caption parity-caveat">
+            Not the same as <a href={`/glossary/${n.slug}/`}>{n.term.term}</a>: {n.text}
+          </p>
+        ))}
       </section>
 
       <LookFor items={entry.lookFor} />
 
       <section class="article-section">
-        <h2 class="h3" id="tools-heading">Top {ranked.length} {entry.term} {ranked.length === 1 ? "tool" : "tools"}</h2>
+        <h2 class="h3" id="tools-heading">{listHeading}</h2>
         <p class="text-secondary body-sm" style="margin-top: var(--space-xs);">
-          Every tool in the directory documented as supporting {entry.term}
-          {partialCount > 0 && <>, {fullCount} fully, {partialCount} partially</>}.
+          {isCategory
+            ? `Every tool in the directory whose main category is ${singularFor(entry)}.`
+            : <>Every tool in the directory whose documentation covers this{partialCount > 0 && <>, {fullCount} fully and {partialCount} partially</>}.</>}
           {partialCount > 0 && " Full support is shown first."} {SHUFFLE_NOTE}
         </p>
-        <p class="caption parity-caveat">{parityCaveat}</p>
+        {!isCategory && <p class="caption parity-caveat">{parityCaveat}</p>}
         <div class="tool-grid pick-grid">
           {ranked.map((t) => (
             <a href={`/${t.slug}/`} class="tool-card" data-band={t.partial ? "partial" : "full"}>

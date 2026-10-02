@@ -2,8 +2,17 @@
 import Layout from "../layouts/Layout.astro";
 import SimpleHeader from "../components/SimpleHeader.astro";
 import { getTools } from "../lib/tools.js";
+import { GLOSSARY } from "../data/glossary.js";
 
 const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
+
+// A sample of the tracked capabilities, linked to their glossary pages. Names
+// come from the glossary itself, so they always match the rest of the site.
+const SAMPLE_TERMS = [
+  "sast", "sca", "secrets-detection", "iac-scanning", "code-smells",
+  "test-coverage-tracking", "ai-code-review", "pr-inline-review", "merge-gate", "mcp-server",
+];
+const sampleTerms = SAMPLE_TERMS.map((slug) => GLOSSARY.find((t) => t.slug === slug)).filter(Boolean);
 ---
 <Layout
   title="About — Review Radar"
@@ -18,9 +27,9 @@ const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
       <p class="label section-label">About</p>
       <h1 class="h1">A directory of code quality, security and code review tools.</h1>
       <p class="body-lg text-secondary" style="margin-top: var(--space-lg);">
-        Review Radar records what code quality, static analysis, security scanning and AI-assisted
-        review tools support. Every tool is recorded against the same set of criteria, so they can
-        be compared directly.
+        Review Radar records what code quality, security and code review tools support, from static
+        analysis and security scanning to AI-assisted review. Every tool is recorded against the same
+        set of criteria, so they can be compared directly.
       </p>
     </div>
     <svg aria-hidden="true" width="360" height="360" viewBox="0 0 360 360" style="position:absolute; right:-90px; top:-40px; opacity:0.35; pointer-events:none;">
@@ -69,17 +78,11 @@ const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
         Each tool is recorded against the same set of capabilities, so tools built for different
         purposes can still be compared where they overlap:
       </p>
-      <div style="display:flex; flex-wrap:wrap; gap: var(--space-xs); margin-top: var(--space-lg);">
-        <span class="pill">Code Quality</span>
-        <span class="pill">SAST</span>
-        <span class="pill">SCA</span>
-        <span class="pill">Secrets Detection</span>
-        <span class="pill">IaC</span>
-        <span class="pill">AI Code Review</span>
-        <span class="pill">PR Analysis</span>
-        <span class="pill">Testing</span>
-        <span class="pill">Code Coverage</span>
-        <span class="pill">Linting</span>
+      <div class="chip-list" style="margin-top: var(--space-lg);">
+        {sampleTerms.map((t) => (
+          <a href={`/glossary/${t.slug}/`} class="chip chip-link">{t.term}</a>
+        ))}
+        <a href="/glossary/" class="chip chip-link">All {GLOSSARY.length} in the glossary</a>
       </div>
       <p class="text-secondary" style="margin-top: var(--space-lg);">
         Each entry also records supported languages, integrations, deployment model (cloud,
@@ -100,8 +103,8 @@ const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
       <p class="text-secondary" style="margin-top: var(--space-md);">
         Each entry is reviewed against public sources: product documentation, pricing pages,
         changelogs and release notes. A capability is recorded as supported only where it is
-        documented. Where the documentation does not address it, it is recorded as unknown rather
-        than assumed either way.
+        documented. Where the documentation doesn't mention it, it is recorded as not available,
+        with a note saying so. The few cases where the evidence is unclear are marked unknown.
       </p>
       <p class="text-secondary" style="margin-top: var(--space-md);">
         Entries are re-checked on a rolling basis. Every tool page shows the date its entry was

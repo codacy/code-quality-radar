@@ -20,7 +20,10 @@ export const GLOSSARY_UPDATED = "2026-10-02";
 
 export const GLOSSARY_GROUPS = [
   "Tool categories",
-  "Analysis & detection",
+  "Security scanning",
+  "Code quality",
+  "AI review & fixes",
+  "Rules & repo support",
   "Developer workflow",
   "AI capabilities",
   "Security & compliance",
@@ -38,7 +41,7 @@ export const GLOSSARY = [
     short:
       "A consolidated code security product that covers several scanning types, typically SAST, SCA, secrets, IaC and containers, under one risk model.",
     long: [
-      "A code security platform bundles the scanners a security team would otherwise buy separately, and, more importantly, normalises their output into a single severity model, one policy engine and one queue of findings.",
+      "A code security platform bundles the scanners a security team would otherwise buy separately, and, more importantly, normalizes their output into a single severity model, one policy engine and one queue of findings.",
       "The case for a platform is consolidation. Five separate scanners mean five dashboards, five sets of false positives and no shared idea of which issue matters most, while a platform can rank a dependency CVE, a hardcoded secret and a misconfigured Terraform bucket on the same scale.",
       "The case against is depth. A platform's individual scanners are not always as strong as a dedicated tool in the same area, so teams with one dominant risk, such as a large dependency surface or heavy infrastructure-as-code, sometimes get more from a specialist there and accept the extra dashboard.",
     ],
@@ -51,14 +54,14 @@ export const GLOSSARY = [
   },
   {
     slug: "quality-platform",
-    term: "Quality Platform",
+    term: "Code Quality Platform",
     group: "Tool categories",
     source: { type: "category", key: "quality-platform" },
     short:
-      "A code quality product centred on maintainability, code smells, complexity, duplication and test coverage, usually with security scanning layered on.",
+      "A code quality product centered on maintainability, code smells, complexity, duplication and test coverage, usually with security scanning layered on.",
     long: [
       "Quality platforms grade a codebase on how expensive it will be to keep changing: complexity, duplication, dead code, coverage gaps and style drift. Most now also carry SAST and dependency scanning, which is what makes them overlap with code security platforms.",
-      "The distinguishing behaviour is the gate on new code. A quality platform is generally designed to let existing debt sit while holding every new pull request to a standard, so a large legacy codebase can adopt one without an unshippable backlog on day one.",
+      "The distinguishing behavior is the gate on new code. A quality platform is generally designed to let existing debt sit while holding every new pull request to a standard, so a large legacy codebase can adopt one without an unshippable backlog on day one.",
     ],
     lookFor: [
       "Whether quality gates can apply to changed lines only, rather than the whole repository",
@@ -87,17 +90,17 @@ export const GLOSSARY = [
   },
   {
     slug: "agent-coding-tool",
-    term: "Agent Coding Tool",
+    term: "AI Coding Agent",
     group: "Tool categories",
     source: { type: "category", key: "agent-coding-tool" },
     short:
       "A general-purpose AI coding agent that writes and edits code, with review or security scanning as one capability among many.",
     long: [
-      "These are coding assistants first. Review and security features exist, but they sit beside code generation, refactoring and terminal work rather than being the product's centre of gravity.",
+      "These are coding assistants first. Review and security features exist, but they sit beside code generation, refactoring and terminal work rather than being the product's center of gravity.",
       "They matter in this directory because they are increasingly the thing producing the code that everything else has to review, and because their review capabilities are real, if narrower and less consistently documented than a dedicated scanner's.",
     ],
     lookFor: [
-      "Whether security review is a documented feature or an emergent model behaviour",
+      "Whether security review is a documented feature or an emergent model behavior",
       "How the tool handles code confidentiality and training-data exclusion",
       "Whether findings can reach CI, or only exist inside the editor session",
       "Cost model, since most are seat plus usage credits, which is hard to forecast",
@@ -108,12 +111,12 @@ export const GLOSSARY = [
   {
     slug: "sast",
     term: "SAST",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "sast" },
     short:
-      "Static Application Security Testing: analysing source code for security flaws without running it.",
+      "Static Application Security Testing: analyzing source code for security flaws without running it.",
     long: [
-      "SAST parses your code, usually into an AST or an intermediate representation, and matches it against rules describing insecure patterns: SQL injection, XSS, command injection, unsafe deserialisation, weak cryptography and so on. Because it never executes anything, it can run on every commit and reach code paths a test suite never triggers.",
+      "SAST parses your code, usually into an AST or an intermediate representation, and matches it against rules describing insecure patterns: SQL injection, XSS, command injection, unsafe deserialization, weak cryptography and so on. Because it never executes anything, it can run on every commit and reach code paths a test suite never triggers.",
       "That is also its weakness. Without runtime facts, a SAST engine has to reason about what could happen, so it tends to over-report. False-positive rate and whether findings arrive somewhere developers already work decide much of whether a SAST tool gets used. The opposite failure matters as much: a tool tuned to stay quiet can also miss real vulnerabilities, so check what it catches on your code, not only how little noise it makes.",
     ],
     lookFor: [
@@ -219,18 +222,18 @@ export const GLOSSARY = [
   },
   {
     slug: "taint-dataflow-analysis",
-    term: "Taint / Data-Flow Analysis",
-    group: "Analysis & detection",
+    term: "Taint Analysis (Data-Flow)",
+    group: "Security scanning",
     source: { type: "detection", key: "taint_dataflow_analysis" },
     short:
       "Tracing untrusted input from where it enters the program (source) to where it could do damage (sink).",
     long: [
-      "Taint analysis is the main difference between a data-flow SAST engine and a pattern matcher. It follows a value across assignments, function calls and files, asking whether attacker-controlled data can reach a dangerous operation without being sanitised along the way.",
-      "The payoff is precision: a hardcoded string passed to a SQL query is not a vulnerability, and taint analysis knows the difference. It costs build time and needs per-framework modelling to know which functions count as sources and sinks, which is why fast pattern-based rules still have a place for simple checks and team conventions.",
+      "Taint analysis is the main difference between a data-flow SAST engine and a pattern matcher. It follows a value across assignments, function calls and files, asking whether attacker-controlled data can reach a dangerous operation without being sanitized along the way.",
+      "The payoff is precision: a hardcoded string passed to a SQL query is not a vulnerability, and taint analysis knows the difference. It costs build time and needs per-framework modeling to know which functions count as sources and sinks, which is why fast pattern-based rules still have a place for simple checks and team conventions.",
     ],
     lookFor: [
       "Whether analysis crosses file and function boundaries, or stops at one function",
-      "Framework coverage for your stack, since modelling is per-framework work",
+      "Framework coverage for your stack, since modeling is per-framework work",
       "Whether the tool shows the full source-to-sink path in the finding",
       "Scan-time impact on large repositories",
     ],
@@ -238,10 +241,10 @@ export const GLOSSARY = [
   {
     slug: "secrets-detection",
     term: "Secrets Detection",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "secrets_detection" },
     short:
-      "Finding credentials, such as API keys, tokens, private keys, connection strings, committed into code, config or history.",
+      "Finding credentials (API keys, tokens, private keys, connection strings) committed to code, config files or git history.",
     long: [
       "Secrets scanning combines known-format patterns (provider key prefixes) with entropy heuristics for opaque strings. The strongest implementations scan git history too, since a secret deleted in a later commit is still exposed in the objects.",
       "Detection is the easy half. A leaked key stays dangerous until it is rotated, so the operationally useful question is what happens after the alert: push protection that blocks the commit, or a ticket someone closes without rotating anything.",
@@ -256,12 +259,12 @@ export const GLOSSARY = [
   {
     slug: "secrets-validation",
     term: "Secrets Validation",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "secrets_validation" },
     short:
       "Checking whether a detected secret is actually live, usually by calling the provider, instead of just reporting that it looks like a key.",
     long: [
-      "A repository can hold hundreds of strings shaped like credentials, such as expired keys, test fixtures, rotated tokens, documentation examples. Validation queries the issuing provider to sort the genuinely active ones from the noise.",
+      "A repository can hold hundreds of strings shaped like credentials, such as expired keys, test fixtures, rotated tokens and documentation examples. Validation queries the issuing provider to sort the genuinely active ones from the noise.",
       "This is the difference between a list of 400 possible secrets and a list of 6 that need rotating this afternoon. It is a comparatively rare capability, and worth checking which providers a tool can actually verify against.",
     ],
     lookFor: [
@@ -273,14 +276,14 @@ export const GLOSSARY = [
   },
   {
     slug: "sca",
-    term: "SCA (Software Composition Analysis)",
-    group: "Analysis & detection",
+    term: "SCA",
+    group: "Security scanning",
     source: { type: "detection", key: "sca_dependencies" },
     short:
-      "Identifying third-party dependencies and matching them against known vulnerability databases.",
+      "Software Composition Analysis: identifying third-party dependencies and matching them against known vulnerability databases.",
     long: [
       "SCA reads your manifests and lockfiles, builds a dependency tree including transitive packages, and cross-references it with advisory sources such as CVE, GHSA and vendor feeds. Most of a modern application is dependencies, so this is usually where the raw finding count lives.",
-      "The interesting variable is not whether a tool does SCA, most do, but what it does with the volume. Reachability analysis, exploit-maturity signals and auto-remediation pull requests are what make the output actionable rather than a standing backlog.",
+      "The interesting variable is not whether a tool does SCA (most do) but what it does with the volume. Reachability analysis, exploit-maturity signals and auto-remediation pull requests are what make the output actionable rather than a standing backlog.",
     ],
     lookFor: [
       "Ecosystem coverage for your package managers, including transitive depth",
@@ -292,13 +295,13 @@ export const GLOSSARY = [
   {
     slug: "reachability-analysis",
     term: "Reachability Analysis",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "reachability_analysis" },
     short:
       "Determining whether your code actually calls the vulnerable function inside a flagged dependency.",
     long: [
       "Many dependency CVEs are unreachable in practice: the package is installed, but the affected function is never invoked from your code. Reachability analysis builds a call graph to check, and can cut the actionable list substantially.",
-      "It is one of the most effective ways to reduce SCA noise, but not a free pass. Static call graphs can miss code reached through reflection, dynamic loading or configuration, a function that is unreachable today can become reachable in the next release, and some compliance regimes expect known vulnerabilities to be patched either way. Language coverage is also usually narrow, so treat an unreachable label as a prioritisation signal rather than proof.",
+      "It is one of the most effective ways to reduce SCA noise, but not a free pass. Static call graphs can miss code reached through reflection, dynamic loading or configuration, a function that is unreachable today can become reachable in the next release, and some compliance regimes expect known vulnerabilities to be patched either way. Language coverage is also usually narrow, so treat an unreachable label as a prioritization signal rather than proof.",
     ],
     lookFor: [
       "Which languages support it, since coverage is usually narrow",
@@ -310,16 +313,16 @@ export const GLOSSARY = [
   {
     slug: "malicious-package-detection",
     term: "Malicious Package Detection",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "malicious_package_detection" },
     short:
-      "Catching deliberately hostile dependencies, such as typosquats, hijacked maintainer accounts, packages with install-time payloads.",
+      "Catching deliberately hostile dependencies: typosquats, packages published from hijacked maintainer accounts, and packages that run malicious code when installed.",
     long: [
       "This is a different problem from vulnerability scanning. A CVE is a mistake in legitimate code; a malicious package is an attack, often live for hours before removal, and frequently designed to execute during install rather than at runtime.",
-      "Because the window is short, early detection depends on behavioural signals and fast-moving threat feeds. Public advisory databases do list known malicious packages, but usually after the package has been reported and pulled, so a tool that relies on them alone catches this class late rather than early.",
+      "Because the window is short, early detection depends on behavioral signals and fast-moving threat feeds. Public advisory databases do list known malicious packages, but usually after the package has been reported and pulled, so a tool that relies on them alone catches this class late rather than early.",
     ],
     lookFor: [
-      "Whether detection is behavioural or purely advisory-feed based",
+      "Whether detection is behavioral or purely advisory-feed based",
       "How quickly new malicious packages appear in the tool's data",
       "Whether install scripts and postinstall hooks are inspected",
       "Rescan cadence, since a clean package today can be hijacked tomorrow",
@@ -328,17 +331,17 @@ export const GLOSSARY = [
   {
     slug: "license-compliance",
     term: "License Compliance",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "license_compliance" },
     short:
-      "Identifying the licences of your dependencies and flagging ones that conflict with your policy.",
+      "Identifying the licenses of your dependencies and flagging ones that conflict with your policy.",
     long: [
-      "Every dependency carries licence obligations, and some, copyleft terms in particular, can impose requirements on how you distribute your own software. Licence scanning identifies each package's licence, usually via SPDX identifiers, and checks it against an allowlist or blocklist.",
-      "This is legal risk rather than security risk, which is why it tends to be a procurement or compliance requirement rather than an engineering one. It matters most when distributing software to customers, though network copyleft licences such as the AGPL also cover software offered as a hosted service.",
+      "Every dependency carries license obligations, and some, copyleft terms in particular, can impose requirements on how you distribute your own software. License scanning identifies each package's license, usually via SPDX identifiers, and checks it against an allowlist or blocklist.",
+      "This is legal risk rather than security risk, which is why it tends to be a procurement or compliance requirement rather than an engineering one. It matters most when distributing software to customers, though network copyleft licenses such as the AGPL also cover software offered as a hosted service.",
     ],
     lookFor: [
-      "Whether policies can be configured per licence category and per repository",
-      "Detection of transitive dependency licences, not just direct ones",
+      "Whether policies can be configured per license category and per repository",
+      "Detection of transitive dependency licenses, not just direct ones",
       "How dual-licensed and unlicensed packages are handled",
       "Whether a merge can be blocked on a policy violation",
     ],
@@ -346,12 +349,12 @@ export const GLOSSARY = [
   {
     slug: "sbom-generation",
     term: "SBOM Generation",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "sbom_generation" },
     short:
       "Producing a machine-readable inventory of everything in a build, usually in CycloneDX or SPDX format.",
     long: [
-      "A Software Bill of Materials lists every component and version in a piece of software so that, when the next widely-exploited dependency vulnerability lands, an organisation can answer 'are we affected' in minutes rather than weeks.",
+      "A Software Bill of Materials lists every component and version in a piece of software so that, when the next widely-exploited dependency vulnerability lands, an organization can answer 'are we affected' in minutes rather than weeks.",
       "SBOMs have moved from good practice to procurement requirement in regulated sectors and government supply chains, and vendors that generate them sometimes charge for it as an add-on or a higher tier. An SBOM is only as useful as the process around it: one generated for a procurement form and never refreshed will not answer 'are we affected' on the day it matters.",
     ],
     lookFor: [
@@ -364,10 +367,10 @@ export const GLOSSARY = [
   {
     slug: "iac-scanning",
     term: "IaC Scanning",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "iac_scanning" },
     short:
-      "Checking infrastructure-as-code, such as Terraform, CloudFormation, Kubernetes manifests, Dockerfiles, for insecure configuration before it is applied.",
+      "Checking infrastructure-as-code files (Terraform, CloudFormation, Kubernetes manifests, Dockerfiles) for insecure configuration before it is applied.",
     long: [
       "A large share of cloud security incidents trace back to configuration rather than application code: a public storage bucket, an over-permissive IAM role, an unencrypted volume. IaC scanning catches these in the pull request that would have created them.",
       "The leverage comes from reuse: a single misconfigured module can be copied across dozens of environments, and fixing the template fixes all of them at once. The limit is that it only sees what is in code. Resources created in the console, drift after deployment and settings that depend on runtime values are outside its view, which is the gap cloud posture scanning covers.",
@@ -382,7 +385,7 @@ export const GLOSSARY = [
   {
     slug: "container-scanning",
     term: "Container Scanning",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "container_scanning" },
     short:
       "Inspecting container images for vulnerable OS packages, application dependencies and unsafe build practices.",
@@ -399,11 +402,11 @@ export const GLOSSARY = [
   },
   {
     slug: "cspm",
-    term: "Cloud Posture (CSPM)",
-    group: "Analysis & detection",
+    term: "CSPM",
+    group: "Security scanning",
     source: { type: "detection", key: "cloud_posture_cspm" },
     short:
-      "Continuously auditing live cloud accounts for misconfiguration and policy drift.",
+      "Cloud Security Posture Management: continuously auditing live cloud accounts for misconfiguration and policy drift.",
     long: [
       "CSPM connects to your cloud provider's APIs and evaluates what is actually deployed, not what your Terraform says should be deployed. It catches drift, console changes and resources created outside your IaC pipeline entirely.",
       "It overlaps with IaC scanning but answers a different question. IaC scanning asks 'is this template safe to apply'; CSPM asks 'is what is running right now safe'. Tools in this directory that offer it usually do so as a lighter-weight feature than a dedicated cloud security platform.",
@@ -418,7 +421,7 @@ export const GLOSSARY = [
   {
     slug: "dast",
     term: "DAST",
-    group: "Analysis & detection",
+    group: "Security scanning",
     source: { type: "detection", key: "dast_api_scanning" },
     short:
       "Dynamic Application Security Testing: probing a running application from the outside, the way an attacker would.",
@@ -435,11 +438,11 @@ export const GLOSSARY = [
   },
   {
     slug: "code-smells",
-    term: "Code Smells & Maintainability",
-    group: "Analysis & detection",
+    term: "Code Smell Detection",
+    group: "Code quality",
     source: { type: "detection", key: "code_smells_maintainability" },
     short:
-      "Flagging code that works but will be expensive to maintain, such as long methods, deep nesting, poor naming, structural anti-patterns.",
+      "Flagging code that works but will be expensive to maintain, such as long methods, deep nesting, poor naming and structural anti-patterns.",
     long: [
       "Code smells are not bugs. They are signals that a piece of code will be harder than necessary to understand and change, which is where a large share of engineering time goes.",
       "The value depends entirely on whether the rules match your team's standards. An aggressive default ruleset applied to a mature codebase produces thousands of findings nobody will action, which is why new-code-only gating matters so much here.",
@@ -447,20 +450,20 @@ export const GLOSSARY = [
     lookFor: [
       "Whether rules can be tuned or disabled per repository",
       "New-code-only enforcement so existing debt does not block delivery",
-      "How findings are prioritised beyond raw severity",
+      "How findings are prioritized beyond raw severity",
       "Whether the tool explains why something is a problem, not just that it is",
     ],
   },
   {
     slug: "complexity-metrics",
     term: "Complexity Metrics",
-    group: "Analysis & detection",
+    group: "Code quality",
     source: { type: "detection", key: "complexity_metrics" },
     short:
       "Measuring how convoluted code is, typically cyclomatic or cognitive complexity per function.",
     long: [
       "Cyclomatic complexity counts independent paths through a function; cognitive complexity weights that by how hard the structure is for a human to follow. Both are proxies for how likely code is to hide a defect and how painful it will be to test.",
-      "Complexity is most useful as a trend and a gate, 'no new function above this threshold', rather than as a score to chase. Absolute numbers vary too much between languages and problem domains to compare across teams.",
+      "Complexity is most useful as a trend and as a gate ('no new function above this threshold') rather than as a score to chase. Absolute numbers vary too much between languages and problem domains to compare across teams.",
     ],
     lookFor: [
       "Which metric is used, and whether the threshold is configurable",
@@ -472,7 +475,7 @@ export const GLOSSARY = [
   {
     slug: "duplication-detection",
     term: "Duplication Detection",
-    group: "Analysis & detection",
+    group: "Code quality",
     source: { type: "detection", key: "duplication_detection" },
     short:
       "Finding copy-pasted or near-identical code blocks across a codebase.",
@@ -489,11 +492,11 @@ export const GLOSSARY = [
   },
   {
     slug: "dead-code",
-    term: "Dead / Unused Code",
-    group: "Analysis & detection",
+    term: "Dead Code Detection",
+    group: "Code quality",
     source: { type: "detection", key: "dead_unused_code" },
     short:
-      "Identifying code that is never reached or referenced, such as unused functions, unreachable branches, orphaned files.",
+      "Identifying code that is never reached or referenced, such as unused functions, unreachable branches and orphaned files.",
     long: [
       "Dead code costs review time, slows builds and misleads anyone reading the codebase. It accumulates naturally as features are removed and refactors leave remnants behind.",
       "Accurate detection is harder than it sounds in dynamic languages, where reflection, dependency injection and string-based dispatch can reference code in ways static analysis cannot see. Expect to verify before deleting.",
@@ -508,12 +511,12 @@ export const GLOSSARY = [
   {
     slug: "test-coverage-tracking",
     term: "Test Coverage Tracking",
-    group: "Analysis & detection",
+    group: "Code quality",
     source: { type: "detection", key: "test_coverage_tracking" },
     short:
       "Ingesting coverage reports from your test runs and tracking which lines are exercised by tests.",
     long: [
-      "The tool does not run your tests. Your CI does, and it ingests the report your test runner emits (lcov, Cobertura, JaCoCo and similar) and turns it into trends, gates and per-file views.",
+      "The tool does not run your tests; your CI does. The tool then ingests the report your test runner emits (lcov, Cobertura, JaCoCo and similar) and turns it into trends, gates and per-file views.",
       "Coverage is a weak proxy for test quality: it tells you code was executed, not that anything meaningful was asserted. It is nonetheless useful as a floor, particularly when applied to new code rather than the repository total.",
     ],
     lookFor: [
@@ -525,8 +528,8 @@ export const GLOSSARY = [
   },
   {
     slug: "diff-coverage",
-    term: "Diff / New-Code Coverage",
-    group: "Analysis & detection",
+    term: "Diff Coverage (New Code)",
+    group: "Code quality",
     source: { type: "detection", key: "diff_new_code_coverage" },
     short:
       "Measuring coverage only on the lines changed in a pull request, rather than across the whole codebase.",
@@ -538,13 +541,13 @@ export const GLOSSARY = [
       "Whether the threshold for new code is separately configurable",
       "How added versus modified lines are counted",
       "Whether the gate blocks the merge or only reports",
-      "Behaviour on pull requests that contain no testable changes",
+      "Behavior on pull requests that contain no testable changes",
     ],
   },
   {
     slug: "architecture-governance",
     term: "Architecture Governance",
-    group: "Analysis & detection",
+    group: "Code quality",
     source: { type: "detection", key: "architecture_governance" },
     short:
       "Enforcing structural rules about which parts of a codebase are allowed to depend on which others.",
@@ -556,13 +559,13 @@ export const GLOSSARY = [
       "How rules are expressed, and whether they live in version control",
       "Whether violations fail CI or only appear in a report",
       "Support for gradually adopting rules on an existing codebase",
-      "Visualisation of current dependencies versus intended structure",
+      "Visualization of current dependencies versus intended structure",
     ],
   },
   {
     slug: "technical-debt-quantification",
     term: "Technical Debt Quantification",
-    group: "Analysis & detection",
+    group: "Code quality",
     source: { type: "detection", key: "technical_debt_quantification" },
     short:
       "Expressing accumulated code quality problems as an estimated cost, typically remediation time or a letter grade.",
@@ -580,13 +583,13 @@ export const GLOSSARY = [
   {
     slug: "behavioral-code-analysis",
     term: "Behavioral Code Analysis",
-    group: "Analysis & detection",
+    group: "Code quality",
     source: { type: "detection", key: "behavioral_delivery_analytics" },
     short:
       "Using version-control history, not just the current code, to find hotspots, coupling and delivery risk.",
     long: [
-      "Behavioural analysis reads the git log as evidence. Files that change constantly and are also complex are hotspots: statistically, that is where defects concentrate. Files that keep changing together reveal hidden coupling no import graph shows.",
-      "It also surfaces organisational signals, such as knowledge concentrated in one departing engineer, or a module edited by six teams at once, that pure code analysis cannot see, because the information lives in the history rather than the source.",
+      "Behavioral analysis reads the git log as evidence. Files that change constantly and are also complex are hotspots: statistically, that is where defects concentrate. Files that keep changing together reveal hidden coupling no import graph shows.",
+      "It also surfaces organizational signals that code analysis alone cannot see, such as knowledge concentrated in one engineer who is about to leave, or a module edited by six teams at once. That information lives in the history, not the source.",
     ],
     lookFor: [
       "How much history is needed before the analysis is meaningful",
@@ -598,10 +601,10 @@ export const GLOSSARY = [
   {
     slug: "ai-logic-bug-detection",
     term: "AI Logic Bug Detection",
-    group: "Analysis & detection",
+    group: "AI review & fixes",
     source: { type: "detection", key: "ai_logic_bug_detection" },
     short:
-      "Using a model to find bugs that are not pattern-matchable, such as off-by-one errors, inverted conditions, wrong variable, broken business logic.",
+      "Using an AI model to find bugs that no fixed rule describes, such as off-by-one errors, inverted conditions, the wrong variable used or broken business logic.",
     long: [
       "Rule-based analysis finds known-shaped problems. It cannot tell you that a function returns the wrong value for an edge case, or that a refactor inverted a condition, because no rule describes 'wrong'. Model-based review can reason about intent and catch that class.",
       "It is also the least deterministic capability in this directory. The same diff can produce different comments on different runs, and confident-sounding wrong findings are the main cost. Evaluate on your own pull requests.",
@@ -616,13 +619,13 @@ export const GLOSSARY = [
   {
     slug: "pr-summaries",
     term: "PR Summaries & Walkthroughs",
-    group: "Analysis & detection",
+    group: "AI review & fixes",
     source: { type: "detection", key: "pr_summaries_walkthroughs" },
     short:
       "Automatically generated descriptions of what a pull request changes, sometimes with a guided file-by-file walkthrough.",
     long: [
       "A summary gives a reviewer the shape of a change before they read it: what moved, what is risky, where to look first. On large pull requests this can shorten the time to a first meaningful review.",
-      "It helps most where PR hygiene is weakest, such as sparse descriptions, large diffs, unfamiliar areas of the codebase. It does not improve the change itself, and a generated summary describes what changed rather than why, which only the author can supply.",
+      "It helps most where PR hygiene is weakest, such as sparse descriptions, large diffs or unfamiliar areas of the codebase. It does not improve the change itself, and a generated summary describes what changed rather than why, which only the author can supply.",
     ],
     lookFor: [
       "Whether summaries are posted automatically or on request",
@@ -634,10 +637,10 @@ export const GLOSSARY = [
   {
     slug: "custom-rule-authoring",
     term: "Custom Rule Authoring",
-    group: "Analysis & detection",
+    group: "Rules & repo support",
     source: { type: "detection", key: "custom_rule_authoring" },
     short:
-      "Writing your own analysis rules for conventions, internal frameworks or organisation-specific risks.",
+      "Writing your own analysis rules for conventions, internal frameworks or organization-specific risks.",
     long: [
       "Every codebase has rules no vendor ships: use this internal HTTP client, never call that deprecated helper, all handlers must check this permission. Custom rules turn tribal knowledge and repeated review comments into automated checks.",
       "Authoring cost largely decides whether custom rules get written. A rule language you can learn in an afternoon tends to get used; one requiring a compiler plugin and a week of study is used less, even though it can express checks a simpler language cannot.",
@@ -652,12 +655,12 @@ export const GLOSSARY = [
   {
     slug: "autofix-suggestions",
     term: "Autofix Suggestions",
-    group: "Analysis & detection",
+    group: "AI review & fixes",
     source: { type: "detection", key: "autofix_suggestions" },
     short:
       "Proposing a concrete code change that resolves a finding, usually as a one-click suggestion in the pull request.",
     long: [
-      "A finding tells you something is wrong; an autofix tells you what to write instead. For mechanical issues, such as formatting, simple refactors, known-safe API swaps, dependency version bumps, this collapses remediation to a click.",
+      "A finding tells you something is wrong; an autofix tells you what to write instead. For mechanical issues (formatting, simple refactors, known-safe API swaps, dependency version bumps), this collapses remediation to a click.",
       "Quality varies sharply by issue class. Deterministic transformations are reliable; model-generated fixes for logic or security issues need review, because a fix that silences the scanner without addressing the underlying flaw is worse than the original finding.",
     ],
     lookFor: [
@@ -669,8 +672,8 @@ export const GLOSSARY = [
   },
   {
     slug: "agentic-autofix-prs",
-    term: "Autofix via Agentic PRs",
-    group: "Analysis & detection",
+    term: "Autofix Pull Requests",
+    group: "AI review & fixes",
     source: { type: "detection", key: "autofix_agentic_prs" },
     short:
       "The tool opens its own pull request containing a fix, rather than suggesting an edit inside yours.",
@@ -687,8 +690,8 @@ export const GLOSSARY = [
   },
   {
     slug: "ai-triage",
-    term: "AI Triage / False-Positive Filtering",
-    group: "Analysis & detection",
+    term: "AI Triage (False-Positive Filtering)",
+    group: "AI review & fixes",
     source: { type: "detection", key: "ai_triage_false_positive_filtering" },
     short:
       "Using a model to assess which raw findings are real and worth acting on, and suppressing or deprioritising the rest.",
@@ -706,7 +709,7 @@ export const GLOSSARY = [
   {
     slug: "monorepo-support",
     term: "Monorepo Support",
-    group: "Analysis & detection",
+    group: "Rules & repo support",
     source: { type: "detection", key: "monorepo_support" },
     short:
       "Handling a repository containing many projects: per-directory configuration, ownership and scoped analysis.",
@@ -738,19 +741,19 @@ export const GLOSSARY = [
       "Which editors are supported, including AI-native ones if your team uses them",
       "Whether it works offline or needs a round-trip to the vendor",
       "Whether IDE rules are the same as CI rules, or a reduced set",
-      "Whether organisation configuration syncs automatically to each developer",
+      "Whether organization configuration syncs automatically to each developer",
     ],
   },
   {
     slug: "ai-agent-guardrails",
-    term: "AI Agent Guardrails (MCP)",
+    term: "AI Agent Guardrails",
     group: "Developer workflow",
     source: { type: "workflow", key: "ai_agent_guardrail_mcp" },
     short:
-      "Exposing analysis to AI coding agents, usually over Model Context Protocol, so generated code is checked as it is produced.",
+      "Checking code from AI coding agents while it is being written, through an MCP server, agent hooks or a plugin.",
     long: [
       "When an agent writes code, the traditional review loop arrives far too late: hundreds of lines can land before anyone looks. Guardrails give the agent access to the scanner directly, so it can check and correct its own output mid-task.",
-      "MCP has become the common interface for this. The practical effect is that the agent's tool call, rather than the pull request, becomes the first quality gate, which matters more as the share of AI-written code rises.",
+      "MCP has become a common interface for this, though some tools do the same job through agent hooks or a plugin. The practical effect is that the agent's tool call, rather than the pull request, becomes the first quality gate, which matters more as the share of AI-written code rises.",
     ],
     lookFor: [
       "Which agents and clients are supported",
@@ -761,14 +764,14 @@ export const GLOSSARY = [
   },
   {
     slug: "local-cli",
-    term: "Local CLI / Pre-Commit",
+    term: "Local Analysis (Pre-Commit)",
     group: "Developer workflow",
     source: { type: "workflow", key: "local_cli_precommit" },
     short:
-      "Running the same analysis locally from the command line or a git hook, without waiting for CI.",
+      "Running the analysis itself on a developer's machine, from the command line or a git hook, without waiting for CI.",
     long: [
       "A CLI closes the feedback loop from minutes to seconds and makes the tool scriptable, useful for pre-commit hooks, custom pipelines and debugging why CI disagrees with your machine.",
-      "It also matters for confidentiality: a CLI that analyses fully locally never sends source code anywhere, which is sometimes the only way a tool passes review in a regulated environment.",
+      "It also matters for confidentiality: a CLI that analyzes fully locally never sends source code anywhere, which is sometimes the only way a tool passes review in a regulated environment.",
     ],
     lookFor: [
       "Whether analysis is genuinely local or a thin client for a cloud API",
@@ -779,14 +782,14 @@ export const GLOSSARY = [
   },
   {
     slug: "pr-inline-review",
-    term: "PR Inline Review",
+    term: "Inline PR Comments",
     group: "Developer workflow",
     source: { type: "workflow", key: "pr_inline_review" },
     short:
       "Posting findings as comments on the specific lines of a pull request, rather than in a separate dashboard.",
     long: [
       "Findings that live in a dashboard get looked at during audits. Findings that appear as a comment on the line the developer just changed get fixed during review, because they arrive where the work is already happening.",
-      "Where findings appear often matters as much for adoption as what the tool detects. The failure mode is volume: a tool that leaves forty comments on a routine pull request will be muted within a fortnight.",
+      "Where findings appear often matters as much for adoption as what the tool detects. The failure mode is volume: a tool that leaves forty comments on a routine pull request will be muted within two weeks.",
     ],
     lookFor: [
       "Whether comments are scoped to changed lines only",
@@ -797,14 +800,14 @@ export const GLOSSARY = [
   },
   {
     slug: "merge-gate",
-    term: "Merge Gate / Blocking",
+    term: "Quality Gates (Merge Blocking)",
     group: "Developer workflow",
     source: { type: "workflow", key: "merge_gate_blocking" },
     short:
       "Preventing a pull request from merging while it violates a defined quality or security threshold.",
     long: [
-      "A gate is what turns advice into policy. Implemented as a required status check, it stops a merge when a condition fails: a new critical vulnerability, coverage below threshold on new code, a licence violation.",
-      "Gates only survive if they are trusted. A gate that fires on false positives gets bypass permissions handed out within a month, at which point it is theatre, so tune the threshold before enforcing it, not after.",
+      "A gate is what turns advice into policy. Implemented as a required status check, it stops a merge when a condition fails: a new critical vulnerability, coverage below threshold on new code, a license violation.",
+      "Gates only survive if they are trusted. A gate that fires on false positives gets bypass permissions handed out within a month, at which point it is theater, so tune the threshold before enforcing it, not after.",
     ],
     lookFor: [
       "Granularity, by severity, issue type or repository",
@@ -819,7 +822,7 @@ export const GLOSSARY = [
     group: "Developer workflow",
     source: { type: "workflow", key: "full_repo_scan" },
     short:
-      "Analysing an entire repository rather than only the diff, establishing a complete baseline.",
+      "Analyzing an entire repository rather than only the diff, establishing a complete baseline.",
     long: [
       "Diff analysis tells you about today's change. A full scan tells you the state of everything, which is what you need for a security baseline, a compliance report or a first look at an unfamiliar codebase.",
       "Full scans are slower and produce the intimidating initial number, so most teams run them on a schedule and gate on diffs, using the baseline for reporting and the diff for enforcement.",
@@ -833,11 +836,11 @@ export const GLOSSARY = [
   },
   {
     slug: "continuous-rescanning",
-    term: "Scheduled / Continuous Rescan",
+    term: "Scheduled Rescans",
     group: "Developer workflow",
     source: { type: "workflow", key: "scheduled_continuous_rescan" },
     short:
-      "Re-analysing code on a schedule even when nothing has changed, to catch newly published vulnerabilities.",
+      "Re-analyzing code on a schedule even when nothing has changed, to catch newly published vulnerabilities.",
     long: [
       "Your dependencies do not have to change for your risk to change. A package that was clean at merge time becomes vulnerable the moment an advisory is published, and commit-triggered scanning alone will never notice.",
       "Continuous rescanning closes that gap. For a stable service that is rarely deployed, sometimes one running a critical workload, it is frequently the only thing watching for new CVEs at all, unless someone monitors an SBOM of the deployed build. The cost is alerts landing on repositories nobody is actively working on, so routing needs thought.",
@@ -845,26 +848,26 @@ export const GLOSSARY = [
     lookFor: [
       "Rescan frequency, and whether it is configurable",
       "How alerts are routed when nobody is actively working on the repository",
-      "Whether rescanning covers deployed artefacts as well as source",
+      "Whether rescanning covers deployed artifacts as well as source",
       "Which plan tier includes it, since this is frequently gated",
     ],
   },
   {
     slug: "runtime-monitoring",
-    term: "Runtime / Production Monitoring",
+    term: "Runtime Monitoring",
     group: "Developer workflow",
     source: { type: "workflow", key: "runtime_production" },
     short:
       "Observing the application in production to detect or block attacks and confirm which vulnerabilities are actually exposed.",
     long: [
       "Runtime context answers the question static analysis cannot: is this vulnerable code path actually reachable in the deployed system, behind authentication, or exposed to the internet? That reorders a backlog fast.",
-      "Some tools go further and block malicious requests in-process. That is a different operational commitment from scanning, since it sits in the request path, so latency and failure behaviour become your concern.",
+      "Some tools go further and block malicious requests in-process. That is a different operational commitment from scanning, since it sits in the request path, so latency and failure behavior become your concern.",
     ],
     lookFor: [
       "Whether it observes only or actively blocks",
-      "Deployment model, such as sidecar, agent, or in-process library, and its overhead",
-      "Whether runtime signals feed back into finding prioritisation",
-      "Failure behaviour if the runtime component becomes unavailable",
+      "Deployment model (sidecar, agent or in-process library) and its overhead",
+      "Whether runtime signals feed back into finding prioritization",
+      "Failure behavior if the runtime component becomes unavailable",
     ],
   },
 
@@ -884,18 +887,18 @@ export const GLOSSARY = [
       "Which model is used, and whether that is disclosed at all",
       "Whether review context includes linked issues and repository history",
       "Comment precision measured on your own pull requests",
-      "Whether AI findings are labelled separately from scanner findings",
+      "Whether AI findings are labeled separately from scanner findings",
     ],
   },
   {
     slug: "byo-model",
-    term: "BYO Model / BYOK",
+    term: "Bring Your Own Model",
     group: "AI capabilities",
     source: { type: "ai", key: "byo_model_byok" },
     short:
-      "Pointing the tool at your own model deployment or API key instead of the vendor's hosted inference.",
+      "Pointing the tool at your own model deployment or LLM API key instead of the vendor's hosted inference.",
     long: [
-      "Bring-your-own-model routes inference through infrastructure you control, such as your Azure OpenAI deployment, your Bedrock account, sometimes a self-hosted open-weights model. Your code goes to your tenancy rather than the vendor's.",
+      "Bring-your-own-model routes inference through infrastructure you control, such as your Azure OpenAI deployment, your Bedrock account or a self-hosted open-weights model. Your code goes to your tenancy rather than the vendor's. Some vendors call this BYOK, meaning your own LLM API key, which is a different thing from customer-managed encryption keys.",
       "This is usually a compliance requirement rather than a preference: it keeps inference inside an existing data-processing agreement and an audited boundary. Where it is offered it is often limited to enterprise plans, and worth confirming exactly which features still work when enabled.",
     ],
     lookFor: [
@@ -917,7 +920,7 @@ export const GLOSSARY = [
       "In practice this is how a scanner becomes part of an agentic workflow rather than only a downstream gate, since the agent can check its work before proposing it. It supplements a CI gate rather than replacing one: the check only happens if the agent is set up to call it, and the agent's token becomes another credential with access to your findings.",
     ],
     lookFor: [
-      "Which operations the server exposes, such as read-only findings, or scan and remediate",
+      "Which operations the server exposes, from read-only findings to scanning and remediation",
       "Which agent clients are known to work with it",
       "Authentication model and what scope the agent's token carries",
       "Whether MCP access is included in your plan tier",
@@ -925,13 +928,13 @@ export const GLOSSARY = [
   },
   {
     slug: "ai-usage-governance",
-    term: "AI Usage Governance",
+    term: "AI-Generated Code Governance",
     group: "AI capabilities",
     source: { type: "ai", key: "ai_usage_governance_inventory" },
     short:
       "Tracking and setting policy over AI-generated code entering your codebase.",
     long: [
-      "As AI writes a growing share of committed code, organisations increasingly need to answer governance questions about it: how much of this release was model-generated, was it reviewed to the same standard, does any of it violate our policies.",
+      "As AI writes a growing share of committed code, organizations increasingly need to answer governance questions about it: how much of this release was model-generated, was it reviewed to the same standard, does any of it violate our policies.",
       "Note the distinction that matters when comparing tools: governing the code the AI wrote is a different capability from inventorying which AI tools your developers use. Both get marketed as AI governance; only the first tells you anything about your codebase.",
     ],
     lookFor: [
@@ -943,7 +946,7 @@ export const GLOSSARY = [
   },
   {
     slug: "chat-with-reviewer",
-    term: "Chat With Reviewer",
+    term: "Conversational Review",
     group: "AI capabilities",
     source: { type: "ai", key: "chat_with_reviewer" },
     short:
@@ -953,7 +956,7 @@ export const GLOSSARY = [
       "It changes the interaction from verdict to discussion, which reduces the resentment that makes teams disable tools. It also gives the vendor a signal about which findings developers reject and why.",
     ],
     lookFor: [
-      "Where the conversation happens, such as a PR thread, IDE panel, or separate app",
+      "Where the conversation happens: a PR thread, an IDE panel or a separate app",
       "Whether the tool can revise or withdraw a finding after discussion",
       "Whether context persists across a conversation or resets each message",
       "Whether dismissals feed back into future analysis",
@@ -961,7 +964,7 @@ export const GLOSSARY = [
   },
   {
     slug: "feedback-learning",
-    term: "Learns From Feedback",
+    term: "Learning From Feedback",
     group: "AI capabilities",
     source: { type: "ai", key: "learns_from_feedback" },
     short:
@@ -971,7 +974,7 @@ export const GLOSSARY = [
       "Without it, tuning stays manual, often meaning the same rule suppressed in every new repository. With it, precision should improve over weeks of use, which is worth verifying rather than assuming. The risk runs the other way too: if a team dismisses valid findings under deadline pressure, the tool can learn to stop raising them.",
     ],
     lookFor: [
-      "Whether learning is per-repository, per-organisation or global",
+      "Whether learning is per-repository, per-organization or global",
       "How long adaptation takes to show measurable effect",
       "Whether learned suppressions are visible and reversible",
       "Whether your feedback trains models shared with other customers",
@@ -983,7 +986,7 @@ export const GLOSSARY = [
     group: "AI capabilities",
     source: { type: "ai", key: "code_excluded_from_training" },
     short:
-      "A contractual and technical guarantee that your source code is not used to train the vendor's or a third party's models.",
+      "A vendor's documented commitment that your source code is not used to train its own or a third party's models.",
     long: [
       "Any AI review tool sends your source to a model. The question every security review asks is what happens to it afterwards: retained, logged, used as training data, or discarded after inference.",
       "Look for this in the contract and the sub-processor list, not the marketing page. 'We do not train on your code' is a meaningful commitment only if it also binds the model provider sitting behind the vendor.",
@@ -1003,7 +1006,7 @@ export const GLOSSARY = [
     group: "Security & compliance",
     source: { type: "compliance", key: "audit_logs" },
     short:
-      "An immutable record of who did what in the tool, such as settings changed, findings dismissed, gates bypassed.",
+      "An immutable record of who did what in the tool, such as settings changed, findings dismissed or gates bypassed.",
     long: [
       "Audit logs answer questions after the fact: who suppressed this vulnerability, who disabled that gate, who added an external user. For SOC 2 and ISO 27001 they are table stakes rather than a nice-to-have.",
       "The security-relevant events here are the suppressions and bypasses. A dismissed critical finding with no attached record of who dismissed it and why is a genuine gap, not an administrative one.",
@@ -1017,13 +1020,13 @@ export const GLOSSARY = [
   },
   {
     slug: "sso-saml",
-    term: "SSO / SAML",
+    term: "SSO (SAML)",
     group: "Security & compliance",
     source: { type: "compliance", key: "sso_saml" },
     short:
       "Authenticating users through your identity provider rather than tool-specific credentials.",
     long: [
-      "Single sign-on centralises access: one identity provider, one offboarding action, MFA enforced in one place. Without it, every tool becomes an account someone has to remember to revoke when an engineer leaves.",
+      "Single sign-on centralizes access: one identity provider, one offboarding action, MFA enforced in one place. Without it, every tool becomes an account someone has to remember to revoke when an engineer leaves.",
       "It is also the classic enterprise-tier paywall. Budget for it, because the price step from the plan you want to the plan with SSO is frequently the largest single jump in these products' pricing.",
     ],
     lookFor: [
@@ -1041,12 +1044,12 @@ export const GLOSSARY = [
     short:
       "Controlling what each user can see and change through defined roles rather than blanket access.",
     long: [
-      "RBAC keeps the blast radius small: a developer sees their team's repositories, a security lead sets policy, an auditor reads without changing anything. It is what makes a tool safe to roll out organisation-wide.",
+      "RBAC keeps the blast radius small: a developer sees their team's repositories, a security lead sets policy, an auditor reads without changing anything. It is what makes a tool safe to roll out organization-wide.",
       "The capability everyone checks too late is who can dismiss a finding or bypass a gate. If that is available to every user by default, your policy is advisory regardless of how the gates are configured.",
     ],
     lookFor: [
-      "Whether roles are predefined or genuinely customisable",
-      "Repository- and team-level scoping, not just organisation-wide roles",
+      "Whether roles are predefined or genuinely customizable",
+      "Repository- and team-level scoping, not just organization-wide roles",
       "Which roles may dismiss findings or bypass gates",
       "Whether role assignment can be driven from your identity provider",
     ],
@@ -1060,7 +1063,7 @@ export const GLOSSARY = [
       "Generating evidence for auditors: control coverage, scan history, finding status mapped to a framework.",
     long: [
       "Auditors want evidence that scanning happened consistently, that findings were triaged, and that exceptions were approved. Assembling that by hand each audit cycle is slow and error-prone; generating it from the tool that did the scanning is much faster.",
-      "The valuable feature is mapping to a named framework, such as SOC 2, ISO 27001, PCI DSS, so a control maps to evidence directly rather than through a spreadsheet you maintain.",
+      "The valuable feature is mapping to a named framework, such as SOC 2, ISO 27001 or PCI DSS, so a control maps to evidence directly rather than through a spreadsheet you maintain.",
     ],
     lookFor: [
       "Which frameworks are mapped out of the box",
@@ -1073,11 +1076,11 @@ export const GLOSSARY = [
   // ---------------------------------------------------------------- deployment
   {
     slug: "cloud-saas",
-    term: "Cloud / SaaS",
+    term: "Cloud (SaaS) Deployment",
     group: "Deployment",
     source: { type: "deployment", key: "cloud" },
     short:
-      "The vendor hosts and operates the tool; your code is analysed on their infrastructure.",
+      "The vendor hosts and operates the tool; your code is analyzed on their infrastructure.",
     long: [
       "SaaS is the most common deployment model: nothing to run, updates arrive continuously, and nobody on your team has to operate the scanner. For teams without a hard rule on where source code can go, it is usually the lowest-effort option.",
       "The trade-off is that source code is sent to and processed by a third party, which is the main question in regulated environments, and a vendor outage can hold up merges if its check is required. Where SaaS passes a security review, it is usually on the strength of data-residency guarantees and a training-exclusion commitment, not the vendor's security posture alone.",
@@ -1091,13 +1094,13 @@ export const GLOSSARY = [
   },
   {
     slug: "self-hosted",
-    term: "Self-Hosted / On-Premises",
+    term: "Self-Hosted (On-Premises) Deployment",
     group: "Deployment",
     source: { type: "deployment", key: "selfHosted" },
     short:
       "Running the tool on infrastructure you control, so source code never leaves your environment.",
     long: [
-      "Self-hosting keeps code inside your perimeter. For defence, finance, healthcare and anyone with a hard data-residency rule, it is frequently the only deployment that passes review, which makes it a hard filter rather than a preference.",
+      "Self-hosting keeps code inside your perimeter. For defense, finance, healthcare and anyone with a hard data-residency rule, it is frequently the only deployment that passes review, which makes it a hard filter rather than a preference.",
       "The cost is ownership: you run the upgrades, the database, the scaling and the incident response. Check carefully whether a vendor's self-hosted edition is a first-class product or a legacy option kept alive for existing customers, because those age very differently.",
     ],
     lookFor: [
@@ -1109,13 +1112,13 @@ export const GLOSSARY = [
   },
   {
     slug: "air-gapped",
-    term: "Air-Gapped",
+    term: "Air-Gapped (Offline) Deployment",
     group: "Deployment",
     source: { type: "deployment", key: "airGapped" },
     short:
-      "Running with no outbound network access at all, in an environment physically isolated from the internet.",
+      "Running the tool fully offline, with no internet connection at all, in an environment physically isolated from outside networks.",
     long: [
-      "Air-gapped is stricter than self-hosted. The installation cannot phone home for licence checks, telemetry, rule updates or vulnerability feeds, so everything must be transferable through an offline update bundle.",
+      "Air-gapped is stricter than self-hosted. The installation cannot phone home for license checks, telemetry, rule updates or vulnerability feeds, so everything must be transferable through an offline update bundle.",
       "This is classified and critical-infrastructure territory. Ask specifically how the vulnerability database is refreshed offline, because a scanner with a stale advisory feed reports confidently on last quarter's threat landscape.",
     ],
     lookFor: [
@@ -1151,7 +1154,7 @@ export const GLOSSARY = [
     group: "Automation & access",
     source: { type: "apiCli", key: "cli" },
     short:
-      "A command-line client for running scans and pulling results from any environment.",
+      "Command-line interface: a client you run from a terminal or a script to start scans and pull results, in any environment.",
     long: [
       "A CLI makes the tool portable across CI systems. Rather than depending on a maintained plugin for one specific platform, you run a binary, which works identically on a laptop, a self-hosted runner and whatever CI you migrate to next.",
       "It is also the fallback when a first-party integration does not exist for your platform, and the fastest way to debug a discrepancy between local and CI results.",
@@ -1176,7 +1179,7 @@ export const GLOSSARY = [
     ],
     lookFor: [
       "Which events can be subscribed to, and at what granularity",
-      "Retry behaviour and delivery guarantees",
+      "Retry behavior and delivery guarantees",
       "Payload signing so receivers can verify authenticity",
       "Whether payloads carry enough detail to avoid an API round-trip",
     ],

@@ -30,9 +30,10 @@
           "tier": "n/a"
         },
         "local_cli_precommit": {
-          "v": "partial",
-          "note": "Offline local SAST scanning possible; no CLI or pre-commit hook documented",
-          "tier": "unknown"
+          "v": "yes",
+          "note": "Local Scanner CLI runs code, secrets, dependency and IaC scans locally; a pre-commit hook checks staged code for secrets.",
+          "tier": "unknown",
+          "verified_on": "2026-10-02"
         },
         "pr_inline_review": {
           "v": "yes",
@@ -96,7 +97,7 @@
         },
         "malicious_package_detection": {
           "v": "yes",
-          "note": "Malware in packages, typosquatting, supply chain compromise, suspicious behaviour patterns",
+          "note": "Malware in packages, typosquatting, supply chain compromise, suspicious behavior patterns",
           "tier": "free"
         },
         "license_compliance": {
@@ -923,31 +924,9 @@
       },
       "languages": {
         "count_claimed": "unknown",
-        "list": [
-          "Bash",
-          "C",
-          "C++",
-          "C#",
-          "Dart",
-          "Go",
-          "GoogleSQL",
-          "Java",
-          "JavaScript",
-          "Kotlin",
-          "Lua",
-          "MATLAB",
-          "PHP",
-          "Python",
-          "R",
-          "Ruby",
-          "Rust",
-          "Scala",
-          "SQL",
-          "Swift",
-          "TypeScript",
-          "YAML"
-        ],
-        "tier_gated_languages": []
+        "list": [],
+        "tier_gated_languages": [],
+        "any_language": true
       },
       "compliance": {
         "certifications": [
@@ -1121,7 +1100,7 @@
             "name": "Enterprise",
             "price": "Not priced (flexible/credit-based; contact sales)",
             "billing_unit": "credits / quote",
-            "who_for": "Large organisations",
+            "who_for": "Large organizations",
             "key_inclusions": [
               "Full feature set including Security Review",
               "Compliance API and append-only log stream",
@@ -1131,7 +1110,7 @@
             ],
             "key_limits": [
               "Quote-only",
-              "No named compliance certifications in source",
+              "No compliance certifications named in OpenAI's documentation",
               "HIPAA/BAA and residency coverage explicitly 'not universal'",
               "A legacy rate card still applies to a small subset of Enterprise customers"
             ]
@@ -1355,7 +1334,7 @@
         },
         "behavioral_delivery_analytics": {
           "v": "partial",
-          "note": "Analytics tracks vulnerability trends, remediation status, and metrics by team, project, and environment; no code-behavioural analytics.",
+          "note": "Analytics tracks vulnerability trends, remediation status, and metrics by team, project, and environment; no code-behavioral analytics.",
           "tier": "unknown"
         },
         "ai_logic_bug_detection": {
@@ -1365,7 +1344,7 @@
         },
         "pr_summaries_walkthroughs": {
           "v": "partial",
-          "note": "PR comment summarises new and fixed vulnerabilities and policy violations; no change-by-change walkthrough.",
+          "note": "PR comment summarizes new and fixed vulnerabilities and policy violations; no change-by-change walkthrough.",
           "tier": "unknown"
         },
         "custom_rule_authoring": {
@@ -1385,7 +1364,7 @@
         },
         "ai_triage_false_positive_filtering": {
           "v": "yes",
-          "note": "Per-project 'AI Triage & Remediation' auto-analyses eligible new vulnerabilities during PR scans; triage predicates persist across scans.",
+          "note": "Per-project 'AI Triage & Remediation' auto-analyzes eligible new vulnerabilities during PR scans; triage predicates persist across scans.",
           "tier": "unknown"
         },
         "monorepo_support": {
@@ -1397,7 +1376,7 @@
       "ai_posture": {
         "has_ai_review_engine": {
           "v": "yes",
-          "note": "AI Security Champion explains and fixes scanner findings; AI Triage analyses new pull-request vulnerabilities.",
+          "note": "AI Security Champion explains and fixes scanner findings; AI Triage analyzes new pull-request vulnerabilities.",
           "tier": "unknown"
         },
         "models_used": [
@@ -1651,13 +1630,13 @@
             "name": "Legacy CxSAST / CxSCA / CxOSA (self-hosted product line)",
             "price": "unknown",
             "billing_unit": "unknown",
-            "who_for": "Organisations requiring fully self-hosted or on-premises deployment",
+            "who_for": "Organizations requiring fully self-hosted or on-premises deployment",
             "key_inclusions": [
               "Centralized, Distributed, and High Availability architectures",
               "Dynamic on-demand Engine allocation via Kubernetes or Docker"
             ],
             "key_limits": [
-              "Described as a legacy product line alongside the modern Checkmarx One platform",
+              "Checkmarx describes it as a legacy product line alongside the Checkmarx One platform",
               "No pricing, sizing requirements, or feature parity statement versus Checkmarx One documented"
             ]
           }
@@ -1939,7 +1918,7 @@
         },
         "code_excluded_from_training": {
           "v": "partial",
-          "note": "Zero Data Retention for qualified Enterprise accounts; no explicit training-exclusion statement in source.",
+          "note": "Zero Data Retention for qualified Enterprise accounts; no explicit training-exclusion statement in Anthropic's documentation.",
           "tier": "enterprise"
         }
       },
@@ -1982,17 +1961,12 @@
         },
         "ci_systems": [
           "GitHub Actions (anthropics/claude-code-action)",
-          "GitHub Enterprise Server (workflows must be adapted manually)",
           "GitLab CI/CD (beta, GitLab-maintained)"
         ],
         "ides": [
           "VS Code",
           "IntelliJ IDEA",
-          "PyCharm",
-          "CLI (terminal)",
-          "Desktop app (macOS)",
-          "Claude Code on the web",
-          "Mobile app (iOS, Android)"
+          "PyCharm"
         ],
         "issue_trackers": [
           "GitHub Issues"
@@ -2008,31 +1982,9 @@
       },
       "languages": {
         "count_claimed": "unknown",
-        "list": [
-          "Bash",
-          "C",
-          "C++",
-          "C#",
-          "Dart",
-          "Go",
-          "GoogleSQL",
-          "Java",
-          "JavaScript",
-          "Kotlin",
-          "Lua",
-          "MATLAB",
-          "PHP",
-          "Python",
-          "R",
-          "Ruby",
-          "Rust",
-          "Scala",
-          "SQL",
-          "Swift",
-          "TypeScript",
-          "YAML"
-        ],
-        "tier_gated_languages": []
+        "list": [],
+        "tier_gated_languages": [],
+        "any_language": true
       },
       "compliance": {
         "certifications": [
@@ -2124,7 +2076,7 @@
           },
           {
             "name": "Pro",
-            "price": "not published in source",
+            "price": "See claude.com/pricing",
             "billing_unit": "per user per month",
             "who_for": "Individual subscriber",
             "key_inclusions": [
@@ -2143,7 +2095,7 @@
           },
           {
             "name": "Max",
-            "price": "not published in source",
+            "price": "See claude.com/pricing",
             "billing_unit": "per user per month",
             "who_for": "Power-user individual subscriber",
             "key_inclusions": [
@@ -2159,7 +2111,7 @@
           },
           {
             "name": "Team",
-            "price": "not published in source (docs point to claude.com/pricing)",
+            "price": "See claude.com/pricing",
             "billing_unit": "per seat",
             "who_for": "Small and mid-size organizations",
             "key_inclusions": [
@@ -2179,7 +2131,7 @@
           },
           {
             "name": "Enterprise",
-            "price": "not published in source (docs point to claude.com/pricing)",
+            "price": "See claude.com/pricing",
             "billing_unit": "per seat",
             "who_for": "Large organizations",
             "key_inclusions": [
@@ -2656,7 +2608,7 @@
           "SOC 2 Type 2",
           "GDPR",
           "CCPA",
-          "ISO 27001 (claimed only in the marketing differentiators list, not in the compliance sections)"
+          "ISO 27001"
         ],
         "standards_mapping": [
           "OWASP Top 10 (DAST scan profile)",
@@ -2786,7 +2738,7 @@
           "regulated"
         ],
         "notable_strengths": [
-          "Aggregates a broad set of third-party analyzers (54 claimed by the vendor) across 40+ languages, so quality, security, IaC, duplication and complexity come from one configuration surface",
+          "Aggregates a broad set of third-party analyzers across 40+ languages, so quality, security, IaC, duplication and complexity come from one configuration surface",
           "Free, unlimited Guardrails IDE extension works offline across VS Code, Cursor, Windsurf and 12 JetBrains IDEs, with MCP guardrails for AI agents included at no cost",
           "Pipeline-less cloud scanning: analysis needs no CI integration, and pricing is flat per developer with no scan, finding or LOC quotas",
           "Coverage is first-class: Coverage Reporter handles 13+ report formats, plus diff coverage, coverage goals, badges and enforceable coverage gates",
@@ -2799,7 +2751,7 @@
           "SSO/SAML, audit logs, SBOM export, DAST, container scanning, data residency and AI governance are all Business-plan-only, and Business is quote-only",
           "Azure DevOps is supported as a CI system (Azure Pipelines) but is absent from the Git provider list, unlike GitHub, GitLab and Bitbucket",
           "No taint/data-flow analysis, architecture governance, monorepo handling, or secret validation is described anywhere in Codacy's documentation",
-          "Language counts conflict across the document (38 vs 44 vs 49) and auto-fix reaches only four languages, so headline breadth overstates depth"
+          "Codacy's documentation gives different language counts (38, 44 and 49), and auto-fix covers only four languages"
         ]
       }
     },
@@ -3044,7 +2996,7 @@
       "deployment": {
         "saas_cloud": {
           "v": "yes",
-          "note": "CodeAnt.ai cloud platform is described as the primary offering",
+          "note": "The CodeAnt.ai cloud platform is the primary offering",
           "tier": "unknown"
         },
         "self_hosted": {
@@ -3610,7 +3562,7 @@
         },
         "air_gapped": {
           "v": "no",
-          "note": "Docs state code and prompts leave the deployment to reach the LLM provider; licence validation phones home.",
+          "note": "Docs state code and prompts leave the deployment to reach the LLM provider; license validation phones home.",
           "tier": "n/a",
           "verified_on": "2026-09-06"
         },
@@ -3870,7 +3822,7 @@
       "slug": "codescene",
       "name": "CodeScene",
       "vendor": "CodeScene",
-      "one_liner": "Behavioural code analysis platform scoring Code Health, hotspots, knowledge distribution and delivery risk from version-control history.",
+      "one_liner": "Behavioral code analysis platform scoring Code Health, hotspots, knowledge distribution and delivery risk from version-control history.",
       "primary_job": "quality-platform",
       "workflow_stages": {
         "ide_realtime": {
@@ -4123,7 +4075,7 @@
       "deployment": {
         "saas_cloud": {
           "v": "yes",
-          "note": "CodeScene Cloud at codescene.io with US and EU data centres and automatic scaling",
+          "note": "CodeScene Cloud at codescene.io with US and EU data centers and automatic scaling",
           "tier": "team",
           "tier_label": "Standard"
         },
@@ -4143,7 +4095,7 @@
         },
         "data_residency_choice": {
           "v": "yes",
-          "note": "US and EU data centres on cloud; on-premise gives complete data control",
+          "note": "US and EU data centers on cloud; on-premise gives complete data control",
           "tier": "team",
           "tier_label": "Standard"
         },
@@ -4376,7 +4328,7 @@
           "regulated"
         ],
         "notable_strengths": [
-          "Behavioural analytics no code-only scanner offers: hotspots weighted by change frequency, change coupling, knowledge distribution, Conway's Law alignment, bus-factor simulation",
+          "Behavioral analytics no code-only scanner offers: hotspots weighted by change frequency, change coupling, knowledge distribution, Conway's Law alignment, bus-factor simulation",
           "Technical debt quantified in business terms: per-hotspot maintenance cost trends, planned vs. unplanned work, refactoring ROI, three-metric Code Health profile that avoids averaging away risk",
           "X-Ray drills hotspots down to function level to give a concrete refactoring starting point in very large files",
           "CodeHealth MCP server runs locally and model-agnostically, giving AI agents an objective maintainability target plus pre/post-commit checks",
@@ -4384,12 +4336,12 @@
           "Published per-active-author pricing with unlimited repos and analyses, plus free open-source edition and Docker/JAR on-premise option"
         ],
         "notable_limitations": [
-          "No security scanning of any kind — SAST, SCA, secrets, IaC, container and cloud posture are absent from the entire 15,000-word source",
+          "No security scanning of any kind: SAST, SCA, secrets, IaC, container and cloud posture scanning are absent from CodeScene's documentation",
           "Requires substantial Git history to be accurate, and onboarding complexity is listed as a risk in CodeScene's own documentation",
           "Code Health quality varies by language because the metric must be implemented per language",
           "Delivery insights, team insights, code coverage, the Software Portfolio overview, the REST API and PM tools integrations with cost analyses require the Pro plan; on CodeScene Cloud, Microsoft Entra SSO starts on Pro, while the Enterprise plan's single sign-on and role-based access control are available on-prem today, with Cloud support on the way.",
           "Duplication detection is never mentioned, an unusual omission for a maintainability platform",
-          "AI features (ACE, MCP server, PR Refactoring Agent) are described as new and maturing; Azure DevOps refactoring agent is not yet available"
+          "CodeScene describes its AI features (ACE, MCP server, PR Refactoring Agent) as new and maturing; the refactoring agent is not yet available for Azure DevOps"
         ]
       }
     },
@@ -4908,15 +4860,15 @@
           "enterprise"
         ],
         "notable_strengths": [
-          "Business-logic/auth vulnerability detection (BLAST) is the marketed core differentiator, included from the Free tier",
-          "PII/PHI scanning (50+ sensitive-data types) is bundled alongside secrets — not in this taxonomy but a real capability",
+          "Business-logic and auth vulnerability detection (BLAST), Corgea's headline feature, is included from the Free tier",
+          "PII/PHI scanning (50+ sensitive-data types) is bundled alongside secrets detection",
           "Security Design Review scans PRDs/specs pre-implementation (beta)",
           "AI Pentesting against live targets plus static SAST/SCA/IaC/container/secrets in one platform",
           "MCP server + Agent Skill give AI coding agents (Claude Code, Cursor, Copilot, Codex) a security checkpoint"
         ],
         "notable_limitations": [
-          "No code-quality domain-adjacent facets: no coverage tracking, tech-debt quantification, or behavioral/git-history analytics",
-          "No CSPM/cloud-account-posture scanning documented anywhere in the doc set",
+          "No code quality features: no coverage tracking, technical debt quantification or behavioral (git-history) analytics",
+          "No CSPM (cloud account posture) scanning documented",
           "SSO, SCIM and audit logs are Enterprise-only (quote-only) — no self-serve identity federation",
           "IDE plugins (VS Code/JetBrains/VS2022) are on-demand only — no real-time-as-you-type findings documented",
           "Several features (IaC scanning, Scheduled Scans, private package registries) require contacting support to enable despite appearing on the public pricing page"
@@ -4961,7 +4913,7 @@
         },
         "full_repo_scan": {
           "v": "yes",
-          "note": "Security Agents scan codebases for vulnerabilities; source has no dedicated feature page or configuration detail.",
+          "note": "Security Agents scan codebases for vulnerabilities; Cursor's docs have no dedicated feature page or configuration detail for them.",
           "tier": "team"
         },
         "scheduled_continuous_rescan": {
@@ -5191,7 +5143,7 @@
         },
         "code_excluded_from_training": {
           "v": "partial",
-          "note": "Team-wide Privacy Mode and Legacy Privacy Mode referenced; no explicit training-exclusion statement in source.",
+          "note": "Team-wide Privacy Mode and Legacy Privacy Mode referenced; no explicit training-exclusion statement in Cursor's documentation.",
           "tier": "team"
         }
       },
@@ -5383,7 +5335,7 @@
             "name": "Teams Standard",
             "price": "$40/user/month",
             "billing_unit": "per user",
-            "who_for": "Teams standardising review",
+            "who_for": "Teams standardizing review",
             "key_inclusions": [
               "Agentic code reviews with Bugbot",
               "PR Routing & Approval and Security Agents",
@@ -5408,14 +5360,14 @@
               "Expanded Agent limits"
             ],
             "key_limits": [
-              "Pricing notation for the 5x uplift not itemised in source"
+              "Price of the 5x Agent limits is not itemized"
             ]
           },
           {
             "name": "Enterprise",
             "price": "Custom (contact sales)",
             "billing_unit": "quote",
-            "who_for": "Large or regulated organisations",
+            "who_for": "Large or regulated organizations",
             "key_inclusions": [
               "Everything in Teams",
               "Audit logs and service accounts",
@@ -5449,7 +5401,7 @@
         "notable_limitations": [
           "Cloud-only: no on-premises deployment is offered",
           "Merge blocking is not the default - findings publish a neutral check unless 'fail on unresolved issues' is enabled, and that is only available for some orgs",
-          "Source documents no SCA, secrets, IaC, container, coverage or duplication capability, and names no supported languages",
+          "Cursor documents no SCA, secrets, IaC, container, coverage or duplication capability, and names no supported languages",
           "Security Agents have no configuration documentation, only cross-references, and require Team or Enterprise",
           "Bugbot review cost is metered per review ($1.00-$1.50) on top of seat price, and Autofix additionally requires on-demand usage pricing and non-Legacy privacy mode",
           "Bugbot Admin API, Public/Analytics API, audit logs and HIPAA BAAs are Enterprise-only; MCP, Merge Queue and Security Agents need Team or Enterprise"
@@ -5490,7 +5442,7 @@
         },
         "full_repo_scan": {
           "v": "yes",
-          "note": "Every commit to the default branch is analysed; languages auto-detected on repository activation.",
+          "note": "Every commit to the default branch is analyzed; languages auto-detected on repository activation.",
           "tier": "free"
         },
         "scheduled_continuous_rescan": {
@@ -5532,7 +5484,7 @@
         },
         "reachability_analysis": {
           "v": "yes",
-          "note": "Call-graph tracing to the vulnerable function; REACHABLE/UNREACHABLE/UNKNOWN with call-path visualisation.",
+          "note": "Call-graph tracing to the vulnerable function; REACHABLE/UNREACHABLE/UNKNOWN with call-path visualization.",
           "tier": "add-on"
         },
         "malicious_package_detection": {
@@ -5706,13 +5658,13 @@
         },
         "air_gapped": {
           "v": "yes",
-          "note": "Documented air-gap install for servers with no internet; bundle staged locally, licence key required.",
+          "note": "Documented air-gap install for servers with no internet; bundle staged locally, license key required.",
           "tier": "enterprise",
           "verified_on": "2026-09-06"
         },
         "data_residency_choice": {
           "v": "partial",
-          "note": "Enterprise Server deploys into the customer's own cloud or data centre; no SaaS region choice documented.",
+          "note": "Enterprise Server deploys into the customer's own cloud or data center; no SaaS region choice documented.",
           "tier": "enterprise"
         },
         "self_hosted_requirements": "DeepSource Enterprise Server runs on Kubernetes via three install methods: standalone cluster (embedded production-ready Kubernetes), existing Kubernetes cluster, or air-gapped install. Minimum two nodes (application plus analysis workloads), each 16 CPU cores, 32 GiB memory, 500 GiB disk; recommended machine types GCP e2-standard-8, AWS c5.4xlarge, Azure Standard_F16s. Targets AWS, GCP, Azure, DigitalOcean, Linode, or bare metal. Host OSes: Ubuntu 18.04/20.04/22.04, CentOS 7.4–8.4, RHEL 7.4–8.6, Oracle Linux 7.4–8.6, Amazon Linux 2. PostgreSQL v12+ required, with the pgvector extension from v5.0.0+; external database strongly recommended for production and backups are not created by DeepSource. Core dependencies minio, pgbouncer, RabbitMQ, Redis; install/upgrade/licensing via Replicated KOTS. TLS via uploaded certificates, Let's Encrypt, or upstream termination; Kubernetes Gateway API supported from v5.0.2+ and outbound HTTP/HTTPS proxy from v4.4.0+. Claimed setup time approximately 20 minutes.",
@@ -5881,7 +5833,7 @@
             "name": "Enterprise",
             "price": "Custom pricing",
             "billing_unit": "negotiated per engagement",
-            "who_for": "Organisations with compliance or security requirements needing operation inside their firewall",
+            "who_for": "Organizations with compliance or security requirements needing operation inside their firewall",
             "key_inclusions": [
               "All Team features",
               "Self-hosted DeepSource Enterprise Server, including air-gapped install",
@@ -5908,7 +5860,7 @@
           "regulated"
         ],
         "notable_strengths": [
-          "Reachability analysis with call-path visualisation plus a tunable Dynamic Risk Score combining CVSS, EPSS, and reachability",
+          "Reachability analysis with call-path visualization plus a tunable Dynamic Risk Score combining CVSS, EPSS, and reachability",
           "Autofix covers both code issues and dependency upgrades, opening PRs with an AI-assessed breakage score",
           "30-tool MCP server and JSON-output CLI give AI agents structured access to issues, metrics, and vulnerabilities",
           "Coverage tracking across line, branch, condition, and composite metrics including new-code variants, with merge gating",
@@ -6344,7 +6296,7 @@
         "minimum_seats": "unknown",
         "free_tier": {
           "v": "partial",
-          "note": "Individual/AI Pro/AI Ultra tiers stopped serving requests 18 June 2026; remaining free paths unverified.",
+          "note": "Individual, AI Pro and AI Ultra tiers stopped serving requests on 18 June 2026; Google's documentation doesn't make clear which free options remain.",
           "tier": "free",
           "verified_on": "2026-09-06"
         },
@@ -6353,7 +6305,7 @@
           "note": "",
           "tier": ""
         },
-        "trial": "Free trial available for evaluation; length and terms not stated in source",
+        "trial": "Free trial available for evaluation; length and terms are not stated in Google's documentation",
         "enterprise_quote_only": {
           "v": "no",
           "note": "Enterprise edition has a published per-seat license fee: $45.00/user/month (12-month commitment) or $54.00/user/month (monthly commitment); volume/custom pricing still negotiable via sales for large orgs.",
@@ -6370,7 +6322,7 @@
             "name": "Gemini Code Assist Standard",
             "price": "Custom pricing - contact Google Cloud",
             "billing_unit": "per developer/seat",
-            "who_for": "Customers with basic coding needs; organisations with strict data security and compliance requirements",
+            "who_for": "Customers with basic coding needs; organizations with strict data security and compliance requirements",
             "key_inclusions": [
               "Code completion and generation, AI chat, simplified UI and IDE integration",
               "Local codebase awareness in the IDE with large context window",
@@ -6425,10 +6377,10 @@
           "Being wound down: individual/AI Pro/AI Ultra tiers stopped serving requests 18 June 2026 and were migrated to Antigravity; since 4 September 2026 new subscriptions cannot be bought through the Cloud console without an existing subscription, only via Google Cloud sales. Standard and Enterprise editions remain available and are still receiving feature updates as of September 2026.",
           "Pricing is quote-only for both editions; no list price, seat minimum or trial length is published",
           "No data residency: processing happens at the geographically closest data center with regionality explicitly not guaranteed, and GitHub Developer Connect is pinned to us-east1 with no region flexibility",
-          "PR review is a Preview feature with a vaguely stated '100+ pull requests per day' Enterprise quota",
+          "PR review is a Preview feature, and the Enterprise quota is stated only as '100+ pull requests per day'",
           "No merge gate, status check or CI integration documented for PR review, so findings cannot block a merge",
           "No IaC, container, cloud posture, DAST, coverage tracking or technical-debt capability documented; SCA and secrets detection exist only via an optional, separately-installed Gemini CLI extension, not the core product",
-          "Detailed review documentation covers GitHub only; GitLab, Bitbucket and Azure DevOps appear in a single garbled provider list with no review workflow described",
+          "Detailed review documentation covers GitHub only; GitLab, Bitbucket and Azure DevOps appear only in a provider list, with no review workflow described",
           "Several adjacent capabilities (Gemini Cloud Assist, Apigee, Application Integration) are Enterprise-only"
         ]
       }
@@ -6452,7 +6404,7 @@
         },
         "local_cli_precommit": {
           "v": "yes",
-          "note": "CodeQL CLI creates and analyses databases locally or in any CI; push protection blocks at push time",
+          "note": "CodeQL CLI creates and analyzes databases locally or in any CI; push protection blocks at push time",
           "tier": "add-on",
           "tier_note": "free on public repos; add-on: Code Security for private/internal"
         },
@@ -6612,9 +6564,9 @@
         },
         "ai_logic_bug_detection": {
           "v": "yes",
-          "note": "Code Quality AI findings reason about code intent; require Copilot licences and enterprise AI features enabled",
+          "note": "Code Quality AI findings reason about code intent; require Copilot licenses and enterprise AI features enabled",
           "tier": "add-on",
-          "tier_note": "add-on: Copilot licences (separate from GHAS SKUs)"
+          "tier_note": "add-on: Copilot licenses (separate from GHAS SKUs)"
         },
         "pr_summaries_walkthroughs": {
           "v": "partial",
@@ -6636,9 +6588,9 @@
         },
         "autofix_agentic_prs": {
           "v": "yes",
-          "note": "Dependabot security-update PRs; Copilot cloud agent pushes validated fixes (Copilot licence and AI Credits)",
+          "note": "Dependabot security-update PRs; Copilot cloud agent pushes validated fixes (Copilot license and AI Credits)",
           "tier": "add-on",
-          "tier_note": "free (Dependabot); add-on: Copilot licence + AI Credits for the agent"
+          "tier_note": "free (Dependabot); add-on: Copilot license + AI Credits for the agent"
         },
         "ai_triage_false_positive_filtering": {
           "v": "yes",
@@ -6659,7 +6611,7 @@
           "v": "yes",
           "note": "AI-powered security detections run at PR review for languages CodeQL misses; Code Quality adds LLM findings",
           "tier": "add-on",
-          "tier_note": "add-on: Code Security (source marks its plan gating 'implied'); Copilot licence for Code Quality AI findings"
+          "tier_note": "add-on: Code Security; Copilot license for Code Quality AI findings"
         },
         "models_used": [],
         "byo_model_byok": {
@@ -6830,7 +6782,7 @@
           "note": "CodeQL scanning/CLI, Copilot Autofix, secret scanning, push protection, dependency review free on all public repos",
           "tier": "free"
         },
-        "trial": "30 days, includes 50 licences and unlimited committers/organizations during the window; $0 except GitHub Actions minutes. Eligibility: enterprise account owners paying by card/PayPal, no prior GHAS purchase, not already on metered billing, at most one prior trial ended 180+ days ago; invoice customers request via sales.",
+        "trial": "30 days, includes 50 licenses and unlimited committers/organizations during the window; $0 except GitHub Actions minutes. Eligibility: enterprise account owners paying by card/PayPal, no prior GHAS purchase, not already on metered billing, at most one prior trial ended 180+ days ago; invoice customers request via sales.",
         "enterprise_quote_only": {
           "v": "partial",
           "note": "Self-serve by credit card/PayPal or invoice via sales; bundled/enterprise commercial terms require contacting sales",
@@ -6839,7 +6791,7 @@
         "paid_addons": [
           "GitHub Secret Protection ($19/active committer/month)",
           "GitHub Code Security ($30/active committer/month)",
-          "GitHub Copilot licences (required for Copilot code review, Copilot cloud agent, and Code Quality AI findings)",
+          "GitHub Copilot licenses (required for Copilot code review, Copilot cloud agent, and Code Quality AI findings)",
           "GitHub AI Credits (consumed when the Copilot cloud agent generates fixes)",
           "GitHub Actions minutes (billed for scanning workflows, including during the GHAS trial)",
           "Base GitHub Team or Enterprise Cloud/Server plan (prerequisite, cost not stated in source)",
@@ -6849,7 +6801,7 @@
         "plans": [
           {
             "name": "GitHub Free / Pro / Team (base plans, no GHAS add-on)",
-            "price": "not specified in source",
+            "price": "Base GitHub plan price only",
             "billing_unit": "per user/month (base GitHub plan)",
             "who_for": "Any developer or organization not yet buying paid AppSec add-ons; open source projects on public repositories",
             "key_inclusions": [
@@ -6881,9 +6833,9 @@
               "Secret insights in security overview and scan history API"
             ],
             "key_limits": [
-              "Requires a GitHub Team or Enterprise Cloud base plan (or GHES with an appropriate licence)",
+              "Requires a GitHub Team or Enterprise Cloud base plan (or GHES with an appropriate license)",
               "No CodeQL code scanning, Copilot Autofix, dependency review or security campaigns for code",
-              "Billed on active-committer activity; volume/subscription buyers must specify committer licence counts"
+              "Billed on active-committer activity; volume/subscription buyers must specify committer license counts"
             ]
           },
           {
@@ -6900,9 +6852,9 @@
               "Code insights in security overview"
             ],
             "key_limits": [
-              "Requires a GitHub Team or Enterprise Cloud base plan (or GHES with an appropriate licence)",
+              "Requires a GitHub Team or Enterprise Cloud base plan (or GHES with an appropriate license)",
               "No secret scanning or push protection for private repos (that is Secret Protection)",
-              "Copilot cloud agent remediation needs separate Copilot licences and AI Credits",
+              "Copilot cloud agent remediation needs separate Copilot licenses and AI Credits",
               "Security campaigns capped at 1,000 alerts each"
             ]
           },
@@ -6915,7 +6867,7 @@
               "Full union of Secret Protection and Code Security features",
               "Enterprise/organization security configurations, policies and rulesets",
               "Security overview across secrets, code scanning and Dependabot",
-              "Metered billing option instead of pre-purchased licences"
+              "Metered billing option instead of pre-purchased licenses"
             ],
             "key_limits": [
               "Still requires a GitHub Team or Enterprise Cloud/Server base plan",
@@ -6926,12 +6878,12 @@
           {
             "name": "GHAS free trial",
             "price": "$0 (Actions minutes still billed)",
-            "billing_unit": "30 days, 50 licences",
+            "billing_unit": "30 days, 50 licenses",
             "who_for": "Enterprise account owners evaluating GHAS at scale before purchase",
             "key_inclusions": [
               "Both Secret Protection and Code Security enabled",
               "Any number of committers and organizations during the trial",
-              "50 licences included for cross-functional participation",
+              "50 licenses included for cross-functional participation",
               "Can transition to metered billing after an Enterprise Cloud trial"
             ],
             "key_limits": [
@@ -6962,9 +6914,9 @@
           "Requires GitHub as the git provider: every capability is scoped to GitHub.com, GitHub Enterprise Cloud or GitHub Enterprise Server repositories, with no GitLab, Bitbucket or Azure Repos support (Azure DevOps appears only as a CI system running the CodeQL CLI, with results uploaded back into GitHub)",
           "Private and internal repositories get almost no GHAS scanning without buying the add-ons: two separate per-active-committer SKUs ($19 Secret Protection, $30 Code Security) layered on a GitHub Team or Enterprise Cloud/Server plan whose cost is not stated",
           "Capability gaps versus full AppSec suites: no DAST, no container image scanning, no cloud posture management, no dependency reachability analysis, and IaC coverage limited to GitHub Actions workflows",
-          "Agentic remediation and Code Quality AI findings need separate Copilot licences and consume GitHub AI Credits, unlike the included Copilot Autofix",
-          "GitHub Code Quality appears in no published pricing or plan-availability table, so its commercial gating is undetermined; security campaigns are capped at 1,000 alerts each and GHES features are version-gated (3.20+, 3.22+)",
-          "GitHub's documentation names no third-party compliance certifications for GHAS (no SOC 2, ISO 27001, FedRAMP, HIPAA), and reviewer-cited gaps include the lack of a centralized cross-project reporting dashboard and deployment complexity"
+          "Agentic remediation and Code Quality AI findings need separate Copilot licenses and consume GitHub AI Credits, unlike the included Copilot Autofix",
+          "GitHub Code Quality appears in no published pricing or plan-availability table, so which plan includes it is unclear; security campaigns are capped at 1,000 alerts each and GHES features are version-gated (3.20+, 3.22+)",
+          "GitHub's documentation names no third-party compliance certifications for GHAS (no SOC 2, ISO 27001, FedRAMP or HIPAA)"
         ]
       }
     },
@@ -7263,20 +7215,13 @@
         "ides": [
           "Cursor",
           "VS Code",
-          "Claude Code (CLI)",
-          "Codex (CLI)",
-          "Windsurf",
-          "Claude Desktop"
+          "Windsurf"
         ],
         "issue_trackers": [
           "Jira (read-only, one authorized Atlassian site)",
-          "Linear (read-only, scopable to teams)",
-          "Notion (named as a context source, no setup docs in source)",
-          "Datadog (named as a context source, no setup docs in source)"
+          "Linear (read-only, scopable to teams)"
         ],
-        "chat_notifications": [
-          "Slack (shared support channel with Greptile engineering; not described as a notification integration)"
-        ],
+        "chat_notifications": [],
         "api_cli": {
           "rest_api": "yes",
           "cli": "yes",
@@ -7935,7 +7880,7 @@
           "Authentication is GitHub SSO only (no SAML); RBAC (\"custom permissions\") and audit logs are gated to the Enterprise tier",
           "For individual and open-source (free) users, source code may be used to train models; opt-out protection applies only to business customers",
           "AI is limited to opt-in autofixes and issue explanations; no AI reviewer, PR walkthrough, chat or MCP server",
-          "Windows CLI support is contradictory in the docs (in development vs. supported); IDE support is a single unaddressed VS Code extension reference"
+          "The docs describe Windows CLI support both as in development and as supported; IDE support is limited to a single VS Code extension mention"
         ]
       }
     },
@@ -8233,9 +8178,7 @@
           "JetBrains IDEs",
           "Visual Studio Professional (Windows only, reduced feature set)",
           "Cursor (via Context Engine MCP)",
-          "Windsurf (via Context Engine MCP)",
-          "Claude Desktop (via Context Engine MCP)",
-          "GitHub Copilot (via Context Engine MCP)"
+          "Windsurf (via Context Engine MCP)"
         ],
         "issue_trackers": [
           "Jira",
@@ -8723,11 +8666,8 @@
         "ides": [
           "Visual Studio Code",
           "IntelliJ / JetBrains IDEs",
-          "Claude Code (via Guardian MCP)",
           "Cursor (via Guardian MCP)",
-          "GitHub Copilot (via Guardian MCP)",
-          "Codex (via Guardian MCP)",
-          "Devin / Windsurf (via Guardian MCP)",
+          "Windsurf (via Guardian MCP)",
           "Kiro (via Guardian MCP)"
         ],
         "issue_trackers": [
@@ -8790,9 +8730,7 @@
         ]
       },
       "compliance": {
-        "certifications": [
-          "None claimed for Semgrep Inc. — Semgrep's documentation explicitly states \"Semgrep Inc. itself is not ISO 27001 certified\"; it notes Managed Scans run on ISO 27001-certified AWS infrastructure and that OpenAI maintains ISO 27001 certification"
-        ],
+        "certifications": [],
         "standards_mapping": [
           "FedRAMP (NIST SP 800-53 Rev 5: RA-5, IA-5, SA-11, AU-2/AU-3, SI-2, SI-3, SA-15/SR-3)",
           "NIST 800-171 (3.14.1, 3.5.10, 3.3.1, 3.4.7)",
@@ -8848,7 +8786,7 @@
           "note": "Public-project contributors are not counted and there are no contributor limits on public projects.",
           "tier": "free"
         },
-        "trial": "No time-limited trial — the Free (AppSec Platform) tier is described as perpetual rather than time-limited",
+        "trial": "No time-limited trial; the Free (AppSec Platform) tier is perpetual",
         "enterprise_quote_only": {
           "v": "yes",
           "note": "Enterprise is custom pricing; extra AI credits sold in 10,000-credit increments, pricing on request.",
@@ -8942,7 +8880,7 @@
         ]
       },
       "fit_signals": {
-        "best_fit_team_size": "CE is described as best for individuals/small teams; the Free platform tier covers organizations with 10 or fewer monthly contributors",
+        "best_fit_team_size": "Semgrep positions CE for individuals and small teams; the Free platform tier covers organizations with 10 or fewer monthly contributors",
         "best_fit_buyer": [
           "indie",
           "startup",
@@ -9256,7 +9194,6 @@
         },
         "ci_systems": [
           "GitHub Actions",
-          "Snyk IaC GitHub Action",
           "any CI/CD via Snyk CLI"
         ],
         "ides": [
@@ -9478,7 +9415,7 @@
           "API access, SSO, Custom Roles, custom security rules, analytics/reports and non-US regions all require Ignite ($1,260/dev/yr) or Enterprise",
           "Free is capped at 5 projects with per-product test caps, and Team still has no API access",
           "Reachability analysis is Early Access and limited to Java and JavaScript; Risk Score is Early Access for Open Source and Container only",
-          "Quality/maintainability facets (complexity metrics, duplication metrics, test coverage) are not documented; inline PR comments cap at 10 per PR"
+          "No code quality features documented (complexity metrics, duplication metrics, test coverage); inline PR comments are capped at 10 per PR"
         ]
       }
     },
@@ -9501,7 +9438,7 @@
         },
         "local_cli_precommit": {
           "v": "yes",
-          "note": "SonarQube CLI analyses local changes and staged files and runs 'sonar analyze secrets'.",
+          "note": "SonarQube CLI analyzes local changes and staged files and runs 'sonar analyze secrets'.",
           "tier": "unknown"
         },
         "pr_inline_review": {
@@ -9638,7 +9575,7 @@
         },
         "behavioral_delivery_analytics": {
           "v": "partial",
-          "note": "Velocity and burndown tracking in metrics; no code-hotspot or behavioural analytics documented.",
+          "note": "Velocity and burndown tracking in metrics; no code-hotspot or behavioral analytics documented.",
           "tier": "unknown"
         },
         "ai_logic_bug_detection": {
@@ -9955,7 +9892,7 @@
             "name": "Enterprise (SonarQube Cloud)",
             "price": "Contact for custom pricing",
             "billing_unit": "per lines of code, unlimited; license key or coupon billing",
-            "who_for": "Large organizations with extensive governance needs; described as ideal from 5M LOC",
+            "who_for": "Large organizations with extensive governance needs; Sonar recommends it from 5M LOC",
             "key_inclusions": [
               "All Team features",
               "Enterprise languages: Apex, ABAP, COBOL, JCL, PL/I, RPG",
@@ -9996,7 +9933,7 @@
               "Free, open-source version of SonarQube Server"
             ],
             "key_limits": [
-              "Source does not enumerate which analysis features Community Build includes or excludes"
+              "Sonar's docs don't list which analysis features Community Build includes or excludes"
             ]
           },
           {
