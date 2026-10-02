@@ -1,6 +1,7 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
 import AuthorCard from "../../components/AuthorCard.astro";
+import ArticleMeta from "../../components/ArticleMeta.astro";
 import LookFor from "../../components/LookFor.astro";
 import Shuffle from "../../components/Shuffle.astro";
 import {
@@ -28,6 +29,7 @@ import { attachComments, byBandThenName, lookForFaq, SHUFFLE_NOTE } from "../../
 import { faqJsonLd } from "../../lib/faq.js";
 import FaqItems from "../../components/FaqItems.astro";
 import { AUTHOR } from "../../data/author.js";
+import { authorLd, publisherLd } from "../../data/publisher.js";
 
 export function getStaticPaths() {
   return GLOSSARY.map((t) => ({ params: { term: t.slug } }));
@@ -117,14 +119,20 @@ const toc = [
   { id: "faq-heading", label: "FAQ" },
 ];
 
+const published = entry.published ?? GLOSSARY_PUBLISHED;
+const updated = entry.updated ?? GLOSSARY_UPDATED;
+const pageUrl = new URL(`/glossary/${entry.slug}/`, Astro.site).href;
 const jsonLdTerm = {
   "@context": "https://schema.org",
   "@type": "DefinedTerm",
   name: entry.term,
   description: entry.short,
+  url: pageUrl,
+  // Same @id and name as the set on /glossary/, so the two pages describe one glossary.
   inDefinedTermSet: {
     "@type": "DefinedTermSet",
-    name: "Review Radar Glossary",
+    "@id": new URL("/glossary/#glossary", Astro.site).href,
+    name: "Code quality, security and code review glossary",
     url: new URL("/glossary/", Astro.site).href,
   },
 };
@@ -133,9 +141,13 @@ const jsonLdArticle = {
   "@type": "Article",
   headline,
   description: entry.short,
-  datePublished: entry.published ?? GLOSSARY_PUBLISHED,
-  dateModified: entry.updated ?? GLOSSARY_UPDATED,
-  author: { "@type": "Person", name: AUTHOR.name, url: AUTHOR.linkedin },
+  url: pageUrl,
+  mainEntityOfPage: pageUrl,
+  image: new URL("/og.png", Astro.site).href,
+  datePublished: published,
+  dateModified: updated,
+  author: authorLd(AUTHOR, Astro.site),
+  publisher: publisherLd(Astro.site),
   about: { "@type": "DefinedTerm", name: entry.term },
 };
 const jsonLdFaq = faqJsonLd(faqs, Astro.site);
@@ -150,6 +162,8 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
   nav="glossary"
   current={entry.slug}
   toc={toc}
+  published={published}
+  modified={updated}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdTerm)} />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
@@ -160,6 +174,7 @@ const jsonLdFaq = faqJsonLd(faqs, Astro.site);
         <p class="label section-label">{entry.group}</p>
         <h1 class="h1">{headline}</h1>
         <p class="article-lede">{entry.short}</p>
+        <ArticleMeta updated={updated} />
       </header>
 
       <section class="article-section">

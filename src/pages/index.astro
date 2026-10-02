@@ -14,6 +14,7 @@ import {
   COMPLIANCE_BOOL_FACETS,
 } from "../lib/tools.js";
 import { logoPathFor } from "../lib/logos.js";
+import { publisherLd } from "../data/publisher.js";
 
 // Alphabetical on the server; the grid is shuffled on every page load.
 const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
@@ -55,19 +56,52 @@ const detectionGroups = DETECTION_GROUPS.map((group) => ({
   title: titleCase(group),
   options: facets.detectionTypes.filter((o) => groupOfDetection[o.key] === group),
 }));
+
+const description = `Compare ${totalCount} code quality, security and code review tools on what their vendors document. Filter by category, language, deployment, compliance and pricing.`;
+const siteUrl = new URL("/", Astro.site).href;
+// The site itself, and the directory as a list of every tool page. List order
+// is alphabetical, the same neutral order the server renders before shuffling.
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Review Radar",
+    url: siteUrl,
+    description,
+    publisher: publisherLd(Astro.site),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Code quality, security and code review tools",
+    url: siteUrl,
+    description,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: totalCount,
+      itemListElement: tools.map((t, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: t.name,
+        url: new URL(`/${t.slug}/`, Astro.site).href,
+      })),
+    },
+  },
+];
 ---
 <Layout
   title="Review Radar — Code Quality, Security & Code Review Tools"
-  description="Code quality, security and code review tools, compared on what vendors document. Filter by category, language, deployment model, compliance, integrations and pricing."
+  description={description}
 >
   <SimpleHeader slot="header" />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="hero-search-wrap">
     <div class="container">
       <h1 class="directory-h1">Code quality, security and code review tools, compared on what vendors document</h1>
       <div class="hero-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" placeholder="Search tools, categories, languages, integrations…" autocomplete="off" />
+        <input type="text" id="searchInput" aria-label="Search tools" placeholder="Search tools, categories, languages, integrations…" autocomplete="off" />
         <kbd class="hero-search-key" aria-hidden="true">/</kbd>
       </div>
     </div>
@@ -90,7 +124,7 @@ const detectionGroups = DETECTION_GROUPS.map((group) => ({
 
           <div class="filters-panel-body" id="filtersPanelBody">
           <div class="filters-panel-head">
-            <h3 class="h4">Filters</h3>
+            <h2 class="h4">Filters</h2>
             <button type="button" id="clearFilters">Clear all</button>
           </div>
 

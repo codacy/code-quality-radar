@@ -739,7 +739,7 @@ details[open] > .filter-group-title::before { transform: rotate(45deg); }
   }
   /* The toggle already says "Filters"; only "Clear all" is worth repeating. */
   .filters-panel-head { justify-content: flex-end; }
-  .filters-panel-head h3 { display: none; }
+  .filters-panel-head h2 { display: none; }
 }
 
 /* Tool detail page */
@@ -975,6 +975,10 @@ details[open] > .filter-group-title::before { transform: rotate(45deg); }
 .faq-list, .faq-links { margin-top: var(--space-sm); }
 .faq-list + .faq-answer, .faq-links + .faq-answer { margin-top: var(--space-sm); }
 .faq-list a { color: var(--accent-text); }
+/* Links inside running text (bylines, captions, About copy) take the same accent
+   as FAQ links, since the global reset would otherwise make them look like text. */
+p.text-secondary a, p.caption a, .tool-hero-meta a { color: var(--accent-text); }
+p.text-secondary a:hover, p.caption a:hover, .tool-hero-meta a:hover { text-decoration: underline; }
 
 
 /* Glossary index */

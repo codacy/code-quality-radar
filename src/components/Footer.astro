@@ -1,5 +1,6 @@
 ---
 import Logo from "./Logo.astro";
+import { PUBLISHER } from "../data/publisher.js";
 ---
 <footer class="site-footer">
   <!--
@@ -21,6 +22,7 @@ import Logo from "./Logo.astro";
     <div class="footer-brand">
       <Logo />
       <p class="caption" style="margin-top: var(--space-sm);">Code quality, security and code review tools, checked against vendor documentation and updated on a rolling basis.</p>
+      <p class="caption" style="margin-top: var(--space-xs);">Published by <a href={PUBLISHER.url}>{PUBLISHER.name}</a>.</p>
     </div>
     <div class="footer-nav-col">
       <ul class="footer-links">

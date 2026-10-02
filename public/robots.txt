@@ -1,18 +1,39 @@
 User-agent: *
 Allow: /
 
-# AI crawlers are welcome — this directory exists to be quoted.
-# See /llms.txt for a structured index intended for language models.
+# AI crawlers are welcome, since this directory exists to be quoted.
+# See /llms.txt for a structured index intended for language models, and
+# /llms-full.txt for every tool's full capability record in one file.
+# Each AI vendor runs separate agents for training, search indexing and
+# fetching a page a user asked about; all of them are allowed.
 User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
 Allow: /
 
 User-agent: ClaudeBot
 Allow: /
 
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
 User-agent: PerplexityBot
 Allow: /
 
+User-agent: Perplexity-User
+Allow: /
+
 User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://radar.codacy.com/sitemap-index.xml

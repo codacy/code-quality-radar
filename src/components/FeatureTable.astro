@@ -10,8 +10,10 @@ interface Props {
   firstColumn?: string;
   /** Feature and availability only, for facets whose cells carry no note (git providers, API/CLI). */
   compact?: boolean;
+  /** Links for facets with no glossary term, by facet key (git providers link to their Explore article). */
+  hrefs?: Record<string, string>;
 }
-const { facets, cells, glossaryType, labelledby, firstColumn = "Feature", compact = false } = Astro.props;
+const { facets, cells, glossaryType, labelledby, firstColumn = "Feature", compact = false, hrefs = {} } = Astro.props;
 
 const STATUS = {
   yes: { text: "Yes", cls: "is-yes" },
@@ -30,7 +32,7 @@ const rows = facets.map((f) => {
     ...f,
     v,
     note: isObject ? cell.note : null,
-    href: slug ? `/glossary/${slug}/` : null,
+    href: slug ? `/glossary/${slug}/` : hrefs[f.key] || null,
   };
 });
 

@@ -1,0 +1,16 @@
+---
+import { AUTHOR } from "../data/author.js";
+
+// Byline and content date under an article's lede. The date is the same one
+// the Article JSON-LD and Open Graph tags carry, so what readers see and what
+// search engines read never disagree. Same format as a tool page's "Last verified".
+interface Props {
+  updated: string;
+}
+const { updated } = Astro.props;
+---
+<p class="tool-hero-meta">
+  <span>By <a href={`/author/${AUTHOR.slug}/`}>{AUTHOR.name}</a></span>
+  <span aria-hidden="true">·</span>
+  <span>Updated <time datetime={updated}>{updated}</time></span>
+</p>

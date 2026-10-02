@@ -23,8 +23,16 @@ interface Props {
   renderBreadcrumbs?: boolean;
   /** Text-led page: the breadcrumb trail sits above the 800px reading column, not at the frame edge. */
   measure?: boolean;
+  /**
+   * Content dates (ISO 8601) for article pages. When set, the page is shared as
+   * an `article` with matching published/modified times, the same dates its
+   * Article JSON-LD and visible "Updated" line carry.
+   */
+  published?: string;
+  modified?: string;
 }
-const { title, description, breadcrumbs, image = "/og.png", noindex = false, renderBreadcrumbs = true, measure = false } = Astro.props;
+const { title, description, breadcrumbs, image = "/og.png", noindex = false, renderBreadcrumbs = true, measure = false, published, modified } = Astro.props;
+const isArticle = Boolean(published || modified);
 
 const trail = breadcrumbs ?? [];
 const fullTrail = [{ name: "All tools", url: "/" }, ...trail];
@@ -56,7 +64,9 @@ const breadcrumbLd = trail.length
     ? <meta name="robots" content="noindex, follow" />
     : <link rel="canonical" href={canonical} />}
 
-  <meta property="og:type" content="website" />
+  <meta property="og:type" content={isArticle ? "article" : "website"} />
+  {published && <meta property="article:published_time" content={published} />}
+  {modified && <meta property="article:modified_time" content={modified} />}
   <meta property="og:site_name" content="Review Radar" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />

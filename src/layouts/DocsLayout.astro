@@ -18,6 +18,9 @@ interface Props {
   /** Slug of the page being viewed, highlighted in the sidebar. */
   current?: string;
   toc?: { id: string; label: string }[];
+  /** Content dates for article pages, passed through to the Open Graph tags. */
+  published?: string;
+  modified?: string;
 }
 const { nav, current, toc = [], breadcrumbs = [], ...layoutProps } = Astro.props;
 ---

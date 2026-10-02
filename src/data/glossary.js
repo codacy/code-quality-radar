@@ -271,7 +271,7 @@ export const GLOSSARY = [
       "Which providers can be verified, since coverage is usually partial",
       "Whether validation happens automatically or on demand",
       "How the tool avoids leaking the secret further while checking it",
-      "Whether inactive findings are suppressed or just deprioritised",
+      "Whether inactive findings are suppressed or just deprioritized",
     ],
   },
   {
@@ -694,7 +694,7 @@ export const GLOSSARY = [
     group: "AI review & fixes",
     source: { type: "detection", key: "ai_triage_false_positive_filtering" },
     short:
-      "Using a model to assess which raw findings are real and worth acting on, and suppressing or deprioritising the rest.",
+      "Using a model to assess which raw findings are real and worth acting on, and suppressing or deprioritizing the rest.",
     long: [
       "Scanners over-report by design, since they would rather flag a maybe than miss a real issue. Triage sits on top, reading each finding in the context of surrounding code to judge whether it is genuinely exploitable or reachable.",
       "It is a direct answer to one of the main reasons security tools get abandoned. The risk is symmetrical: a triage layer that wrongly suppresses a real vulnerability has done more damage than the noise it removed, so look for transparency over silent filtering.",
