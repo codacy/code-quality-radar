@@ -9,15 +9,21 @@ import {
   getSimilarTools,
   WORKFLOW_STAGE_FACETS,
   DETECTION_FACETS,
+  DETECTION_GROUPS,
   AI_CAPABILITY_FACETS,
   COMPLIANCE_BOOL_FACETS,
   GIT_PROVIDER_FACETS,
   API_CLI_FACETS,
-  BEST_FIT_BUYER_LABELS,
   PRICING_MODEL_LABELS,
+  cleanList,
+  isCatchAll,
 } from "../lib/tools.js";
+import { TOOL_FIT } from "../data/tool-fit.js";
 import { websiteFor } from "../data/tool-websites.js";
 import { logoPathFor } from "../lib/logos.js";
+import Shuffle from "../components/Shuffle.astro";
+import FaqItems from "../components/FaqItems.astro";
+import { faqJsonLd } from "../lib/faq.js";
 
 export function getStaticPaths() {
   return getAllSlugs().map((slug) => ({ params: { slug } }));
@@ -26,7 +32,9 @@ export function getStaticPaths() {
 const { slug } = Astro.params;
 const tool = getToolDetail(slug);
 const allTools = getTools();
-const similar = getSimilarTools(tool, allTools, 4);
+// Every other tool in the category, alphabetically; the grid shows a shuffled
+// four on each page load so no tool is always the one recommended.
+const similar = getSimilarTools(tool, allTools, Infinity).sort((a, b) => a.name.localeCompare(b.name));
 const officialSite = websiteFor(slug);
 
 function ok(v) {
@@ -55,53 +63,104 @@ function joinList(arr, max = 8) {
 const langCount = (typeof tool.languages?.count_claimed === "number" ? tool.languages.count_claimed : 0) || tool.languages?.list?.length || 0;
 const languageList = tool.languages?.list || [];
 const gatedLanguages = tool.languages?.tier_gated_languages || [];
-const buyerLabels = (tool.fit_signals?.best_fit_buyer || []).map((b) => BEST_FIT_BUYER_LABELS[b] || b);
 const gitLabels = GIT_PROVIDER_FACETS.map((f) =>
   mark(f.label, tool.integrations?.git_providers?.[f.key])
 ).filter(Boolean);
 
+/** "A, B and C", or "A, B, C and 4 more" past `max`. */
+function joinNames(arr, max = Infinity) {
+  const items = arr.length > max ? [...arr.slice(0, max), `${arr.length - max} more`] : [...arr];
+  return items.length > 1 ? `${items.slice(0, -1).join(", ")} and ${items.at(-1)}` : items[0] || "";
+}
+const capitalize = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+
+// "Who it's for" and the "When should you choose" FAQ share one source per
+// tool (src/data/tool-fit.js). A tool added without an entry gets neither,
+// and the build says so.
+const fit = TOOL_FIT[slug];
+if (!fit) console.warn(`[tool-fit] no entry for "${slug}"`);
+
+// Integrations, from the cleaned lists: display names only, no vendor notes.
+// Catch-all entries ("any CI/CD via the Snyk CLI") become one closing phrase.
+// Answers are split into short paragraphs and lists (see src/lib/faq.js).
+const ciNames = cleanList(tool.integrations?.ci_systems);
+const ciCatchAll = (tool.integrations?.ci_systems || []).some(isCatchAll);
+const ideNames = cleanList(tool.integrations?.ides);
+const integrationItems = [
+  gitLabels.length && `Source control: ${joinNames(gitLabels)}`,
+  ciNames.length && `CI systems: ${joinNames(ciNames, 5)}${ciCatchAll ? ", plus others through its CLI or API" : ""}`,
+  !ciNames.length && ciCatchAll && "CI systems: any, through its CLI or API",
+  ideNames.length && `IDEs: ${joinNames(ideNames, 5)}`,
+].filter(Boolean);
+
+// Pricing, from the parsed entry price rather than the display label, which
+// leads with "Free plan available" whenever there is one.
+const commercial = tool.commercial || {};
+const freeTier = commercial.free_tier?.v === "yes";
+const quoteOnly = (commercial.pricing_models || []).length === 1 && commercial.pricing_models[0] === "quote-only";
+const enterpriseQuote = commercial.enterprise_quote_only?.v === "yes";
+const pricingAnswer = tool.entryPrice
+  ? `${freeTier ? `${tool.name} has a free plan, and paid plans start at ${tool.entryPrice}.` : `${tool.name}'s paid plans start at ${tool.entryPrice}.`}${
+      enterpriseQuote ? " Enterprise pricing is by quote." : ""
+    }`
+  : quoteOnly
+    ? `${tool.name} is priced by quote, with no published price list.`
+    : `${tool.name}${freeTier ? " has a free plan but" : ""} doesn't publish paid plan prices, so pricing is by quote from the vendor.`;
+
 const faqs = [
   {
     q: `When should you choose ${tool.name}?`,
-    a: `${tool.name} best fits ${joinList(buyerLabels, 5) || "teams evaluating this category"}${
-      known(tool.fit_signals?.best_fit_team_size) ? `, ${tool.fit_signals.best_fit_team_size}.` : "."
-    }${tool.fit_signals?.notable_strengths?.[0] ? ` ${tool.fit_signals.notable_strengths[0]}` : ""}`,
+    a: fit
+      ? [
+          `${tool.name} is best for ${fit.bestFor}. It's a good fit if:`,
+          { list: fit.goodFitIf },
+          "Consider alternatives if:",
+          { list: fit.alternativesIf },
+        ]
+      : `${tool.name} is listed as ${/^[AEIOU]/.test(tool.categoryLabel) ? "an" : "a"} ${tool.categoryLabel.toLowerCase()}. See its capabilities above.`,
   },
   {
     q: `What languages does ${tool.name} support?`,
-    a: langCount
-      ? `${tool.name} supports ${langCount}+ languages and frameworks, including ${joinList(tool.languages.list, 10)}.`
-      : `Language support for ${tool.name} is not documented in the sources reviewed.`,
+    a: tool.anyLanguage
+      ? `${tool.name} isn't limited to a fixed list of languages. It works with any language its underlying model can read.`
+      : langCount
+        ? `${tool.name} supports ${langCount}+ languages and frameworks, including ${joinList(tool.languages.list, 10)}.`
+        : `${tool.name}'s documentation doesn't name the languages it supports.`,
   },
   {
     q: `What does ${tool.name} integrate with?`,
-    a: `${tool.name} integrates with ${joinList(gitLabels, 7) || "the git providers documented above"} for source control${
-      tool.integrations?.ci_systems?.length ? `, CI systems including ${joinList(tool.integrations.ci_systems, 5)}` : ""
-    }${tool.integrations?.ides?.length ? `, and IDEs including ${joinList(tool.integrations.ides, 5)}` : ""}.`,
+    a: integrationItems.length
+      ? [`${tool.name} integrates with:`, { list: integrationItems }]
+      : `See the integrations documented above.`,
   },
   {
     q: `What tools are similar to ${tool.name}?`,
     a: similar.length
-      ? `Similar ${tool.categoryLabel} tools tracked here include ${similar.map((s) => s.name).join(", ")}.`
-      : `No other tools in the ${tool.categoryLabel} category are currently tracked.`,
+      ? [`Other ${tool.categoryPlural} tracked here:`, { links: similar.map((s) => ({ text: s.name, href: `/${s.slug}/` })) }]
+      : `No other ${tool.categoryPlural} are tracked here yet.`,
   },
   {
     q: `What are ${tool.name}'s plans and pricing?`,
-    a: `${tool.name} ${tool.commercial?.free_tier?.v === "yes" ? "offers a free tier, with paid plans" : "has paid plans"} ${
-      tool.priceLabel !== "Contact for pricing" ? `starting around ${tool.priceLabel}` : "available by contacting the vendor"
-    }${tool.commercial?.enterprise_quote_only?.v === "yes" ? "; enterprise pricing is quote-only" : ""}.`,
+    a: pricingAnswer,
   },
 ];
 
-const hasFit = tool.fit_signals?.notable_strengths?.length > 0 || tool.fit_signals?.notable_limitations?.length > 0;
+const hasFit = Boolean(fit);
+// Analysis & detection is split into the same four groups the glossary and the
+// home-page filters use, each with its own heading, count and table.
+const detectionSections = DETECTION_GROUPS.map((title) => ({
+  title,
+  id: `${title.toLowerCase().replace(/&/g, "and").replace(/[^a-z]+/g, "-")}-heading`,
+  facets: DETECTION_FACETS.filter((f) => f.group === title).map(({ group, ...f }) => f),
+}));
 // "On this page" entries, built from the same conditions that render each section.
 const toc = [
   { id: "workflow-heading", label: "Workflow coverage" },
-  { id: "detection-heading", label: "Analysis & detection" },
+  ...detectionSections.map((d) => ({ id: d.id, label: d.title })),
   { id: "ai-heading", label: "AI capabilities" },
   { id: "compliance-heading", label: "Compliance & governance" },
   { id: "integrations-heading", label: "Integrations" },
-  ...(languageList.length > 0 ? [{ id: "languages-heading", label: "Languages" }] : []),
+  ...(languageList.length > 0 || tool.anyLanguage ? [{ id: "languages-heading", label: "Languages" }] : []),
   { id: "pricing-heading", label: "Pricing & plans" },
   ...(hasFit ? [{ id: "fit-heading", label: "Who it's for" }] : []),
   ...(similar.length > 0 ? [{ id: "similar-heading", label: "Similar tools" }] : []),
@@ -115,18 +174,10 @@ const jsonLdApp = {
   description: tool.one_liner,
   applicationCategory: tool.categoryLabel,
   ...(tool.commercial?.free_tier?.v === "yes"
-    ? { offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free tier" } }
+    ? { offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free plan" } }
     : {}),
 };
-const jsonLdFaq = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((f) => ({
-    "@type": "Question",
-    name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: f.a },
-  })),
-};
+const jsonLdFaq = faqJsonLd(faqs, Astro.site);
 ---
 <DocsLayout
   title={`${tool.name} — Review Radar`}
@@ -165,17 +216,22 @@ const jsonLdFaq = {
       </div>
       <div class="quick-fact">
         <p class="label quick-fact-label">Languages</p>
-        <p class="quick-fact-value">{langCount ? `${langCount}+` : "Not documented"}</p>
+        <p class="quick-fact-value">{tool.anyLanguage ? "Any (no fixed list)" : langCount ? `${langCount}+` : "Not documented"}</p>
       </div>
       <div class="quick-fact">
         <p class="label quick-fact-label">Pricing model</p>
         <p class="quick-fact-value">{(tool.commercial?.pricing_models || []).map((m) => PRICING_MODEL_LABELS[m] || m).join(", ") || "Not documented"}</p>
       </div>
       <div class="quick-fact">
-        <p class="label quick-fact-label">Free tier</p>
+        <p class="label quick-fact-label">Free plan</p>
         <p class="quick-fact-value">{tool.commercial?.free_tier?.v === "yes" ? "Yes" : tool.commercial?.free_tier?.v === "partial" ? "Partial" : "No"}</p>
       </div>
     </div>
+
+    <p class="caption" style="margin-top: var(--space-md);">
+      <b>Partial</b> means the documentation covers only part of a capability, a related capability, or a beta.
+      The description next to it says what is covered.
+    </p>
 
     <section class="detail-section">
       <div class="detail-section-head has-tally">
@@ -188,16 +244,15 @@ const jsonLdFaq = {
       <FeatureTable facets={WORKFLOW_STAGE_FACETS} cells={tool.workflow_stages} glossaryType="workflow" labelledby="workflow-heading" />
     </section>
 
-    <section class="detail-section">
-      <div class="detail-section-head has-tally">
-        <div>
-          <h2 class="h2" id="detection-heading">Analysis &amp; detection</h2>
-          <p class="text-secondary" style="margin-top: var(--space-xs);">Every detection and code-analysis capability tracked for {tool.name}.</p>
+    {detectionSections.map((d) => (
+      <section class="detail-section">
+        <div class="detail-section-head has-tally">
+          <h2 class="h2" id={d.id}>{d.title}</h2>
+          <FeatureTally sets={[{ facets: d.facets, cells: tool.detection }]} />
         </div>
-        <FeatureTally sets={[{ facets: DETECTION_FACETS, cells: tool.detection }]} />
-      </div>
-      <FeatureTable facets={DETECTION_FACETS} cells={tool.detection} glossaryType="detection" labelledby="detection-heading" />
-    </section>
+        <FeatureTable facets={d.facets} cells={tool.detection} glossaryType="detection" labelledby={d.id} />
+      </section>
+    ))}
 
     <section class="detail-section">
       <div class="detail-section-head has-tally">
@@ -265,6 +320,17 @@ const jsonLdFaq = {
       })}
     </section>
 
+    {tool.anyLanguage && (
+      <section class="detail-section">
+        <div class="detail-section-head">
+          <h2 class="h2" id="languages-heading">Languages</h2>
+          <p class="text-secondary" style="margin-top: var(--space-xs);">
+            Not limited to a fixed list: {tool.name} works with any language its underlying model can read.
+          </p>
+        </div>
+      </section>
+    )}
+
     {languageList.length > 0 && (
       <section class="detail-section">
         <div class="detail-section-head">
@@ -320,27 +386,24 @@ const jsonLdFaq = {
       <section class="detail-section">
         <div class="detail-section-head">
           <h2 class="h2" id="fit-heading">Who it's for</h2>
+          <p class="text-secondary" style="margin-top: var(--space-xs);"><b>Best for</b> {fit.bestFor}.</p>
           {known(tool.fit_signals?.best_fit_team_size) && (
-            <p class="text-secondary" style="margin-top: var(--space-xs);">{tool.fit_signals.best_fit_team_size}</p>
+            <p class="caption" style="margin-top: var(--space-xs);">{capitalize(tool.fit_signals.best_fit_team_size)}{/[.!?]$/.test(tool.fit_signals.best_fit_team_size) ? "" : "."}</p>
           )}
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-xl);">
-          {tool.fit_signals?.notable_strengths?.length > 0 && (
-            <div>
-              <p class="label quick-fact-label" style="margin-bottom: var(--space-md);">Notable strengths</p>
-              <ul class="fit-list strengths">
-                {tool.fit_signals.notable_strengths.map((s) => <li>{s}</li>)}
-              </ul>
-            </div>
-          )}
-          {tool.fit_signals?.notable_limitations?.length > 0 && (
-            <div>
-              <p class="label quick-fact-label" style="margin-bottom: var(--space-md);">Notable limitations</p>
-              <ul class="fit-list limitations">
-                {tool.fit_signals.notable_limitations.map((s) => <li>{s}</li>)}
-              </ul>
-            </div>
-          )}
+          <div>
+            <p class="label quick-fact-label" style="margin-bottom: var(--space-md);">A good fit if</p>
+            <ul class="fit-list strengths">
+              {fit.goodFitIf.map((s) => <li>{s}</li>)}
+            </ul>
+          </div>
+          <div>
+            <p class="label quick-fact-label" style="margin-bottom: var(--space-md);">Consider alternatives if</p>
+            <ul class="fit-list limitations">
+              {fit.alternativesIf.map((s) => <li>{s}</li>)}
+            </ul>
+          </div>
         </div>
       </section>
     )}
@@ -359,6 +422,7 @@ const jsonLdFaq = {
             </a>
           ))}
         </div>
+        <Shuffle limit={4} />
       </section>
     )}
 
@@ -366,12 +430,7 @@ const jsonLdFaq = {
       <div class="detail-section-head">
         <h2 class="h2" id="faq-heading">FAQ</h2>
       </div>
-      {faqs.map((f) => (
-        <div class="faq-item">
-          <h3 class="faq-question">{f.q}</h3>
-          <p class="faq-answer">{f.a}</p>
-        </div>
-      ))}
+      <FaqItems faqs={faqs} />
     </section>
 
     {officialSite && (

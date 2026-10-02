@@ -2,18 +2,21 @@
 import Layout from "../layouts/Layout.astro";
 import SimpleHeader from "../components/SimpleHeader.astro";
 import FilterGroup from "../components/FilterGroup.astro";
+import Shuffle from "../components/Shuffle.astro";
 import {
   getTools,
   getFacetOptions,
   GIT_PROVIDER_FACETS,
   WORKFLOW_STAGE_FACETS,
   DETECTION_FACETS,
+  DETECTION_GROUPS,
   AI_CAPABILITY_FACETS,
   COMPLIANCE_BOOL_FACETS,
 } from "../lib/tools.js";
 import { logoPathFor } from "../lib/logos.js";
 
-const tools = getTools().sort((a, b) => b.lastUpdated.localeCompare(a.lastUpdated) || a.name.localeCompare(b.name));
+// Alphabetical on the server; the grid is shuffled on every page load.
+const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
 const facets = getFacetOptions(tools);
 const totalCount = tools.length;
 
@@ -42,19 +45,30 @@ const PIPE_GROUPS = ["languages", "certifications", "ides", "ci", "issuetrackers
 // price-transparency rating, so those stay OR-within-group, or picking two
 // values would always produce zero matches.
 const OR_WITHIN_GROUP = ["category"];
+
+// Analysis & detection is shown as four filter groups, the same split the
+// glossary and tool pages use. They share one filter key, so checking options
+// across them still narrows the results together.
+const groupOfDetection = Object.fromEntries(DETECTION_FACETS.map((f) => [f.key, f.group]));
+const titleCase = (s) => s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+const detectionGroups = DETECTION_GROUPS.map((group) => ({
+  title: titleCase(group),
+  options: facets.detectionTypes.filter((o) => groupOfDetection[o.key] === group),
+}));
 ---
 <Layout
-  title="Review Radar — Code Quality, Code Security & Code Review Tools"
-  description="A directory of code quality, static analysis, security scanning, and AI-assisted code review tools. Filter by category, language, deployment model, compliance, integrations, and pricing."
+  title="Review Radar — Code Quality, Security & Code Review Tools"
+  description="Code quality, security and code review tools, compared on what vendors document. Filter by category, language, deployment model, compliance, integrations and pricing."
 >
   <SimpleHeader slot="header" />
 
   <section class="hero-search-wrap">
     <div class="container">
-      <h1 class="directory-h1">Unbiased code quality, security and code review tool directory</h1>
+      <h1 class="directory-h1">Code quality, security and code review tools, compared on what vendors document</h1>
       <div class="hero-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="searchInput" placeholder="Search tools, categories, languages, integrations…" autocomplete="off" />
+        <kbd class="hero-search-key" aria-hidden="true">/</kbd>
       </div>
     </div>
   </section>
@@ -87,7 +101,9 @@ const OR_WITHIN_GROUP = ["category"];
           <FilterGroup title="Category" groupKey="category" options={facets.categories} open={false} />
           <FilterGroup title="Deployment" groupKey="deployment" options={facets.deployment} open={false} />
           <FilterGroup title="Workflow Stage" groupKey="workflow" options={facets.workflowStages} open={false} />
-          <FilterGroup title="Analysis & Detection" groupKey="detection" options={facets.detectionTypes} searchable={true} open={false} />
+          {detectionGroups.map((g) => (
+            <FilterGroup title={g.title} groupKey="detection" options={g.options} open={false} />
+          ))}
           <FilterGroup title="Compliance & Governance" groupKey="compliance" options={facets.complianceBool} open={false} />
           <FilterGroup title="Certifications" groupKey="certifications" options={facets.certifications} searchable={true} open={false} />
           <FilterGroup title="API & CLI Access" groupKey="apicli" options={facets.apiCli} open={false} />
@@ -108,7 +124,8 @@ const OR_WITHIN_GROUP = ["category"];
               <label class="sort-control">
                 Sort by
                 <select id="sortSelect">
-                  <option value="updated" selected>Last updated</option>
+                  <option value="shuffled" selected>Shuffled</option>
+                  <option value="updated">Last verified</option>
                   <option value="name-asc">Name (A–Z)</option>
                   <option value="name-desc">Name (Z–A)</option>
                 </select>
@@ -153,11 +170,11 @@ const OR_WITHIN_GROUP = ["category"];
                     t.freeTier && "freeTier",
                     t.freeForOpenSource && "freeForOpenSource",
                     t.hasTrial && "hasTrial",
-                    t.enterpriseQuoteOnly && "enterpriseQuoteOnly",
                   ]
                     .filter(Boolean)
                     .join(" ")}
                   data-languages={pipeStr(t.languages)}
+                  data-anylang={t.anyLanguage ? "true" : undefined}
                   data-certifications={pipeStr(t.certifications)}
                   data-ides={pipeStr(t.ides)}
                   data-ci={pipeStr(t.ciSystems)}
@@ -185,6 +202,7 @@ const OR_WITHIN_GROUP = ["category"];
               );
             })}
           </div>
+          <Shuffle />
           <p class="no-results" id="noResults" hidden>No tools match these filters.</p>
         </div>
       </div>
@@ -197,6 +215,8 @@ const OR_WITHIN_GROUP = ["category"];
     const sortSelect = document.getElementById("sortSelect");
     const toolGrid = document.getElementById("toolGrid");
     const cards = Array.from(document.querySelectorAll(".tool-card"));
+    // The grid was shuffled before first paint; keep that order for "Shuffled".
+    const shuffledOrder = Array.from(toolGrid.children);
     const visibleCountEl = document.getElementById("visibleCount");
     const noResultsEl = document.getElementById("noResults");
     const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"][data-filter-group]'));
@@ -245,7 +265,11 @@ const OR_WITHIN_GROUP = ["category"];
     }
 
     function applySort() {
-      const mode = sortSelect?.value || "updated";
+      const mode = sortSelect?.value || "shuffled";
+      if (mode === "shuffled") {
+        for (const card of shuffledOrder) toolGrid.appendChild(card);
+        return;
+      }
       const sorted = [...cards].sort((a, b) => {
         if (mode === "name-asc") return a.dataset.name.localeCompare(b.dataset.name);
         if (mode === "name-desc") return b.dataset.name.localeCompare(a.dataset.name);
@@ -266,6 +290,8 @@ const OR_WITHIN_GROUP = ["category"];
     }
 
     function cardMatchesGroup(card, group, value) {
+      // A tool with no fixed language list works with any language.
+      if (group === "languages" && card.dataset.anylang === "true") return true;
       const raw = card.dataset[group];
       if (raw === undefined) return false;
       return pipeGroupSet.has(group) ? raw.includes(`|${value}|`) : raw.split(" ").includes(value);
@@ -333,6 +359,12 @@ const OR_WITHIN_GROUP = ["category"];
     }
 
     searchInput?.addEventListener("input", applyFilters);
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.target.closest?.("input, textarea, select, [contenteditable]")) return;
+      e.preventDefault();
+      searchInput?.focus();
+    });
     checkboxes.forEach((cb) => cb.addEventListener("change", applyFilters));
 
     document.querySelectorAll(".js-inline-search").forEach((input) => {

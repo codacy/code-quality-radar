@@ -19,7 +19,7 @@ const jsonLd = {
   "@type": "DefinedTermSet",
   name: "Code quality, security and code review glossary",
   description:
-    "Plain definitions of the code quality, code security and code review terms used across the Review Radar tool directory.",
+    "Plain definitions of the code quality, security and code review terms used across the Review Radar tool directory.",
   hasDefinedTerm: entries.map((e) => ({
     "@type": "DefinedTerm",
     name: e.term,
@@ -30,7 +30,7 @@ const jsonLd = {
 ---
 <Layout
   title="Glossary — Review Radar"
-  description="Plain-English definitions of code quality, code security and code review terms, including SAST, SCA, IaC scanning, merge gates and self-hosted deployment, each with the tools that support it."
+  description="Plain-English definitions of code quality, security and code review terms, including SAST, SCA, IaC scanning, quality gates and self-hosted deployment, each with the tools that support it."
   breadcrumbs={[{ name: "Glossary", url: "/glossary/" }]}
 >
   <SimpleHeader slot="header" />
@@ -40,7 +40,7 @@ const jsonLd = {
     <div class="container">
       <p class="label section-label">Glossary</p>
       <h1 class="h2" style="margin-top: var(--space-2xs);">
-        The vocabulary of code quality, security and review
+        The vocabulary of code quality, security and code review
       </h1>
       <p class="text-secondary" style="margin-top: var(--space-sm); max-width: 620px;">
         {entries.length} terms, each defined plainly and linked to the tools in the directory that
@@ -48,7 +48,7 @@ const jsonLd = {
       </p>
       <div class="hero-search" style="margin-top: var(--space-lg);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="glossarySearch" placeholder="Try “sast”, “self-hosted”, “merge gate”…" autocomplete="off" />
+        <input type="text" id="glossarySearch" placeholder="Try “sast”, “self-hosted”, “quality gate”…" autocomplete="off" />
       </div>
     </div>
   </section>

@@ -1,0 +1,35 @@
+---
+// Shuffles the children of the element placed immediately before this
+// component, on every page load, so no tool gains an advantage from its
+// position. The script runs inline, before first paint, so the reorder is not
+// visible; without JavaScript the server order (alphabetical) stays.
+//
+// Children with a `data-band` attribute are shuffled within their band and the
+// bands keep their order, which keeps full support ahead of partial support.
+// `limit` keeps only the first N children after shuffling, so a fixed-size
+// sample (such as "Similar tools") is drawn fairly too.
+interface Props {
+  limit?: number;
+}
+const { limit = 0 } = Astro.props;
+---
+<script is:inline define:vars={{ limit }}>
+  const list = document.currentScript.previousElementSibling;
+  if (list) {
+    const bands = new Map();
+    for (const el of Array.from(list.children)) {
+      const band = el.dataset.band || "";
+      if (!bands.has(band)) bands.set(band, []);
+      bands.get(band).push(el);
+    }
+    const order = [];
+    for (const items of bands.values()) {
+      for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+      }
+      order.push(...items);
+    }
+    order.forEach((el, i) => (limit && i >= limit ? el.remove() : list.appendChild(el)));
+  }
+</script>

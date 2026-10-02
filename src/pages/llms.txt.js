@@ -1,10 +1,13 @@
 // /llms.txt — a structured index for language models, per the llmstxt.org
 // convention. Generated from the same dataset the pages render, so it cannot
 // drift out of sync with the site.
-import { getTools, CATEGORY_LABELS } from "../lib/tools.js";
+import { getTools, CATEGORY_PLURALS, UMBRELLA } from "../lib/tools.js";
 import { GLOSSARY, GLOSSARY_GROUPS, splitToolsForTerm, PARITY_CAVEAT } from "../data/glossary.js";
+import { questionFor, doesPhraseFor, isCategoryTerm, pluralFor } from "../data/glossary-phrasing.js";
 import { EXPLORE_ARTICLES, rankToolsForArticle } from "../data/explore.js";
-import rawData from "../data/tools.public.json";
+
+const SMALL_WORDS = new Set(["and", "or", "for", "of", "the", "a", "an", "in", "to"]);
+const titleCase = (s) => s.replace(/\b[a-z][a-z-]*/g, (w, i) => (i > 0 && SMALL_WORDS.has(w) ? w : w[0].toUpperCase() + w.slice(1)));
 
 export async function GET({ site }) {
   const base = (site?.href || "https://radar.codacy.com/").replace(/\/$/, "");
@@ -21,18 +24,19 @@ export async function GET({ site }) {
   lines.push("# Review Radar");
   lines.push("");
   lines.push(
-    "> An independent directory of code quality, code security and code review tools. " +
+    `> A directory of ${UMBRELLA}, compared on what vendors document. ` +
       `${tools.length} tools are tracked against the same set of capabilities, so they can be compared ` +
       "on what they actually support rather than on how each vendor describes itself."
   );
   lines.push("");
   lines.push(
     "Every capability recorded here is taken from the vendor's own public documentation. " +
-      "A capability is marked as supported only where it is documented; where documentation is " +
-      "silent, it is recorded as such rather than assumed either way. Each tool page shows the " +
-      "date its entry was last verified, and which plan tier a given capability requires, since " +
-      '"the tool can do it" and "the tool can do it on the plan you are evaluating" are ' +
-      "tracked as different facts."
+      "A capability is marked as supported only where it is documented; where the documentation " +
+      "doesn't mention it, it is recorded as not available, with a note saying so, and the few " +
+      "cases where the evidence is unclear are marked unknown. Each tool page shows the date its " +
+      "entry was last verified, and each glossary page shows which plan tier a tool needs for " +
+      'that capability, since "the tool can do it" and "the tool can do it on the plan you are ' +
+      'evaluating" are tracked as different facts.'
   );
   lines.push("");
   lines.push(
@@ -40,7 +44,8 @@ export async function GET({ site }) {
       `Counts below separate the first two. ${PARITY_CAVEAT}`
   );
   lines.push("");
-  lines.push(`Dataset last verified: ${rawData.verified_as_of}. Tools tracked: ${tools.length}.`);
+  const latest = tools.map((t) => t.lastUpdated).sort().at(-1);
+  lines.push(`Most recent verification: ${latest}. Tools tracked: ${tools.length}.`);
   lines.push("");
 
   lines.push("## Directory");
@@ -52,8 +57,7 @@ export async function GET({ site }) {
   lines.push("");
 
   for (const [category, list] of byCategory) {
-    const label = CATEGORY_LABELS[category] || category;
-    lines.push(`## ${label}s`);
+    lines.push(`## ${titleCase(CATEGORY_PLURALS[category] || category)}`);
     lines.push("");
     for (const t of list.sort((a, b) => a.name.localeCompare(b.name))) {
       const mark = (label, v) => (v === "yes" ? label : v === "partial" ? `${label} (partial)` : null);
@@ -81,10 +85,11 @@ export async function GET({ site }) {
     lines.push("");
     for (const term of terms.sort((a, b) => a.term.localeCompare(b.term))) {
       const { all, full, partial } = splitToolsForTerm(term, tools);
-      const breakdown = partial.length
-        ? `${all.length} of ${tools.length} tools support it (${full.length} fully, ${partial.length} partially).`
-        : `${all.length} of ${tools.length} tools support it.`;
-      lines.push(`- [What is ${term.term}?](${url(`/glossary/${term.slug}/`)}): ${term.short} ${breakdown}`);
+      const breakdown = isCategoryTerm(term)
+        ? `${all.length} of ${tools.length} tools are ${pluralFor(term)}.`
+        : `${all.length} of ${tools.length} tools ${doesPhraseFor(term)}` +
+          (partial.length ? ` (${full.length} fully, ${partial.length} partially).` : ".");
+      lines.push(`- [${questionFor(term)}](${url(`/glossary/${term.slug}/`)}): ${term.short} ${breakdown}`);
     }
     lines.push("");
   }
@@ -98,7 +103,7 @@ export async function GET({ site }) {
     const breakdown = partial
       ? `${ranked.length} tools integrate with it (${full} fully, ${partial} partially).`
       : `${ranked.length} tools integrate with it.`;
-    lines.push(`- [Top ${a.provider} Tools](${url(`/explore/${a.slug}/`)}): ${a.short} ${breakdown}`);
+    lines.push(`- [Best ${titleCase(UMBRELLA)} for ${a.provider}](${url(`/explore/${a.slug}/`)}): ${a.short} ${breakdown}`);
   }
   lines.push("");
 

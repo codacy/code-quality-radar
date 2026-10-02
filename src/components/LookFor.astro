@@ -1,0 +1,22 @@
+---
+// "What to look for": guidance on how to judge a tool for the page's topic.
+// Items are { label, text }, or plain strings on pages not yet rewritten.
+interface Props {
+  items: (string | { label: string; text: string })[];
+}
+const { items } = Astro.props;
+---
+<section class="article-section">
+  <h2 class="h3" id="look-for-heading">What to look for</h2>
+  <ul class="fit-list strengths look-for-list" style="margin-top: var(--space-md);">
+    {items.map((l) =>
+      typeof l === "string" ? (
+        <li>{l}</li>
+      ) : (
+        <li>
+          <span class="look-for-label">{l.label}.</span> {l.text}
+        </li>
+      )
+    )}
+  </ul>
+</section>

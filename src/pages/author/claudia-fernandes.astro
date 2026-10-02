@@ -4,6 +4,7 @@ import SimpleHeader from "../../components/SimpleHeader.astro";
 import { AUTHOR } from "../../data/author.js";
 import { EXPLORE_ARTICLES, rankToolsForArticle } from "../../data/explore.js";
 import { getTools } from "../../lib/tools.js";
+import { exploreHeadline } from "../../lib/headlines.js";
 
 const tools = getTools();
 const articles = EXPLORE_ARTICLES.map((a) => ({
@@ -90,7 +91,7 @@ const jsonLd = {
         {articles.map((a) => (
           <a href={`/explore/${a.slug}/`} class="glossary-card">
             <span class="label glossary-card-group">{a.group}</span>
-            <span class="glossary-card-term">Top {a.toolCount} Code Review Tools for {a.provider} in 2026</span>
+            <span class="glossary-card-term">{exploreHeadline(a.provider, a.toolCount)}</span>
             <span class="glossary-card-short">{a.short}</span>
             <span class="glossary-card-foot">
               <span>{a.toolCount} {a.toolCount === 1 ? "tool" : "tools"}</span>

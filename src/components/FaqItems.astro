@@ -1,0 +1,31 @@
+---
+// Renders FAQ questions and answers. Answers can be split into paragraphs,
+// bulleted lists and rows of links (see src/lib/faq.js), so no answer has to
+// be one long block of text.
+import { answerParts } from "../lib/faq.js";
+
+interface Props {
+  faqs: { q: string; a: any }[];
+}
+const { faqs } = Astro.props;
+---
+{faqs.map((f) => (
+  <div class="faq-item">
+    <h3 class="faq-question">{f.q}</h3>
+    {answerParts(f.a).map((part) =>
+      typeof part === "string" ? (
+        <p class="faq-answer">{part}</p>
+      ) : part.links ? (
+        <div class="chip-list faq-links">
+          {part.links.map((l) => <a href={l.href} class="chip chip-link">{l.text}</a>)}
+        </div>
+      ) : (
+        <ul class="fit-list strengths faq-list">
+          {part.list.map((i) => (
+            <li>{typeof i === "string" ? i : i.href ? <a href={i.href}>{i.text}</a> : i.text}</li>
+          ))}
+        </ul>
+      )
+    )}
+  </div>
+))}
