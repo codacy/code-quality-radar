@@ -55,6 +55,7 @@ const OR_WITHIN_GROUP = ["category"];
       <div class="hero-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="searchInput" placeholder="Search tools, categories, languages, integrations…" autocomplete="off" />
+        <kbd class="hero-search-key" aria-hidden="true">/</kbd>
       </div>
     </div>
   </section>
@@ -333,6 +334,12 @@ const OR_WITHIN_GROUP = ["category"];
     }
 
     searchInput?.addEventListener("input", applyFilters);
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.target.closest?.("input, textarea, select, [contenteditable]")) return;
+      e.preventDefault();
+      searchInput?.focus();
+    });
     checkboxes.forEach((cb) => cb.addEventListener("change", applyFilters));
 
     document.querySelectorAll(".js-inline-search").forEach((input) => {

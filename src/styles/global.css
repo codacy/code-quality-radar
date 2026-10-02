@@ -1298,7 +1298,8 @@ details[open] > .filter-group-title::before { transform: rotate(45deg); }
 }
 .docs-search-input::placeholder { color: var(--text-tertiary); }
 .docs-search-input::-webkit-search-cancel-button { -webkit-appearance: none; }
-.docs-search-key {
+.docs-search-key,
+.hero-search-key {
   font-family: var(--font-sans);
   font-size: 11px;
   line-height: 16px;
@@ -1306,6 +1307,10 @@ details[open] > .filter-group-title::before { transform: rotate(45deg); }
   color: var(--text-tertiary);
   border: 1px solid var(--border-hover);
   border-radius: var(--radius-tag);
+}
+.hero-search-key { font-size: 12px; line-height: 20px; padding: 0 7px; }
+@media (hover: none) {
+  .hero-search-key { display: none; }
 }
 .docs-sidebar-title { font-size: 14px; font-weight: 500; padding: 0 10px; margin-bottom: var(--space-xs); }
 .docs-sidebar-title a { color: var(--text-primary); }
