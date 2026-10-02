@@ -1,6 +1,8 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
 import AuthorCard from "../../components/AuthorCard.astro";
+import LookFor from "../../components/LookFor.astro";
+import Shuffle from "../../components/Shuffle.astro";
 import {
   GLOSSARY,
   getGlossaryTerm,
@@ -11,6 +13,10 @@ import {
   GLOSSARY_UPDATED,
 } from "../../data/glossary.js";
 import { getTools, getToolDetail, tierLabelFor } from "../../lib/tools.js";
+import { logoPathFor } from "../../lib/logos.js";
+import { attachComments, byBandThenName, lookForFaq, SHUFFLE_NOTE } from "../../lib/picks.js";
+import { faqJsonLd } from "../../lib/faq.js";
+import FaqItems from "../../components/FaqItems.astro";
 import { AUTHOR } from "../../data/author.js";
 
 export function getStaticPaths() {
@@ -21,29 +27,21 @@ const { term: slug } = Astro.params;
 const entry = getGlossaryTerm(slug);
 const allTools = getTools();
 
-// Tools that fully support the term rank above those that only partly do, and
-// Codacy leads the list only where its own support is full — heading a "top
-// tools" list with a partial implementation would overstate it.
-const matching = toolsForTerm(entry, allTools);
-const byName = (a, b) => a.name.localeCompare(b.name);
-const isPartial = (t) => valueForTerm(entry, t) === "partial";
-const fullSupport = matching.filter((t) => !isPartial(t));
-const partialSupport = matching.filter(isPartial);
-
-const ranked = [
-  ...fullSupport.filter((t) => t.slug === "codacy"),
-  ...fullSupport.filter((t) => t.slug !== "codacy").sort(byName),
-  ...partialSupport.sort(byName),
-].map((t) => {
-  const raw = getToolDetail(t.slug);
-  const cell = facetCellFor(entry, raw);
+// Every tool with the capability, each with its documented note and plan for
+// it. Server order is alphabetical (full support first); the grid is shuffled
+// on every page load. Comments come from the term's picks where written.
+const withNotes = toolsForTerm(entry, allTools).map((t) => {
+  const cell = facetCellFor(entry, getToolDetail(t.slug));
   return {
     ...t,
     note: cell?.note || t.description,
     tier: cell ? tierLabelFor(cell) : null,
-    partial: cell?.v === "partial",
+    partial: valueForTerm(entry, t) === "partial",
   };
 });
+const ranked = attachComments(withNotes.sort(byBandThenName), entry.picks, entry.slug);
+const commented = Boolean(entry.picks?.length);
+const alphabetical = [...ranked].sort((a, b) => a.name.localeCompare(b.name)).map((t) => ({ text: t.name, href: `/${t.slug}/` }));
 
 const related = GLOSSARY.filter((t) => t.group === entry.group && t.slug !== entry.slug).slice(0, 6);
 const headline = `What is ${entry.term}?`;
@@ -54,29 +52,32 @@ const headline = `What is ${entry.term}?`;
 const partialCount = ranked.filter((t) => t.partial).length;
 const fullCount = ranked.length - partialCount;
 const parityCaveat =
-  "Support is not the same as parity, since some implementations are narrower in scope, gated to a higher plan tier, or maintained only for existing customers. The note under each tool is what its own documentation describes.";
+  "Support is not the same as parity, since some implementations are narrower in scope, gated to a higher plan tier, or maintained only for existing customers. " +
+  (commented
+    ? "The comment under each tool is our summary of what its own documentation describes."
+    : "The note under each tool is what its own documentation describes.");
 
 const faqs = [
   { q: headline, a: entry.short },
   {
     q: `How many tools support ${entry.term}?`,
-    a:
+    a: [
       `${ranked.length} of the ${allTools.length} tools tracked in this directory support ${entry.term}` +
-      (partialCount
-        ? `, ${fullCount} fully and ${partialCount} partially`
-        : "") +
-      (ranked.length ? `, including ${ranked.slice(0, 5).map((t) => t.name).join(", ")}.` : ".") +
-      ` ${parityCaveat}`,
+        (partialCount ? `, ${fullCount} fully and ${partialCount} partially` : "") +
+        (ranked.length ? ":" : "."),
+      ...(ranked.length ? [{ links: alphabetical }] : []),
+      parityCaveat,
+    ],
   },
   {
     q: `What should you look for in ${entry.term}?`,
-    a: entry.lookFor.join(". ") + ".",
+    a: lookForFaq(entry.lookFor),
   },
 ];
 
 const toc = [
-  { id: "tools-heading", label: ranked.length === 1 ? "Top tool" : "Top tools" },
   { id: "look-for-heading", label: "What to look for" },
+  { id: "tools-heading", label: ranked.length === 1 ? "Top tool" : "Top tools" },
   ...(related.length > 0 ? [{ id: "related-heading", label: "Related terms" }] : []),
   { id: "faq-heading", label: "FAQ" },
 ];
@@ -102,15 +103,7 @@ const jsonLdArticle = {
   author: { "@type": "Person", name: AUTHOR.name, url: AUTHOR.linkedin },
   about: { "@type": "DefinedTerm", name: entry.term },
 };
-const jsonLdFaq = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((f) => ({
-    "@type": "Question",
-    name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: f.a },
-  })),
-};
+const jsonLdFaq = faqJsonLd(faqs, Astro.site);
 ---
 <DocsLayout
   title={`${headline} — Review Radar`}
@@ -138,37 +131,39 @@ const jsonLdFaq = {
         {entry.long.map((p) => <p class="article-body">{p}</p>)}
       </section>
 
+      <LookFor items={entry.lookFor} />
+
       <section class="article-section">
         <h2 class="h3" id="tools-heading">Top {ranked.length} {entry.term} {ranked.length === 1 ? "tool" : "tools"}</h2>
         <p class="text-secondary body-sm" style="margin-top: var(--space-xs);">
           Every tool in the directory documented as supporting {entry.term}
-          {partialCount > 0 && <>, {fullCount} fully, {partialCount} partially</>}, with what its
-          own documentation says.
+          {partialCount > 0 && <>, {fullCount} fully, {partialCount} partially</>}.
+          {partialCount > 0 && " Full support is shown first."} {SHUFFLE_NOTE}
         </p>
         <p class="caption parity-caveat">{parityCaveat}</p>
-        <ol class="ranked-list">
-          {ranked.map((t, i) => (
-            <li class="ranked-item">
-              <span class="ranked-index">{i + 1}</span>
-              <div class="ranked-body">
-                <div class="ranked-head">
-                  <a href={`/${t.slug}/`} class="ranked-name">{t.name}</a>
-                  <span class="pill">{t.categoryLabel}</span>
+        <div class="tool-grid pick-grid">
+          {ranked.map((t) => (
+            <a href={`/${t.slug}/`} class="tool-card" data-band={t.partial ? "partial" : "full"}>
+              <div class="tool-card-head">
+                <p class="tool-category-label">{t.categoryLabel}</p>
+                <div class="tool-name-row">
+                  <span class="tool-avatar">
+                    {logoPathFor(t.slug) ? <img src={logoPathFor(t.slug)} alt="" loading="lazy" /> : t.initial}
+                  </span>
+                  <span class="tool-name">{t.name}</span>
                   {t.partial && <span class="facet-status status-partial">Partial</span>}
-                  {t.tier && <span class="pill facet-tier">{t.tier}</span>}
                 </div>
-                <p class="ranked-note">{t.note}</p>
+                {t.tier && <div class="tool-card-badges"><span class="pill facet-tier">{t.tier}</span></div>}
               </div>
-            </li>
+              <p class="tool-desc is-full">{t.comment ?? t.note}</p>
+              <div class="tool-footer">
+                <span class="tool-price">{t.priceLabel}</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+              </div>
+            </a>
           ))}
-        </ol>
-      </section>
-
-      <section class="article-section">
-        <h2 class="h3" id="look-for-heading">What to look for</h2>
-        <ul class="fit-list strengths" style="margin-top: var(--space-md);">
-          {entry.lookFor.map((l) => <li>{l}</li>)}
-        </ul>
+        </div>
+        <Shuffle />
       </section>
 
       {related.length > 0 && (
@@ -184,12 +179,7 @@ const jsonLdFaq = {
 
       <section class="article-section">
         <h2 class="h3" id="faq-heading">FAQ</h2>
-        {faqs.map((f) => (
-          <div class="faq-item">
-            <h3 class="faq-question">{f.q}</h3>
-            <p class="faq-answer">{f.a}</p>
-          </div>
-        ))}
+        <FaqItems faqs={faqs} />
       </section>
 
       <AuthorCard />

@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import SimpleHeader from "../components/SimpleHeader.astro";
 import FilterGroup from "../components/FilterGroup.astro";
+import Shuffle from "../components/Shuffle.astro";
 import {
   getTools,
   getFacetOptions,
@@ -13,7 +14,8 @@ import {
 } from "../lib/tools.js";
 import { logoPathFor } from "../lib/logos.js";
 
-const tools = getTools().sort((a, b) => b.lastUpdated.localeCompare(a.lastUpdated) || a.name.localeCompare(b.name));
+// Alphabetical on the server; the grid is shuffled on every page load.
+const tools = getTools().sort((a, b) => a.name.localeCompare(b.name));
 const facets = getFacetOptions(tools);
 const totalCount = tools.length;
 
@@ -109,7 +111,8 @@ const OR_WITHIN_GROUP = ["category"];
               <label class="sort-control">
                 Sort by
                 <select id="sortSelect">
-                  <option value="updated" selected>Last updated</option>
+                  <option value="shuffled" selected>Shuffled</option>
+                  <option value="updated">Last updated</option>
                   <option value="name-asc">Name (A–Z)</option>
                   <option value="name-desc">Name (Z–A)</option>
                 </select>
@@ -186,6 +189,7 @@ const OR_WITHIN_GROUP = ["category"];
               );
             })}
           </div>
+          <Shuffle />
           <p class="no-results" id="noResults" hidden>No tools match these filters.</p>
         </div>
       </div>
@@ -198,6 +202,8 @@ const OR_WITHIN_GROUP = ["category"];
     const sortSelect = document.getElementById("sortSelect");
     const toolGrid = document.getElementById("toolGrid");
     const cards = Array.from(document.querySelectorAll(".tool-card"));
+    // The grid was shuffled before first paint; keep that order for "Shuffled".
+    const shuffledOrder = Array.from(toolGrid.children);
     const visibleCountEl = document.getElementById("visibleCount");
     const noResultsEl = document.getElementById("noResults");
     const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"][data-filter-group]'));
@@ -246,7 +252,11 @@ const OR_WITHIN_GROUP = ["category"];
     }
 
     function applySort() {
-      const mode = sortSelect?.value || "updated";
+      const mode = sortSelect?.value || "shuffled";
+      if (mode === "shuffled") {
+        for (const card of shuffledOrder) toolGrid.appendChild(card);
+        return;
+      }
       const sorted = [...cards].sort((a, b) => {
         if (mode === "name-asc") return a.dataset.name.localeCompare(b.dataset.name);
         if (mode === "name-desc") return b.dataset.name.localeCompare(a.dataset.name);

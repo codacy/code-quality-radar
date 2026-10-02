@@ -652,6 +652,11 @@ details[open] > .filter-group-title::before { transform: rotate(45deg); }
   overflow: hidden;
 }
 .tool-tags { display: flex; flex-wrap: wrap; gap: var(--space-2xs); }
+/* Tool cards on Explore and glossary pages: the comment is shown in full,
+   since clipping it could cut off a limitation. */
+.pick-grid { margin-top: var(--space-lg); grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-md); }
+.tool-desc.is-full { display: block; -webkit-line-clamp: unset; overflow: visible; }
+.tool-card-badges { display: flex; flex-wrap: wrap; gap: var(--space-2xs); margin-top: var(--space-sm); }
 .tool-footer {
   display: flex;
   align-items: center;
@@ -930,6 +935,8 @@ details[open] > .filter-group-title::before { transform: rotate(45deg); }
 .fit-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-sm); }
 .fit-list li { font-size: 14px; color: var(--text-secondary); line-height: 1.55; padding-left: var(--space-lg); position: relative; }
 .fit-list.strengths li::before { content: "+"; color: var(--accent-text); position: absolute; left: 0; font-weight: 500; }
+.look-for-list { gap: var(--space-md); }
+.look-for-label { color: var(--text-primary); font-weight: 500; }
 .fit-list.limitations li::before { content: "–"; color: var(--text-disabled); position: absolute; left: 0; font-weight: 500; }
 
 .similar-grid {
@@ -964,6 +971,10 @@ details[open] > .filter-group-title::before { transform: rotate(45deg); }
 .faq-question { font-size: 16px; font-weight: 500; color: var(--text-primary); margin: 0 0 var(--space-sm); }
 .faq-answer { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
 .faq-answer a { color: var(--accent-text); }
+.faq-answer + .faq-answer { margin-top: var(--space-sm); }
+.faq-list, .faq-links { margin-top: var(--space-sm); }
+.faq-list + .faq-answer, .faq-links + .faq-answer { margin-top: var(--space-sm); }
+.faq-list a { color: var(--accent-text); }
 
 
 /* Glossary index */

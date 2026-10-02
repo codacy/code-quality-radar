@@ -1,7 +1,13 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
 import AuthorCard from "../../components/AuthorCard.astro";
+import LookFor from "../../components/LookFor.astro";
+import Shuffle from "../../components/Shuffle.astro";
 import { EXPLORE_ARTICLES, getExploreArticle, rankToolsForArticle } from "../../data/explore.js";
+import { logoPathFor } from "../../lib/logos.js";
+import { attachComments, lookForFaq, SHUFFLE_NOTE } from "../../lib/picks.js";
+import { faqJsonLd } from "../../lib/faq.js";
+import FaqItems from "../../components/FaqItems.astro";
 import { getTools } from "../../lib/tools.js";
 import { AUTHOR } from "../../data/author.js";
 
@@ -12,7 +18,10 @@ export function getStaticPaths() {
 const { slug } = Astro.params;
 const article = getExploreArticle(slug);
 const allTools = getTools();
-const ranked = rankToolsForArticle(article, allTools);
+// Server order is alphabetical (full support first); the grid is shuffled on
+// every page load. Comments come from the article's picks where written.
+const ranked = attachComments(rankToolsForArticle(article, allTools), article.picks, article.slug);
+const alphabetical = [...ranked].sort((a, b) => a.name.localeCompare(b.name)).map((t) => ({ text: t.name, href: `/${t.slug}/` }));
 const fullCount = ranked.filter((t) => !t.partial).length;
 const partialCount = ranked.length - fullCount;
 
@@ -28,24 +37,31 @@ const anOrA = /^[aeiou]/i.test(article.provider) ? "an" : "a";
 const faqs = [
   {
     q: `What are the best code review tools for ${article.provider}?`,
-    a: `${ranked.length ? ranked.slice(0, 5).map((t) => t.name).join(", ") : "None currently tracked"} are the ${article.provider} integrations documented in this directory, out of ${allTools.length} tools tracked in total.`,
+    a: ranked.length
+      ? [
+          `${ranked.length} of the ${allTools.length} tools in this directory document a ${article.provider} integration:`,
+          { links: alphabetical },
+          "Which fits best depends on your setup. The guidance on this page covers what to weigh.",
+        ]
+      : `None of the ${allTools.length} tools tracked in this directory document an integration with ${article.provider}.`,
   },
   {
     q: `How many tools integrate with ${article.provider}?`,
-    a:
+    a: [
       `${ranked.length} of ${allTools.length} tools support ${article.provider}` +
-      (partialCount ? `, ${fullCount} fully and ${partialCount} partially.` : ".") +
-      ` ${PARITY_CAVEAT}`,
+        (partialCount ? `, ${fullCount} fully and ${partialCount} partially.` : "."),
+      PARITY_CAVEAT,
+    ],
   },
   {
     q: `What should you look for in ${anOrA} ${article.provider} code review tool?`,
-    a: article.lookFor.join(". ") + ".",
+    a: lookForFaq(article.lookFor),
   },
 ];
 
 const toc = [
-  { id: "tools-heading", label: ranked.length === 1 ? "Top tool" : "Top tools" },
   { id: "look-for-heading", label: "What to look for" },
+  { id: "tools-heading", label: ranked.length === 1 ? "Top tool" : "Top tools" },
   ...(other.length > 0 ? [{ id: "other-heading", label: "Other platforms" }] : []),
   { id: "faq-heading", label: "FAQ" },
 ];
@@ -69,15 +85,7 @@ const jsonLdItemList = {
     url: new URL(`/${t.slug}/`, Astro.site).href,
   })),
 };
-const jsonLdFaq = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((f) => ({
-    "@type": "Question",
-    name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: f.a },
-  })),
-};
+const jsonLdFaq = faqJsonLd(faqs, Astro.site);
 ---
 <DocsLayout
   title={`${headline} — Review Radar`}
@@ -105,6 +113,8 @@ const jsonLdFaq = {
         {article.intro.map((p) => <p class="article-body">{p}</p>)}
       </section>
 
+      <LookFor items={article.lookFor} />
+
       <section class="article-section">
         <h2 class="h3" id="tools-heading">
           Top {ranked.length} code review {ranked.length === 1 ? "tool" : "tools"} for {article.provider}
@@ -112,34 +122,31 @@ const jsonLdFaq = {
         <p class="text-secondary body-sm" style="margin-top: var(--space-xs);">
           Every tool in the directory documented as integrating with {article.provider}
           {partialCount > 0 && <>, {fullCount} fully, {partialCount} partially</>}.
+          {` ${SHUFFLE_NOTE}`}
         </p>
         {partialCount > 0 && <p class="caption parity-caveat">{PARITY_CAVEAT}</p>}
-        <ol class="ranked-list">
-          {ranked.map((t, i) => (
-            <li class="ranked-item">
-              <span class="ranked-index">{i + 1}</span>
-              <div class="ranked-body">
-                <div class="ranked-head">
-                  <a href={`/${t.slug}/`} class="ranked-name">{t.name}</a>
-                  <span class="pill">{t.categoryLabel}</span>
+        <div class="tool-grid pick-grid">
+          {ranked.map((t) => (
+            <a href={`/${t.slug}/`} class="tool-card" data-band={t.partial ? "partial" : "full"}>
+              <div class="tool-card-head">
+                <p class="tool-category-label">{t.categoryLabel}</p>
+                <div class="tool-name-row">
+                  <span class="tool-avatar">
+                    {logoPathFor(t.slug) ? <img src={logoPathFor(t.slug)} alt="" loading="lazy" /> : t.initial}
+                  </span>
+                  <span class="tool-name">{t.name}</span>
                   {t.partial && <span class="facet-status status-partial">Partial</span>}
                 </div>
-                <p class="ranked-note">{t.description}</p>
-                <div class="tool-tags" style="margin-top: var(--space-xs);">
-                  {t.tags.map((tag) => <span class="pill">{tag}</span>)}
-                  <span class="pill">{t.priceLabel}</span>
-                </div>
               </div>
-            </li>
+              <p class="tool-desc is-full">{t.comment ?? t.description}</p>
+              <div class="tool-footer">
+                <span class="tool-price">{t.priceLabel}</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+              </div>
+            </a>
           ))}
-        </ol>
-      </section>
-
-      <section class="article-section">
-        <h2 class="h3" id="look-for-heading">What to look for</h2>
-        <ul class="fit-list strengths" style="margin-top: var(--space-md);">
-          {article.lookFor.map((l) => <li>{l}</li>)}
-        </ul>
+        </div>
+        <Shuffle />
       </section>
 
       {other.length > 0 && (
@@ -155,12 +162,7 @@ const jsonLdFaq = {
 
       <section class="article-section">
         <h2 class="h3" id="faq-heading">FAQ</h2>
-        {faqs.map((f) => (
-          <div class="faq-item">
-            <h3 class="faq-question">{f.q}</h3>
-            <p class="faq-answer">{f.a}</p>
-          </div>
-        ))}
+        <FaqItems faqs={faqs} />
       </section>
 
       <AuthorCard />

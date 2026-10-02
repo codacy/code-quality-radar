@@ -18,6 +18,9 @@ import {
 } from "../lib/tools.js";
 import { websiteFor } from "../data/tool-websites.js";
 import { logoPathFor } from "../lib/logos.js";
+import Shuffle from "../components/Shuffle.astro";
+import FaqItems from "../components/FaqItems.astro";
+import { faqJsonLd } from "../lib/faq.js";
 
 export function getStaticPaths() {
   return getAllSlugs().map((slug) => ({ params: { slug } }));
@@ -26,7 +29,9 @@ export function getStaticPaths() {
 const { slug } = Astro.params;
 const tool = getToolDetail(slug);
 const allTools = getTools();
-const similar = getSimilarTools(tool, allTools, 4);
+// Every other tool in the category, alphabetically; the grid shows a shuffled
+// four on each page load so no tool is always the one recommended.
+const similar = getSimilarTools(tool, allTools, Infinity).sort((a, b) => a.name.localeCompare(b.name));
 const officialSite = websiteFor(slug);
 
 function ok(v) {
@@ -60,12 +65,28 @@ const gitLabels = GIT_PROVIDER_FACETS.map((f) =>
   mark(f.label, tool.integrations?.git_providers?.[f.key])
 ).filter(Boolean);
 
+// Split into short paragraphs and lists (see src/lib/faq.js) so no answer is
+// one long block of text.
+const sentence = (t) => {
+  const x = String(t).trim();
+  return x ? x.charAt(0).toUpperCase() + x.slice(1) + (/[.!?]$/.test(x) ? "" : ".") : "";
+};
+const lowerFirst = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+const hasPublishedPrice = /^\$/.test(tool.priceLabel);
+const integrationItems = [
+  gitLabels.length && `Source control: ${joinList(gitLabels, 7)}`,
+  tool.integrations?.ci_systems?.length && `CI systems: ${joinList(tool.integrations.ci_systems, 5)}`,
+  tool.integrations?.ides?.length && `IDEs: ${joinList(tool.integrations.ides, 5)}`,
+].filter(Boolean);
+
 const faqs = [
   {
     q: `When should you choose ${tool.name}?`,
-    a: `${tool.name} best fits ${joinList(buyerLabels, 5) || "teams evaluating this category"}${
-      known(tool.fit_signals?.best_fit_team_size) ? `, ${tool.fit_signals.best_fit_team_size}.` : "."
-    }${tool.fit_signals?.notable_strengths?.[0] ? ` ${tool.fit_signals.notable_strengths[0]}` : ""}`,
+    a: [
+      `${tool.name} best fits ${buyerLabels.length ? joinList(buyerLabels.map(lowerFirst), 5) : "teams evaluating this category"}.`,
+      ...(known(tool.fit_signals?.best_fit_team_size) ? [sentence(tool.fit_signals.best_fit_team_size)] : []),
+      ...(tool.fit_signals?.notable_strengths?.[0] ? [sentence(tool.fit_signals.notable_strengths[0])] : []),
+    ],
   },
   {
     q: `What languages does ${tool.name} support?`,
@@ -75,21 +96,21 @@ const faqs = [
   },
   {
     q: `What does ${tool.name} integrate with?`,
-    a: `${tool.name} integrates with ${joinList(gitLabels, 7) || "the git providers documented above"} for source control${
-      tool.integrations?.ci_systems?.length ? `, CI systems including ${joinList(tool.integrations.ci_systems, 5)}` : ""
-    }${tool.integrations?.ides?.length ? `, and IDEs including ${joinList(tool.integrations.ides, 5)}` : ""}.`,
+    a: integrationItems.length
+      ? [`${tool.name} integrates with:`, { list: integrationItems }]
+      : `See the integrations documented above.`,
   },
   {
     q: `What tools are similar to ${tool.name}?`,
     a: similar.length
-      ? `Similar ${tool.categoryLabel} tools tracked here include ${similar.map((s) => s.name).join(", ")}.`
+      ? [`Other ${tool.categoryLabel} tools tracked here:`, { links: similar.map((s) => ({ text: s.name, href: `/${s.slug}/` })) }]
       : `No other tools in the ${tool.categoryLabel} category are currently tracked.`,
   },
   {
     q: `What are ${tool.name}'s plans and pricing?`,
     a: `${tool.name} ${tool.commercial?.free_tier?.v === "yes" ? "offers a free tier, with paid plans" : "has paid plans"} ${
-      tool.priceLabel !== "Contact for pricing" ? `starting around ${tool.priceLabel}` : "available by contacting the vendor"
-    }${tool.commercial?.enterprise_quote_only?.v === "yes" ? "; enterprise pricing is quote-only" : ""}.`,
+      hasPublishedPrice ? `starting around ${tool.priceLabel}` : "priced by contacting the vendor"
+    }${tool.commercial?.enterprise_quote_only?.v === "yes" ? ", and enterprise pricing is quote-only" : ""}.`,
   },
 ];
 
@@ -118,15 +139,7 @@ const jsonLdApp = {
     ? { offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free tier" } }
     : {}),
 };
-const jsonLdFaq = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((f) => ({
-    "@type": "Question",
-    name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: f.a },
-  })),
-};
+const jsonLdFaq = faqJsonLd(faqs, Astro.site);
 ---
 <DocsLayout
   title={`${tool.name} — Review Radar`}
@@ -359,6 +372,7 @@ const jsonLdFaq = {
             </a>
           ))}
         </div>
+        <Shuffle limit={4} />
       </section>
     )}
 
@@ -366,12 +380,7 @@ const jsonLdFaq = {
       <div class="detail-section-head">
         <h2 class="h2" id="faq-heading">FAQ</h2>
       </div>
-      {faqs.map((f) => (
-        <div class="faq-item">
-          <h3 class="faq-question">{f.q}</h3>
-          <p class="faq-answer">{f.a}</p>
-        </div>
-      ))}
+      <FaqItems faqs={faqs} />
     </section>
 
     {officialSite && (
